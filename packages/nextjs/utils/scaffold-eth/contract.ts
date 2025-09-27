@@ -29,7 +29,7 @@ import {
 import { Config, UseReadContractParameters, UseWatchContractEventParameters, UseWriteContractParameters } from "wagmi";
 import { WriteContractParameters, WriteContractReturnType, simulateContract } from "wagmi/actions";
 import { WriteContractVariables } from "wagmi/query";
-import deployedContractsData from "~~/contracts/deployedContracts";
+import deployedContracts from "~~/contracts/deployedContracts";
 import externalContractsData from "~~/contracts/externalContracts";
 import scaffoldConfig from "~~/scaffold.config";
 
@@ -61,7 +61,7 @@ const deepMergeContracts = <L extends Record<PropertyKey, any>, E extends Record
   return result as MergeDeepRecord<AddExternalFlag<L>, AddExternalFlag<E>, { arrayMergeMode: "replace" }>;
 };
 
-const contractsData = deepMergeContracts(deployedContractsData, externalContractsData);
+const contractsData = deepMergeContracts(deployedContracts, externalContractsData);
 
 export type InheritedFunctions = { readonly [key: string]: string };
 
@@ -355,7 +355,7 @@ export const getParsedErrorWithAllAbis = (error: any, chainId: AllowedChainIds):
 
     try {
       // Get all deployed contracts for the current chain
-      const chainContracts = deployedContractsData[chainId as keyof typeof deployedContractsData];
+      const chainContracts = deployedContracts[chainId as keyof typeof deployedContracts];
 
       if (!chainContracts) {
         return originalParsedError;
