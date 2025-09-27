@@ -136,6 +136,30 @@ class USDAIRebalancer:
                     'allocation_percentage': 20
                 }
             ]
+        elif strategy == "aggressive":
+            return [
+                {
+                    'protocol': 'aerodrome',
+                    'chain': 'arbitrum_sepolia',
+                    'target_apy': 0.15,
+                    'risk_score': 0.4,
+                    'allocation_percentage': 50
+                },
+                {
+                    'protocol': 'uniswap_v3',
+                    'chain': 'base_sepolia',
+                    'target_apy': 0.12,
+                    'risk_score': 0.35,
+                    'allocation_percentage': 35
+                },
+                {
+                    'protocol': 'aave_v3',
+                    'chain': 'ethereum_sepolia',
+                    'target_apy': 0.08,
+                    'risk_score': 0.25,
+                    'allocation_percentage': 15
+                }
+            ]
         else:  # balanced
             return [
                 {
@@ -256,7 +280,7 @@ class USDAIRebalancer:
 
         # Summary
         result = {
-            "status": "planned",
+            "status": "planned" if actions else "no_action_needed",
             "total_value": total_value,
             "actions_planned": len(actions),
             "actions_executed": 0,
@@ -271,6 +295,225 @@ class USDAIRebalancer:
         print(f"   Status: Ready for execution")
 
         return result
+
+    async def execute_rebalancing(self, rebalance_plan: Dict) -> Dict:
+        """Execute the planned rebalancing actions"""
+        
+        print(f"EXECUTING REBALANCING PLAN")
+        print("=" * 50)
+        
+        if rebalance_plan["status"] != "planned":
+            print("❌ No valid rebalancing plan to execute")
+            return {"status": "failed", "reason": "no_valid_plan"}
+        
+        executed_actions = []
+        total_cost = 0.0
+        
+        try:
+            # Get current positions for execution
+            current_positions = await self.get_current_portfolio()
+            target_allocations = await self.get_optimization_targets(rebalance_plan["strategy"])
+            total_value = sum(pos.amount_usdc for pos in current_positions)
+            
+            # Calculate actions again for execution
+            actions = await self.calculate_rebalance_actions(
+                current_positions,
+                target_allocations,
+                total_value
+            )
+            
+            print(f"Executing {len(actions)} rebalancing actions...")
+            
+            for i, action in enumerate(actions, 1):
+                print(f"\nAction {i}/{len(actions)}: {action.action_type}")
+                print(f"   Amount: {action.amount_usdc:.2f} USDC")
+                print(f"   Route: {action.source_chain} → {action.target_chain}")
+                
+                try:
+                    if action.action_type == "cross_chain_transfer":
+                        # Execute CCTP transfer
+                        transfer_result = await self._execute_cctp_transfer(action)
+                        executed_actions.append(transfer_result)
+                        total_cost += transfer_result.get("cost", 0)
+                        
+                        print(f"   ✅ Transfer executed: {transfer_result.get('status', 'unknown')}")
+                    
+                except Exception as e:
+                    print(f"   ❌ Action failed: {e}")
+                    executed_actions.append({
+                        "action": action,
+                        "status": "failed",
+                        "error": str(e)
+                    })
+            
+            # Verify final portfolio state
+            final_positions = await self.get_current_portfolio()
+            final_value = sum(pos.amount_usdc for pos in final_positions)
+            
+            result = {
+                "status": "completed",
+                "actions_executed": len([a for a in executed_actions if a.get("status") == "success"]),
+                "actions_failed": len([a for a in executed_actions if a.get("status") == "failed"]),
+                "total_cost": total_cost,
+                "initial_value": total_value,
+                "final_value": final_value,
+                "value_change": final_value - total_value,
+                "timestamp": datetime.now().isoformat()
+            }
+            
+            print(f"\n🎯 REBALANCING EXECUTION COMPLETE")
+            print(f"   Actions Executed: {result['actions_executed']}")
+            print(f"   Actions Failed: {result['actions_failed']}")
+            print(f"   Total Cost: ${total_cost:.2f}")
+            print(f"   Value Change: ${result['value_change']:.2f}")
+            
+            return result
+            
+        except Exception as e:
+            print(f"❌ Rebalancing execution failed: {e}")
+            return {
+                "status": "failed",
+                "error": str(e),
+                "actions_executed": len(executed_actions),
+                "total_cost": total_cost
+            }
+
+    async def _execute_cctp_transfer(self, action: RebalanceAction) -> Dict:
+        """Execute a CCTP cross-chain transfer"""
+        
+        try:
+            # Import CCTP integration
+            from ..apis.cctp_integration import CCTPIntegration
+            cctp = CCTPIntegration()
+            
+            print(f"   🌉 Initiating CCTP transfer...")
+            
+            # Initiate transfer
+            transfer = await cctp.initiate_cross_chain_transfer(
+                source_chain=action.source_chain,
+                destination_chain=action.target_chain,
+                amount=action.amount_usdc,
+                recipient=self.account.address,
+                private_key=self.private_key
+            )
+            
+            print(f"   🔥 Burn transaction: {transfer.burn_tx_hash}")
+            
+            # Wait for attestation and complete transfer
+            completed_transfer = await cctp.complete_cross_chain_transfer(
+                transfer, self.private_key
+            )
+            
+            print(f"   🪙 Mint transaction: {completed_transfer.mint_tx_hash}")
+            
+            # Calculate costs
+            burn_cost = transfer.gas_used * transfer.gas_price / 10**18 if transfer.gas_used else 0
+            mint_cost = completed_transfer.gas_used * completed_transfer.gas_price / 10**18 if completed_transfer.gas_used else 0
+            total_cost = burn_cost + mint_cost
+            
+            return {
+                "action": action,
+                "status": "success",
+                "burn_tx": transfer.burn_tx_hash,
+                "mint_tx": completed_transfer.mint_tx_hash,
+                "amount": action.amount_usdc,
+                "cost": total_cost,
+                "execution_time": datetime.now().isoformat()
+            }
+            
+        except Exception as e:
+            return {
+                "action": action,
+                "status": "failed",
+                "error": str(e),
+                "execution_time": datetime.now().isoformat()
+            }
+
+    async def get_portfolio_performance(self, time_period: str = "24h") -> Dict:
+        """Get portfolio performance metrics"""
+        
+        print(f"Analyzing portfolio performance over {time_period}...")
+        
+        try:
+            current_positions = await self.get_current_portfolio()
+            total_value = sum(pos.amount_usdc for pos in current_positions)
+            
+            # Calculate performance metrics
+            performance = {
+                "total_value": total_value,
+                "position_count": len(current_positions),
+                "chain_distribution": {},
+                "average_apy": 0.0,
+                "risk_score": 0.0,
+                "last_updated": datetime.now().isoformat()
+            }
+            
+            # Calculate chain distribution
+            for pos in current_positions:
+                if pos.chain not in performance["chain_distribution"]:
+                    performance["chain_distribution"][pos.chain] = 0
+                performance["chain_distribution"][pos.chain] += pos.amount_usdc
+            
+            # Calculate weighted average APY and risk
+            total_weighted_apy = 0
+            total_weighted_risk = 0
+            
+            for pos in current_positions:
+                weight = pos.amount_usdc / total_value if total_value > 0 else 0
+                total_weighted_apy += pos.apy * weight
+                total_weighted_risk += pos.risk_score * weight
+            
+            performance["average_apy"] = total_weighted_apy
+            performance["risk_score"] = total_weighted_risk
+            
+            return performance
+            
+        except Exception as e:
+            print(f"❌ Error calculating performance: {e}")
+            return {"error": str(e)}
+
+    async def optimize_gas_costs(self, actions: List[RebalanceAction]) -> List[RebalanceAction]:
+        """Optimize gas costs for rebalancing actions"""
+        
+        print("Optimizing gas costs for rebalancing actions...")
+        
+        optimized_actions = []
+        
+        for action in actions:
+            try:
+                # Get current gas prices for both chains
+                source_config = self.cctp.chain_configs[action.source_chain]
+                dest_config = self.cctp.chain_configs[action.target_chain]
+                
+                source_w3 = Web3(Web3.HTTPProvider(source_config.rpc_url))
+                dest_w3 = Web3(Web3.HTTPProvider(dest_config.rpc_url))
+                
+                source_gas_price = source_w3.eth.gas_price
+                dest_gas_price = dest_w3.eth.gas_price
+                
+                # Estimate gas costs
+                estimated_burn_gas = source_config.gas_limit
+                estimated_mint_gas = dest_config.gas_limit
+                
+                burn_cost = estimated_burn_gas * source_gas_price / 10**18
+                mint_cost = estimated_mint_gas * dest_gas_price / 10**18
+                total_cost = burn_cost + mint_cost
+                
+                # Check if cost is acceptable
+                cost_percentage = total_cost / action.amount_usdc if action.amount_usdc > 0 else 0
+                
+                if cost_percentage <= self.max_gas_cost_percentage:
+                    action.reason += f" (Gas cost: ${total_cost:.2f}, {cost_percentage:.2%})"
+                    optimized_actions.append(action)
+                else:
+                    print(f"   ⚠️ Skipping action due to high gas cost: {cost_percentage:.2%}")
+                    
+            except Exception as e:
+                print(f"   ❌ Error optimizing action: {e}")
+                optimized_actions.append(action)  # Include anyway
+        
+        print(f"   Optimized to {len(optimized_actions)} actions")
+        return optimized_actions
 
 # Test the rebalancer
 async def test_rebalancer():
