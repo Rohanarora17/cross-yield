@@ -150,10 +150,13 @@ class CCTPIntegration:
                     {"name": "amount", "type": "uint256"},
                     {"name": "destinationDomain", "type": "uint32"},
                     {"name": "mintRecipient", "type": "bytes32"},
-                    {"name": "burnToken", "type": "address"}
+                    {"name": "burnToken", "type": "address"},
+                    {"name": "hookData", "type": "bytes32"},
+                    {"name": "maxFee", "type": "uint256"},
+                    {"name": "finalityThreshold", "type": "uint32"}
                 ],
                 "name": "depositForBurn",
-                "outputs": [{"name": "_nonce", "type": "uint64"}],
+                "outputs": [],
                 "stateMutability": "nonpayable",
                 "type": "function"
             },
@@ -202,6 +205,23 @@ class CCTPIntegration:
                 ],
                 "name": "balanceOf",
                 "outputs": [{"name": "balance", "type": "uint256"}],
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "inputs": [
+                    {"name": "owner", "type": "address"},
+                    {"name": "spender", "type": "address"}
+                ],
+                "name": "allowance",
+                "outputs": [{"name": "remaining", "type": "uint256"}],
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "inputs": [],
+                "name": "totalSupply",
+                "outputs": [{"name": "supply", "type": "uint256"}],
                 "stateMutability": "view",
                 "type": "function"
             }
@@ -287,7 +307,7 @@ class CCTPIntegration:
             })
             
             signed_approve = account.sign_transaction(approve_tx)
-            approve_tx_hash = w3.eth.send_raw_transaction(signed_approve.rawTransaction)
+            approve_tx_hash = w3.eth.send_raw_transaction(signed_approve.raw_transaction)
             print(f"   ✅ Approval tx: {approve_tx_hash.hex()}")
 
             # Wait for approval confirmation
@@ -309,11 +329,19 @@ class CCTPIntegration:
             current_nonce = w3.eth.get_transaction_count(account.address)
             gas_price = max(w3.eth.gas_price, w3.to_wei(config.gas_price_gwei, 'gwei'))
 
+            # Circle CCTP V2 parameters (from official implementation)
+            hook_data = "0x" + "0" * 64  # Empty bytes32
+            max_fee = amount_wei - 1  # Slightly less than burn amount
+            finality_threshold = 2000  # Standard transfer (1000 for fast)
+
             burn_tx = token_messenger.functions.depositForBurn(
                 amount_wei,
                 destination_domain,
                 recipient_bytes32,
-                w3.to_checksum_address(config.usdc_address)
+                w3.to_checksum_address(config.usdc_address),
+                hook_data,
+                max_fee,
+                finality_threshold
             ).build_transaction({
                 'from': account.address,
                 'gas': config.gas_limit,
@@ -322,13 +350,18 @@ class CCTPIntegration:
             })
             
             signed_burn = account.sign_transaction(burn_tx)
-            burn_tx_hash = w3.eth.send_raw_transaction(signed_burn.rawTransaction)
+            burn_tx_hash = w3.eth.send_raw_transaction(signed_burn.raw_transaction)
             
             # Wait for transaction confirmation
             receipt = w3.eth.wait_for_transaction_receipt(burn_tx_hash)
-            
+
+            # Check if transaction succeeded
+            if receipt.status != 1:
+                raise ValueError(f"Burn transaction failed. TX: {burn_tx_hash.hex()}, Gas used: {receipt.gasUsed}")
+
             print(f"   ✅ Burn tx: {burn_tx_hash.hex()}")
             print(f"   ⛽ Gas used: {receipt.gasUsed}")
+            print(f"   📋 Logs: {len(receipt.logs)}")
             
             # Extract nonce from logs - MessageSent event signature
             # MessageSent event: keccak256("MessageSent(bytes)")
@@ -523,6 +556,45 @@ class CCTPIntegration:
         except Exception as e:
             print(f"   ❌ Error getting attestation: {e}")
             return None
+
+    async def calculate_transfer_cost(
+        self,
+        source_chain: str,
+        destination_chain: str,
+        amount: float
+    ) -> Dict[str, float]:
+        """Calculate total cost of CCTP transfer"""
+
+        source_config = self.chain_configs[source_chain]
+        dest_config = self.chain_configs[destination_chain]
+
+        # Gas costs (estimated)
+        source_gas_cost = source_config.gas_limit * source_config.gas_price_gwei * 1e-9  # Convert to ETH
+        dest_gas_cost = dest_config.gas_limit * dest_config.gas_price_gwei * 1e-9
+
+        # Get current ETH prices (simplified - in production use real price feeds)
+        eth_prices = {
+            "ethereum": 3000,
+            "ethereum_sepolia": 3000,
+            "base": 3000,
+            "base_sepolia": 3000,
+            "arbitrum": 3000,
+            "arbitrum_sepolia": 3000,
+            "polygon": 3000,
+            "avalanche": 3000
+        }
+
+        source_usd_cost = source_gas_cost * eth_prices.get(source_chain, 3000)
+        dest_usd_cost = dest_gas_cost * eth_prices.get(destination_chain, 3000)
+
+        total_cost = source_usd_cost + dest_usd_cost
+
+        return {
+            "source_gas_cost_usd": source_usd_cost,
+            "destination_gas_cost_usd": dest_usd_cost,
+            "total_cost_usd": total_cost,
+            "cost_percentage": (total_cost / amount) * 100 if amount > 0 else 0
+        }
 
 async def complete_cross_chain_transfer(
     self,
