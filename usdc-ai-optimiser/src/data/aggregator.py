@@ -3,8 +3,8 @@
 
 import asyncio
 from typing import List
-from src.apis.defillama import DeFiLlamaAPI
-from src.data.models import USDCOpportunity
+from ..apis.defillama import DeFiLlamaAPI
+from .models import USDCOpportunity
 
 class USDCDataAggregator:
     """Main USDC data aggregation system"""
@@ -34,13 +34,15 @@ class USDCDataAggregator:
         
         for opp in opportunities:
             # Quality filters
-            if (opp.tvl_usd >= 1000000 and  # Min $1M TVL
-                opp.apy >= 1.0 and          # Min 1% APY
+            if (opp.tvl_usd >= 1000000 and      # Min $1M TVL
+                opp.apy >= 1.0 and              # Min 1% APY  
+                opp.apy <= 100.0 and            # Max 100% APY (filter out extreme outliers)
                 opp.usdc_liquidity >= 500000):  # Min $500k USDC liquidity
                 filtered.append(opp)
         
         # Sort by risk-adjusted return
         return sorted(filtered, key=lambda x: x.apy / (1 + x.risk_score), reverse=True)
+
 
 # Test the data aggregator
 async def test_data_aggregation():

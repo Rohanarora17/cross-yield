@@ -4,8 +4,8 @@
 import aiohttp
 import asyncio
 from typing import List, Dict
-from src.config import config
-from src.data.models import USDCOpportunity
+from ...config import config
+from ...data.models import USDCOpportunity
 from datetime import datetime
 
 class DeFiLlamaAPI:
@@ -59,15 +59,24 @@ class DeFiLlamaAPI:
                 if chain not in config.SUPPORTED_CHAINS:
                     continue
                 
+                # Handle None values for APY fields
+                apy = pool.get("apy", 0) or 0
+                apy_base = pool.get("apyBase") or 0  # Handle None
+                apy_reward = pool.get("apyReward") or 0  # Handle None
+                
+                # Skip pools with extremely high APYs (likely errors)
+                if apy > 1000:  # Skip APYs over 1000%
+                    continue
+                
                 # Create opportunity
                 opportunity = USDCOpportunity(
                     protocol=pool.get("project", "unknown"),
                     chain=chain,
                     pool_id=pool.get("pool", ""),
                     pool_name=pool.get("symbol", "Unknown"),
-                    apy=pool.get("apy", 0),
-                    apy_base=pool.get("apyBase", 0),
-                    apy_reward=pool.get("apyReward", 0),
+                    apy=apy,
+                    apy_base=apy_base,
+                    apy_reward=apy_reward,
                     tvl_usd=pool.get("tvlUsd", 0),
                     usdc_liquidity=self._estimate_usdc_liquidity(pool),
                     risk_score=self._calculate_basic_risk_score(pool),
@@ -173,17 +182,38 @@ class DeFiLlamaAPI:
             {
                 "protocol": "aave-v3", "chain": "ethereum", "pool_name": "USDC",
                 "apy": 4.2, "apy_base": 4.2, "apy_reward": 0,
-                "tvl_usd": 1800000000, "usdc_liquidity": 1710000000
+                "tvl_usd": 1800000000, "usdc_liquidity": 1710000000,
+                "risk_score": 0.1, "category": "lending"
             },
             {
                 "protocol": "moonwell", "chain": "base", "pool_name": "USDC",
                 "apy": 11.8, "apy_base": 7.5, "apy_reward": 4.3,
-                "tvl_usd": 42000000, "usdc_liquidity": 39900000
+                "tvl_usd": 42000000, "usdc_liquidity": 39900000,
+                "risk_score": 0.3, "category": "lending"
             },
             {
                 "protocol": "radiant", "chain": "arbitrum", "pool_name": "USDC", 
                 "apy": 18.5, "apy_base": 12.2, "apy_reward": 6.3,
-                "tvl_usd": 23000000, "usdc_liquidity": 21850000
+                "tvl_usd": 23000000, "usdc_liquidity": 21850000,
+                "risk_score": 0.4, "category": "lending"
+            },
+            {
+                "protocol": "compound", "chain": "ethereum", "pool_name": "USDC",
+                "apy": 3.8, "apy_base": 3.8, "apy_reward": 0,
+                "tvl_usd": 800000000, "usdc_liquidity": 760000000,
+                "risk_score": 0.15, "category": "lending"
+            },
+            {
+                "protocol": "curve", "chain": "ethereum", "pool_name": "USDC-USDT",
+                "apy": 2.1, "apy_base": 2.1, "apy_reward": 0,
+                "tvl_usd": 500000000, "usdc_liquidity": 250000000,
+                "risk_score": 0.25, "category": "stable_lp"
+            },
+            {
+                "protocol": "yearn", "chain": "ethereum", "pool_name": "USDC Vault",
+                "apy": 6.5, "apy_base": 4.0, "apy_reward": 2.5,
+                "tvl_usd": 150000000, "usdc_liquidity": 142500000,
+                "risk_score": 0.2, "category": "yield_farm"
             }
         ]
         
@@ -199,8 +229,8 @@ class DeFiLlamaAPI:
                 apy_reward=data["apy_reward"],
                 tvl_usd=data["tvl_usd"],
                 usdc_liquidity=data["usdc_liquidity"],
-                risk_score=0.2,
-                category="lending",
+                risk_score=data["risk_score"],
+                category=data["category"],
                 min_deposit=1.0,
                 oracle_confidence=0.9,
                 last_updated=datetime.now()
@@ -208,4 +238,3 @@ class DeFiLlamaAPI:
             opportunities.append(opportunity)
         
         return opportunities
-
