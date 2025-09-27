@@ -13,6 +13,7 @@ class Config:
     # API Keys
     CLAUDE_API_KEY = os.getenv("CLAUDE_API_KEY", "")
     ALCHEMY_API_KEY = os.getenv("ALCHEMY_API_KEY", "")
+    ONEINCH_API_KEY = os.getenv("1INCH_API_KEY", "")
     
     # Chain Configuration
     SUPPORTED_CHAINS = {

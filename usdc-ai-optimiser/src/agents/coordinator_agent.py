@@ -278,6 +278,7 @@ class LLMCoordinatorAgent(BaseAgent):
         return {
             "allocation": allocation,
             "expected_apy": expected_apy,
+            "confidence": 0.8,
             "reasoning": f"Balanced allocation across {len(top_opportunities)} top risk-adjusted opportunities",
             "coordination_method": "fallback_logic",
             "diversification": len(set(opp.chain for opp in top_opportunities))
