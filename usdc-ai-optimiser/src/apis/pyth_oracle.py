@@ -12,38 +12,193 @@ class PythOracleAPI:
     """Pyth Network oracle integration for real-time market data"""
     
     def __init__(self):
-        self.base_url = "https://hermes.pyth.network"
-        self.price_feeds = {
-            "USDC": "0xeaa020c61cc479712813461ce153894a96a6c00b",
-            "ETH": "0xff61491a931112ddf1bd8147cd1b641375f79f5825122d1364803c6ec40f8b0a",
-            "BTC": "0xe62df6c8b4a85fe1a67db44dc12de5db330f7ac66b72dc658afedf0f4a415b43",
-            "AVAX": "0x93da3352f9f1d105fdfe4971cfa80e9dd777b8c0cb0e5b9f985933e6b0b2c0c"
+        # Pyth Network API endpoints (using correct Hermes API format like your TypeScript implementation)
+        self.hermes_base_url = "https://hermes.pyth.network"
+        self.coingecko_base_url = "https://api.coingecko.com/api/v3"
+        
+        # Pyth price feed IDs (using standard IDs like your TypeScript implementation)
+        self.pyth_price_feeds = {
+            "USDC": "eaa020c61cc479712813461ce153894a96a6c00b21ed0cfc2798d1f9a9e9c94a",  # USDC/USD
+            "ETH": "ff61491a931112ddf1bd8147cd1b641375f79f5825126d665480874634fd0ace",   # ETH/USD
+            "BTC": "e62df6c8b4a85fe1a67db44dc12de5db330f7ac66b72dc658afedf0f4a415b43",   # BTC/USD
+            "AVAX": "93da3352f9f1d105fdf5544952f31346519d362adbc8dca9b7dbd0b8a6aad25c"   # AVAX/USD
+        }
+        
+        # CoinGecko fallback mapping
+        self.coingecko_feeds = {
+            "USDC": "usd-coin",
+            "ETH": "ethereum", 
+            "BTC": "bitcoin",
+            "AVAX": "avalanche-2"
         }
         
     async def get_price_feeds(self, symbols: List[str]) -> Dict[str, Dict]:
-        """Get real-time price feeds from Pyth"""
+        """Get real-time price feeds from Pyth Network"""
         
         print(f"🔮 Fetching Pyth price feeds for {symbols}...")
         
         try:
             async with aiohttp.ClientSession() as session:
-                # Get latest price feeds
-                url = f"{self.base_url}/api/latest_price_feeds"
-                params = {
-                    "ids[]": [self.price_feeds.get(symbol, "") for symbol in symbols if symbol in self.price_feeds]
-                }
+                # Try Pyth Network API first
+                feed_ids = [self.pyth_price_feeds.get(symbol) for symbol in symbols if symbol in self.pyth_price_feeds]
                 
-                async with session.get(url, params=params) as response:
-                    if response.status == 200:
-                        data = await response.json()
-                        return self._parse_price_feeds(data)
-                    else:
-                        print(f"⚠️ Pyth API error: {response.status}")
-                        return await self._get_fallback_prices(symbols)
-                        
+                if feed_ids:
+                    # Use Hermes API format like your TypeScript implementation
+                    # Build URL with ids[] parameters
+                    url = f"{self.hermes_base_url}/api/latest_price_feeds"
+                    params = []
+                    for feed_id in feed_ids:
+                        params.append(f"ids[]={feed_id}")
+                    params.append("parsed=true")
+
+                    full_url = f"{url}?{'&'.join(params)}"
+                    print(f"🔍 Pyth API URL: {full_url}")
+
+                    async with session.get(full_url) as response:
+                        if response.status == 200:
+                            data = await response.json()
+                            parsed_feeds = self._parse_pyth_feeds(data, symbols)
+                            if parsed_feeds:
+                                print("✅ Successfully fetched from Pyth Network")
+                                return parsed_feeds
+                        else:
+                            print(f"⚠️ Pyth Network API error: {response.status}")
+                            # Try to get error details
+                            try:
+                                error_text = await response.text()
+                                print(f"   Error details: {error_text[:200]}")
+                            except:
+                                pass
+
+                # Fallback to CoinGecko API
+                print("🔄 Falling back to CoinGecko API...")
+                return await self._fetch_from_coingecko(session, symbols)
+
         except Exception as e:
             print(f"❌ Pyth fetch failed: {e}")
+            # Final fallback to static prices
             return await self._get_fallback_prices(symbols)
+
+    async def _fetch_from_coingecko(self, session: aiohttp.ClientSession, symbols: List[str]) -> Dict[str, Dict]:
+        """Fetch prices from CoinGecko API with proper error handling"""
+        try:
+            ids = [self.coingecko_feeds.get(symbol) for symbol in symbols if symbol in self.coingecko_feeds]
+            filtered_ids = [id for id in ids if id]  # Remove None values
+
+            if not filtered_ids:
+                print("⚠️ No valid CoinGecko IDs found for symbols")
+                return await self._get_fallback_prices(symbols)
+
+            ids_str = ",".join(filtered_ids)
+            url = f"{self.coingecko_base_url}/simple/price"
+            params = {
+                "ids": ids_str,
+                "vs_currencies": "usd",
+                "include_24hr_change": "true",
+                "include_24hr_vol": "true"
+            }
+
+            async with session.get(url, params=params) as response:
+                if response.status == 200:
+                    data = await response.json()
+                    parsed_data = self._parse_coingecko_feeds(data, symbols)
+                    if parsed_data:
+                        print("✅ Successfully fetched from CoinGecko")
+                        return parsed_data
+                    else:
+                        print("⚠️ Failed to parse CoinGecko data")
+                        return await self._get_fallback_prices(symbols)
+                else:
+                    print(f"⚠️ CoinGecko API error: {response.status}")
+                    try:
+                        error_text = await response.text()
+                        print(f"   Error details: {error_text[:200]}")
+                    except:
+                        pass
+                    return await self._get_fallback_prices(symbols)
+
+        except Exception as e:
+            print(f"❌ CoinGecko fetch failed: {e}")
+            return await self._get_fallback_prices(symbols)
+    
+    def _parse_coingecko_feeds(self, data: Dict, symbols: List[str]) -> Dict[str, Dict]:
+        """Parse CoinGecko price feed data"""
+        
+        parsed_feeds = {}
+        
+        for symbol in symbols:
+            coin_id = self.coingecko_feeds.get(symbol)
+            if not coin_id or coin_id not in data:
+                continue
+                
+            coin_data = data[coin_id]
+            
+            parsed_feeds[symbol] = {
+                'price': coin_data.get('usd', 0),
+                'confidence': abs(coin_data.get('usd_24h_change', 0)) / 100,  # Convert percentage to confidence
+                'timestamp': datetime.now().timestamp(),
+                'exponent': 0,
+                'status': 'trading',
+                'change_24h': coin_data.get('usd_24h_change', 0),
+                'volume_24h': coin_data.get('usd_24h_vol', 0)
+            }
+        
+        return parsed_feeds
+    
+    def _parse_pyth_feeds(self, data: Dict, symbols: List[str]) -> Dict[str, Dict]:
+        """Parse Pyth Network price feed data"""
+
+        parsed_feeds = {}
+
+        try:
+            # Handle both list and dict response formats
+            if isinstance(data, list):
+                parsed_data = data
+            else:
+                parsed_data = data.get('parsed', [])
+
+            for feed_data in parsed_data:
+                feed_id = feed_data.get('id', '')
+
+                # Find symbol from feed ID
+                symbol = None
+                for sym, fid in self.pyth_price_feeds.items():
+                    if fid == feed_id:
+                        symbol = sym
+                        break
+
+                if not symbol or symbol not in symbols:
+                    continue
+
+                # Parse price data from Hermes format
+                price_obj = feed_data.get('price', {})
+                price = int(price_obj.get('price', 0))
+                expo = int(price_obj.get('expo', 0))
+                conf = int(price_obj.get('conf', 0))
+
+                # Apply exponent to normalize price (Pyth uses negative exponents)
+                if expo < 0:
+                    normalized_price = price / (10 ** abs(expo))
+                    normalized_conf = conf / (10 ** abs(expo))
+                else:
+                    normalized_price = price * (10 ** expo)
+                    normalized_conf = conf * (10 ** expo)
+
+                parsed_feeds[symbol] = {
+                    'price': normalized_price,
+                    'confidence': normalized_conf,
+                    'timestamp': feed_data.get('publish_time', datetime.now().timestamp()),
+                    'exponent': expo,
+                    'status': feed_data.get('status', 'trading'),
+                    'change_24h': 0.0,  # Pyth doesn't provide 24h change
+                    'volume_24h': 0.0    # Pyth doesn't provide volume
+                }
+
+        except Exception as e:
+            print(f"⚠️ Failed to parse Pyth feeds: {e}")
+            print(f"   Raw data: {data}")
+
+        return parsed_feeds
     
     def _parse_price_feeds(self, data: List[Dict]) -> Dict[str, Dict]:
         """Parse Pyth price feed data"""
@@ -76,7 +231,7 @@ class PythOracleAPI:
     def _get_symbol_from_id(self, feed_id: str) -> Optional[str]:
         """Get symbol from Pyth feed ID"""
         
-        for symbol, feed_id_mapping in self.price_feeds.items():
+        for symbol, feed_id_mapping in self.pyth_price_feeds.items():
             if feed_id == feed_id_mapping:
                 return symbol
         return None

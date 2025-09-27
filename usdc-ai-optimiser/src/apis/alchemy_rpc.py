@@ -114,7 +114,10 @@ class AlchemyRPCIntegration:
             )
             
             # Parse balance (assuming 18 decimals for most tokens)
-            balance_wei = int(balance_data, 16)
+            if not balance_data or balance_data == "0x":
+                balance_wei = 0
+            else:
+                balance_wei = int(balance_data, 16)
             balance = balance_wei / (10 ** 18)
             
             # Get token price (simplified - would use price oracle in production)
@@ -164,7 +167,10 @@ class AlchemyRPCIntegration:
                 ]
             )
             
-            total_supply = int(reserves_data, 16) / (10 ** 18)
+            if not reserves_data or reserves_data == "0x":
+                total_supply = 0
+            else:
+                total_supply = int(reserves_data, 16) / (10 ** 18)
             
             # Estimate liquidity (simplified calculation)
             estimated_liquidity = total_supply * 1000  # Simplified multiplier
