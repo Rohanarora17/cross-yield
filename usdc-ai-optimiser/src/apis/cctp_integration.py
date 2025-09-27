@@ -4,12 +4,17 @@
 import asyncio
 import aiohttp
 import json
+import os
 from typing import Dict, List, Optional, Tuple
 from datetime import datetime, timedelta
 from dataclasses import dataclass
 from web3 import Web3
 from eth_account import Account
 import numpy as np
+from dotenv import load_dotenv
+
+# Load environment variables
+load_dotenv()
 
 @dataclass
 class CCTPTransfer:
@@ -42,15 +47,16 @@ class CCTPIntegration:
     """Circle's Cross-Chain Transfer Protocol integration"""
     
     def __init__(self):
-        # CCTP contract addresses for supported chains
+        # Official CCTP contract addresses from Circle documentation
         self.chain_configs = {
+            # Mainnet addresses
             "ethereum": CCTPChainConfig(
                 chain_id=1,
                 name="Ethereum",
-                rpc_url="https://eth-mainnet.g.alchemy.com/v2/demo",
-                token_messenger_address="0xbd3fa81b9ba4b8b8e8b8b8b8b8b8b8b8b8b8b8b8",
-                message_transmitter_address="0x0a992d191deec32afe36203ad87d8d64e4e8b592",
-                usdc_address="0xa0b86a33e6c8b8b8b8b8b8b8b8b8b8b8b8b8b8b8",
+                rpc_url=f"https://eth-mainnet.g.alchemy.com/v2/{os.getenv('ALCHEMY_API_KEY', 'demo')}",
+                token_messenger_address="0x28b5a0e9C621a5BadaA536219b3a228C8168cf5d",
+                message_transmitter_address="0x81D40F21F12A8F0E3252Bccb954D722d4c464B64",
+                usdc_address="0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",  # Official Ethereum USDC
                 gas_limit=200000,
                 gas_price_gwei=20.0
             ),
@@ -58,9 +64,9 @@ class CCTPIntegration:
                 chain_id=8453,
                 name="Base",
                 rpc_url="https://mainnet.base.org",
-                token_messenger_address="0x1682aee93502c41e357175b4e272070354aa9c38",
-                message_transmitter_address="0xad09780d193884d503182ad458b0e0bc9e1652af",
-                usdc_address="0x833589fcd6edb6e08f4c7c32d4f71b54bda02913",
+                token_messenger_address="0x28b5a0e9C621a5BadaA536219b3a228C8168cf5d",
+                message_transmitter_address="0x81D40F21F12A8F0E3252Bccb954D722d4c464B64",
+                usdc_address="0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
                 gas_limit=200000,
                 gas_price_gwei=0.001
             ),
@@ -68,9 +74,9 @@ class CCTPIntegration:
                 chain_id=42161,
                 name="Arbitrum",
                 rpc_url="https://arb1.arbitrum.io/rpc",
-                token_messenger_address="0x19330d10d9cc8751218eaf51e8885d058642e08a",
-                message_transmitter_address="0xc30362373fba6eb35a1c4e8b1b7a5a5a5a5a5a5a5",
-                usdc_address="0xaf88d065e77c8cc2239327c5edb3a432268e5831",
+                token_messenger_address="0x28b5a0e9C621a5BadaA536219b3a228C8168cf5d",
+                message_transmitter_address="0x81D40F21F12A8F0E3252Bccb954D722d4c464B64",
+                usdc_address="0xaf88d065e77c8cC2239327C5EDb3A432268e5831",  # Official Arbitrum USDC
                 gas_limit=200000,
                 gas_price_gwei=0.1
             ),
@@ -78,9 +84,9 @@ class CCTPIntegration:
                 chain_id=137,
                 name="Polygon",
                 rpc_url="https://polygon-rpc.com",
-                token_messenger_address="0x9daF8c91A1AE30e4536c6f1d1698b21cfd49723a",
-                message_transmitter_address="0x4d41f22c5a0e5c74090899e5a8fb7a49bea0c906",
-                usdc_address="0x2791bca1f2de4661ed88a30c99a7a9449aa84174",
+                token_messenger_address="0x28b5a0e9C621a5BadaA536219b3a228C8168cf5d",
+                message_transmitter_address="0x81D40F21F12A8F0E3252Bccb954D722d4c464B64",
+                usdc_address="0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359",  # Official Polygon USDC
                 gas_limit=200000,
                 gas_price_gwei=30.0
             ),
@@ -88,15 +94,56 @@ class CCTPIntegration:
                 chain_id=43114,
                 name="Avalanche",
                 rpc_url="https://api.avax.network/ext/bc/C/rpc",
-                token_messenger_address="0x6b25532e1060ce10cc3b0a99e5683b91bfde6982",
-                message_transmitter_address="0x8186359af5f57fbb40c6b14a588d2a59e0d20171",
-                usdc_address="0xb97ef9ef8734c71904d8002f8b6bc66dd9c48a6e",
+                token_messenger_address="0x28b5a0e9C621a5BadaA536219b3a228C8168cf5d",
+                message_transmitter_address="0x81D40F21F12A8F0E3252Bccb954D722d4c464B64",
+                usdc_address="0xB97EF9Ef8734C71904D8002F8b6Bc66Dd9c48a6E",  # Official Avalanche USDC
+                gas_limit=200000,
+                gas_price_gwei=25.0
+            ),
+            # Testnet addresses (official Circle addresses)
+            "ethereum_sepolia": CCTPChainConfig(
+                chain_id=11155111,
+                name="Ethereum Sepolia",
+                rpc_url=f"https://eth-sepolia.g.alchemy.com/v2/{os.getenv('ALCHEMY_API_KEY', 'demo')}",
+                token_messenger_address="0x8FE6B999Dc680CcFDD5Bf7EB0974218be2542DAA",
+                message_transmitter_address="0xE737e5cEBEEBa77EFE34D4aa090756590b1CE275",
+                usdc_address="0x1c7d4b196cb0c7b01d743fbc6116a902379c7238",
+                gas_limit=200000,
+                gas_price_gwei=0.1
+            ),
+            "base_sepolia": CCTPChainConfig(
+                chain_id=84532,
+                name="Base Sepolia",
+                rpc_url="https://sepolia.base.org",
+                token_messenger_address="0x8FE6B999Dc680CcFDD5Bf7EB0974218be2542DAA",
+                message_transmitter_address="0xE737e5cEBEEBa77EFE34D4aa090756590b1CE275",
+                usdc_address="0x036CbD53842c5426634e7929541eC2318f3dCF7e",  # Official Base Sepolia USDC
+                gas_limit=200000,
+                gas_price_gwei=0.001
+            ),
+            "arbitrum_sepolia": CCTPChainConfig(
+                chain_id=421614,
+                name="Arbitrum Sepolia",
+                rpc_url=f"https://arb-sepolia.g.alchemy.com/v2/{os.getenv('ALCHEMY_API_KEY', 'demo')}",
+                token_messenger_address="0x8FE6B999Dc680CcFDD5Bf7EB0974218be2542DAA",
+                message_transmitter_address="0xE737e5cEBEEBa77EFE34D4aa090756590b1CE275",
+                usdc_address="0x75faf114eafb1BDbe2F0316DF893fd58CE46AA4d",  # Official Arbitrum Sepolia USDC
+                gas_limit=200000,
+                gas_price_gwei=0.1
+            ),
+            "avalanche_fuji": CCTPChainConfig(
+                chain_id=43113,
+                name="Avalanche Fuji",
+                rpc_url="https://api.avax-test.network/ext/bc/C/rpc",
+                token_messenger_address="0x8FE6B999Dc680CcFDD5Bf7EB0974218be2542DAA",
+                message_transmitter_address="0xE737e5cEBEEBa77EFE34D4aa090756590b1CE275",
+                usdc_address="0x5425890298aed601595a70AB815c96711a31Bc65",
                 gas_limit=200000,
                 gas_price_gwei=25.0
             )
         }
         
-        # CCTP ABI fragments
+        # CCTP V2 ABI fragments - Official from Circle
         self.token_messenger_abi = [
             {
                 "inputs": [
@@ -106,7 +153,20 @@ class CCTPIntegration:
                     {"name": "burnToken", "type": "address"}
                 ],
                 "name": "depositForBurn",
-                "outputs": [{"name": "nonce", "type": "uint64"}],
+                "outputs": [{"name": "_nonce", "type": "uint64"}],
+                "stateMutability": "nonpayable",
+                "type": "function"
+            },
+            {
+                "inputs": [
+                    {"name": "amount", "type": "uint256"},
+                    {"name": "destinationDomain", "type": "uint32"},
+                    {"name": "mintRecipient", "type": "bytes32"},
+                    {"name": "burnToken", "type": "address"},
+                    {"name": "destinationCaller", "type": "bytes32"}
+                ],
+                "name": "depositForBurnWithCaller",
+                "outputs": [{"name": "_nonce", "type": "uint64"}],
                 "stateMutability": "nonpayable",
                 "type": "function"
             }
@@ -147,13 +207,19 @@ class CCTPIntegration:
             }
         ]
         
-        # Domain mappings for CCTP
+        # Domain mappings for CCTP V2
         self.domain_mappings = {
+            # Mainnet domains
             "ethereum": 0,
+            "avalanche": 1,
             "base": 6,
             "arbitrum": 3,
-            "polygon": 1,
-            "avalanche": 1
+            "polygon": 7,
+            # Testnet domains
+            "ethereum_sepolia": 0,
+            "avalanche_fuji": 1,
+            "base_sepolia": 6,
+            "arbitrum_sepolia": 3
         }
         
         self.web3_instances = {}
@@ -200,7 +266,7 @@ class CCTPIntegration:
             
             # Check USDC balance
             usdc_contract = w3.eth.contract(
-                address=config.usdc_address,
+                address=w3.to_checksum_address(config.usdc_address),
                 abi=self.usdc_abi
             )
             
@@ -211,7 +277,7 @@ class CCTPIntegration:
             # Approve USDC spending
             print("   📝 Approving USDC spending...")
             approve_tx = usdc_contract.functions.approve(
-                config.token_messenger_address,
+                w3.to_checksum_address(config.token_messenger_address),
                 amount_wei
             ).build_transaction({
                 'from': account.address,
@@ -223,30 +289,36 @@ class CCTPIntegration:
             signed_approve = account.sign_transaction(approve_tx)
             approve_tx_hash = w3.eth.send_raw_transaction(signed_approve.rawTransaction)
             print(f"   ✅ Approval tx: {approve_tx_hash.hex()}")
-            
+
             # Wait for approval confirmation
-            await asyncio.sleep(2)
+            receipt = w3.eth.wait_for_transaction_receipt(approve_tx_hash)
+            print(f"   ✅ Approval confirmed in block {receipt.blockNumber}")
             
             # Initiate burn
             print("   🔥 Initiating USDC burn...")
             token_messenger = w3.eth.contract(
-                address=config.token_messenger_address,
+                address=w3.to_checksum_address(config.token_messenger_address),
                 abi=self.token_messenger_abi
             )
             
             destination_domain = self._get_domain(destination_chain)
-            recipient_bytes = w3.to_bytes(hexstr=recipient)
+            # Convert recipient address to bytes32 format (pad with zeros)
+            recipient_bytes32 = "0x" + "0" * 24 + recipient[2:]  # Remove 0x and pad with 24 zeros
             
+            # Get current gas price and increase nonce
+            current_nonce = w3.eth.get_transaction_count(account.address)
+            gas_price = max(w3.eth.gas_price, w3.to_wei(config.gas_price_gwei, 'gwei'))
+
             burn_tx = token_messenger.functions.depositForBurn(
                 amount_wei,
                 destination_domain,
-                recipient_bytes,
-                config.usdc_address
+                recipient_bytes32,
+                w3.to_checksum_address(config.usdc_address)
             ).build_transaction({
                 'from': account.address,
                 'gas': config.gas_limit,
-                'gasPrice': w3.to_wei(config.gas_price_gwei, 'gwei'),
-                'nonce': w3.eth.get_transaction_count(account.address)
+                'gasPrice': gas_price,
+                'nonce': current_nonce
             })
             
             signed_burn = account.sign_transaction(burn_tx)
@@ -258,13 +330,44 @@ class CCTPIntegration:
             print(f"   ✅ Burn tx: {burn_tx_hash.hex()}")
             print(f"   ⛽ Gas used: {receipt.gasUsed}")
             
+            # Extract nonce from logs - MessageSent event signature
+            # MessageSent event: keccak256("MessageSent(bytes)")
+            message_sent_signature = "0x8c5261668696ce22758910d05bab8f186d6eb247ceac2af2e82c7dc17669b036"
+            nonce = 0
+
+            if receipt.logs:
+                for log in receipt.logs:
+                    # Look for MessageSent event
+                    if len(log.topics) > 0 and log.topics[0].hex() == message_sent_signature:
+                        # Nonce is in the message data - extract from topics
+                        if len(log.topics) >= 2:
+                            try:
+                                nonce = int(log.topics[1].hex(), 16)
+                                print(f"   📝 Extracted nonce from MessageSent event: {nonce}")
+                                break
+                            except:
+                                pass
+
+                # Fallback: try other logs if MessageSent not found
+                if nonce == 0:
+                    for log in receipt.logs:
+                        if len(log.topics) >= 2:
+                            try:
+                                potential_nonce = int(log.topics[1].hex(), 16)
+                                if 0 < potential_nonce < 2**32:  # Reasonable nonce range
+                                    nonce = potential_nonce
+                                    print(f"   📝 Extracted nonce from log: {nonce}")
+                                    break
+                            except:
+                                continue
+
             # Create transfer record
             transfer = CCTPTransfer(
                 source_chain=source_chain,
                 destination_chain=destination_chain,
                 amount=amount,
                 recipient=recipient,
-                nonce=receipt.logs[0].topics[1].hex() if receipt.logs else 0,
+                nonce=nonce,
                 burn_tx_hash=burn_tx_hash.hex(),
                 status="burned",
                 timestamp=datetime.now(),
@@ -301,11 +404,20 @@ class CCTPIntegration:
             config = self.chain_configs[transfer.destination_chain]
             
             # Get attestation from Circle's API
-            attestation = await self._get_attestation(transfer.burn_tx_hash)
-            if not attestation:
+            source_domain = self._get_domain(transfer.source_chain)
+            attestation_data = await self._get_attestation(transfer.burn_tx_hash, source_domain)
+            if not attestation_data:
                 raise ValueError("Failed to get attestation from Circle")
             
-            # Get message from source chain
+            # Extract attestation from Circle's response
+            attestation_hex = attestation_data.get('attestation')
+            
+            if not attestation_hex:
+                raise ValueError("Invalid attestation data from Circle")
+            
+            attestation = bytes.fromhex(attestation_hex[2:])  # Remove 0x prefix
+            
+            # Get message from source chain transaction logs (API returns message: null)
             message = await self._get_message(transfer.source_chain, transfer.burn_tx_hash)
             if not message:
                 raise ValueError("Failed to get message from source chain")
@@ -313,7 +425,7 @@ class CCTPIntegration:
             # Mint USDC on destination chain
             print("   🪙 Minting USDC on destination chain...")
             message_transmitter = w3.eth.contract(
-                address=config.message_transmitter_address,
+                address=w3.to_checksum_address(config.message_transmitter_address),
                 abi=self.message_transmitter_abi
             )
             
@@ -328,7 +440,7 @@ class CCTPIntegration:
             })
             
             signed_mint = account.sign_transaction(mint_tx)
-            mint_tx_hash = w3.eth.send_raw_transaction(signed_mint.rawTransaction)
+            mint_tx_hash = w3.eth.send_raw_transaction(signed_mint.raw_transaction)
             
             # Wait for transaction confirmation
             receipt = w3.eth.wait_for_transaction_receipt(mint_tx_hash)
@@ -350,54 +462,143 @@ class CCTPIntegration:
             transfer.status = "failed"
             raise
     
-    async def _get_attestation(self, burn_tx_hash: str) -> Optional[bytes]:
-        """Get attestation from Circle's API"""
+    
+    async def _get_attestation(self, burn_tx_hash: str, source_domain: int) -> Optional[dict]:
+        """Get attestation from Circle's CCTP V2 API"""
         
         print("   🔍 Getting attestation from Circle...")
         
         try:
-            # Circle's attestation API
-            url = f"https://iris-api.circle.com/attestations/{burn_tx_hash}"
-            
-            async with aiohttp.ClientSession() as session:
-                async with session.get(url) as response:
-                    if response.status == 200:
-                        data = await response.json()
-                        attestation = data.get('attestation')
-                        if attestation:
-                            return bytes.fromhex(attestation[2:])  # Remove 0x prefix
-                    else:
-                        print(f"   ⚠️ Attestation API error: {response.status}")
-                        return None
-                        
-        except Exception as e:
-            print(f"   ⚠️ Failed to get attestation: {e}")
-            return None
-    
-    async def _get_message(self, source_chain: str, burn_tx_hash: str) -> Optional[bytes]:
-        """Get message from source chain transaction"""
-        
-        print("   🔍 Getting message from source chain...")
-        
-        try:
-            w3 = self._get_web3(source_chain)
-            
-            # Get transaction receipt
+            # Get transaction receipt to extract nonce from logs
+            source_config = next(cfg for cfg in self.chain_configs.values()
+                                if self._get_domain(cfg.name.lower().replace(' ', '_')) == source_domain)
+            w3 = Web3(Web3.HTTPProvider(source_config.rpc_url))
             receipt = w3.eth.get_transaction_receipt(burn_tx_hash)
+
+            # Extract nonce from transaction logs
+            nonce = 0
+            if receipt.logs:
+                for log in receipt.logs:
+                    if len(log.topics) >= 2:
+                        try:
+                            nonce = int(log.topics[1].hex(), 16)
+                            break
+                        except:
+                            continue
+
+            # Circle's CCTP attestation API for testnet
+            url = f"https://iris-api-sandbox.circle.com/attestations/{burn_tx_hash}"
             
-            # Extract message from logs
-            for log in receipt.logs:
-                if len(log.topics) > 2:
-                    # Message is typically in the data field
-                    message = log.data
-                    if message and len(message) > 0:
-                        return message
+            max_attempts = 30  # Wait up to 5 minutes
+            attempt = 0
             
+            while attempt < max_attempts:
+                async with aiohttp.ClientSession() as session:
+                    async with session.get(url) as response:
+                        if response.status == 200:
+                            data = await response.json()
+
+                            # Check if attestation is ready
+                            if data.get('status') == 'complete':
+                                print(f"   ✅ Attestation ready!")
+                                return data
+                            else:
+                                status = data.get('status', 'pending')
+                                print(f"   ⏳ Attestation status: {status}, waiting...")
+                        elif response.status == 404:
+                            print(f"   ⏳ Transaction not found yet, attempt {attempt + 1}/{max_attempts}")
+                        else:
+                            print(f"   ⚠️ API error: {response.status}")
+                            text = await response.text()
+                            print(f"      Error details: {text}")
+
+                attempt += 1
+                if attempt < max_attempts:
+                    print(f"   ⏳ Waiting 10 seconds before retry...")
+                    await asyncio.sleep(10)
+            
+            print(f"   ❌ Attestation not ready after {max_attempts} attempts")
             return None
             
         except Exception as e:
-            print(f"   ⚠️ Failed to get message: {e}")
+            print(f"   ❌ Error getting attestation: {e}")
             return None
+
+async def complete_cross_chain_transfer(
+    self,
+    transfer: CCTPTransfer,
+    private_key: str
+) -> CCTPTransfer:
+    """Complete a cross-chain transfer by minting on destination chain"""
+    
+    print(f"🪙 Completing CCTP transfer on {transfer.destination_chain}")
+    
+    try:
+        # Get Web3 instance for destination chain
+        w3 = self._get_web3(transfer.destination_chain)
+        account = Account.from_key(private_key)
+        config = self.chain_configs[transfer.destination_chain]
+        
+        # Get attestation from Circle's API
+        source_domain = self._get_domain(transfer.source_chain)
+        attestation_data = await self._get_attestation(transfer.burn_tx_hash, source_domain)
+        
+        if not attestation_data:
+            raise ValueError("Failed to get attestation from Circle")
+        
+        # Extract message and attestation from API response
+        message_hex = attestation_data.get('message')
+        attestation_hex = attestation_data.get('attestation')
+        
+        if not message_hex or not attestation_hex:
+            raise ValueError("Invalid attestation data - missing message or attestation")
+        
+        # Convert to bytes
+        message = bytes.fromhex(message_hex[2:])  # Remove 0x prefix
+        attestation = bytes.fromhex(attestation_hex[2:])  # Remove 0x prefix
+        
+        print(f"   📝 Message length: {len(message)} bytes")
+        print(f"   ✍️ Attestation length: {len(attestation)} bytes")
+        
+        # Mint USDC on destination chain
+        print("   🪙 Minting USDC on destination chain...")
+        message_transmitter = w3.eth.contract(
+            address=w3.to_checksum_address(config.message_transmitter_address),
+            abi=self.message_transmitter_abi
+        )
+        
+        mint_tx = message_transmitter.functions.receiveMessage(
+            message,
+            attestation
+        ).build_transaction({
+            'from': account.address,
+            'gas': config.gas_limit,
+            'gasPrice': w3.to_wei(config.gas_price_gwei, 'gwei'),
+            'nonce': w3.eth.get_transaction_count(account.address)
+        })
+        
+        signed_mint = account.sign_transaction(mint_tx)
+        mint_tx_hash = w3.eth.send_raw_transaction(signed_mint.raw_transaction)
+        
+        # Wait for transaction confirmation
+        receipt = w3.eth.wait_for_transaction_receipt(mint_tx_hash)
+        
+        print(f"   ✅ Mint tx: {mint_tx_hash.hex()}")
+        print(f"   ⛽ Gas used: {receipt.gasUsed}")
+        
+        # Update transfer record
+        transfer.mint_tx_hash = mint_tx_hash.hex()
+        transfer.status = "minted"
+        transfer.gas_used = receipt.gasUsed
+        
+        print(f"   🎯 Transfer completed successfully!")
+        return transfer
+        
+    except Exception as e:
+        print(f"❌ CCTP completion failed: {e}")
+        transfer.status = "failed"
+        raise
+
     
     async def get_transfer_status(self, transfer: CCTPTransfer) -> str:
         """Get current status of a CCTP transfer"""
@@ -405,8 +606,9 @@ class CCTPIntegration:
         try:
             if transfer.status == "burned":
                 # Check if attestation is available
-                attestation = await self._get_attestation(transfer.burn_tx_hash)
-                if attestation:
+                source_domain = self._get_domain(transfer.source_chain)
+                attestation_data = await self._get_attestation(transfer.burn_tx_hash, source_domain)
+                if attestation_data:
                     return "ready_to_mint"
                 else:
                     return "waiting_for_attestation"
