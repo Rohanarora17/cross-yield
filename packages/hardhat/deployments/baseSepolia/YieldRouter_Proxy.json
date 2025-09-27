@@ -1,0 +1,77 @@
+{
+  "address": "0x940CAAA3E0268EFDA3cAF3754Ea6123CbF3c92e4",
+  "abi": [
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_implementation",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "constructor"
+    },
+    {
+      "stateMutability": "payable",
+      "type": "fallback"
+    },
+    {
+      "inputs": [],
+      "name": "implementation",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "stateMutability": "payable",
+      "type": "receive"
+    }
+  ],
+  "transactionHash": "0x0e95557dc2c965a47a0d6c3c9c3683971081d39d4db2999e7fdb962e02fd6ab1",
+  "receipt": {
+    "to": null,
+    "from": "0xCE54cF5a0dE3843011cF20389C1b6a4AaC442d6A",
+    "contractAddress": "0x940CAAA3E0268EFDA3cAF3754Ea6123CbF3c92e4",
+    "transactionIndex": 6,
+    "gasUsed": "106126",
+    "logsBloom": "0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+    "blockHash": "0x2e1baac7de1b7a9c29afeabdda46b9e2cd1dfaa0205dfa5d4ce60297b9448bca",
+    "transactionHash": "0x0e95557dc2c965a47a0d6c3c9c3683971081d39d4db2999e7fdb962e02fd6ab1",
+    "logs": [],
+    "blockNumber": 31616936,
+    "cumulativeGasUsed": "559669",
+    "status": 1,
+    "byzantium": true
+  },
+  "args": [
+    "0x105bfdA57Ece4c01e116B60978CC669E6608FbAb"
+  ],
+  "numDeployments": 1,
+  "solcInputHash": "094957e5f9dc1a182376d1e4ef1061e7",
+  "metadata": "{\"compiler\":{\"version\":\"0.8.20+commit.a1b79de6\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_implementation\",\"type\":\"address\"}],\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"stateMutability\":\"payable\",\"type\":\"fallback\"},{\"inputs\":[],\"name\":\"implementation\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"stateMutability\":\"payable\",\"type\":\"receive\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{},\"title\":\"SimpleProxy\",\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"notice\":\"A simple proxy contract that delegates all calls to an implementation\",\"version\":1}},\"settings\":{\"compilationTarget\":{\"contracts/SimpleProxy.sol\":\"SimpleProxy\"},\"evmVersion\":\"paris\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\",\"useLiteralContent\":true},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[]},\"sources\":{\"contracts/SimpleProxy.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\npragma solidity ^0.8.20;\\n\\n/**\\n * @title SimpleProxy\\n * @notice A simple proxy contract that delegates all calls to an implementation\\n */\\ncontract SimpleProxy {\\n    address public immutable implementation;\\n\\n    constructor(address _implementation) {\\n        implementation = _implementation;\\n    }\\n\\n    fallback() external payable {\\n        address impl = implementation;\\n        assembly {\\n            calldatacopy(0, 0, calldatasize())\\n            let result := delegatecall(gas(), impl, 0, calldatasize(), 0, 0)\\n            returndatacopy(0, 0, returndatasize())\\n            switch result\\n            case 0 { revert(0, returndatasize()) }\\n            default { return(0, returndatasize()) }\\n        }\\n    }\\n\\n    receive() external payable {}\\n}\",\"keccak256\":\"0xf4d5765a7bc16deb4b4cdee479d02a79467b508344656e5722b6550b2d58d240\",\"license\":\"MIT\"}},\"version\":1}",
+  "bytecode": "0x60a060405234801561001057600080fd5b5060405161017b38038061017b83398101604081905261002f91610040565b6001600160a01b0316608052610070565b60006020828403121561005257600080fd5b81516001600160a01b038116811461006957600080fd5b9392505050565b60805160ed61008e60003960008181602701526079015260ed6000f3fe608060405260043610601f5760003560e01c80635c60da1b146069576025565b36602557005b7f00000000000000000000000000000000000000000000000000000000000000003660008037600080366000845af43d6000803e8080156064573d6000f35b3d6000fd5b348015607457600080fd5b50609b7f000000000000000000000000000000000000000000000000000000000000000081565b6040516001600160a01b03909116815260200160405180910390f3fea2646970667358221220ffbf713768c59f03b12ae54d70c67e6ba974fcd81825c867711e479b87cc9e6464736f6c63430008140033",
+  "deployedBytecode": "0x608060405260043610601f5760003560e01c80635c60da1b146069576025565b36602557005b7f00000000000000000000000000000000000000000000000000000000000000003660008037600080366000845af43d6000803e8080156064573d6000f35b3d6000fd5b348015607457600080fd5b50609b7f000000000000000000000000000000000000000000000000000000000000000081565b6040516001600160a01b03909116815260200160405180910390f3fea2646970667358221220ffbf713768c59f03b12ae54d70c67e6ba974fcd81825c867711e479b87cc9e6464736f6c63430008140033",
+  "devdoc": {
+    "kind": "dev",
+    "methods": {},
+    "title": "SimpleProxy",
+    "version": 1
+  },
+  "userdoc": {
+    "kind": "user",
+    "methods": {},
+    "notice": "A simple proxy contract that delegates all calls to an implementation",
+    "version": 1
+  },
+  "storageLayout": {
+    "storage": [],
+    "types": null
+  }
+}

@@ -1,0 +1,36 @@
+{
+  "language": "Solidity",
+  "sources": {
+    "contracts/SimpleProxy.sol": {
+      "content": "// SPDX-License-Identifier: MIT\npragma solidity ^0.8.20;\n\n/**\n * @title SimpleProxy\n * @notice A simple proxy contract that delegates all calls to an implementation\n */\ncontract SimpleProxy {\n    address public immutable implementation;\n\n    constructor(address _implementation) {\n        implementation = _implementation;\n    }\n\n    fallback() external payable {\n        address impl = implementation;\n        assembly {\n            calldatacopy(0, 0, calldatasize())\n            let result := delegatecall(gas(), impl, 0, calldatasize(), 0, 0)\n            returndatacopy(0, 0, returndatasize())\n            switch result\n            case 0 { revert(0, returndatasize()) }\n            default { return(0, returndatasize()) }\n        }\n    }\n\n    receive() external payable {}\n}"
+    }
+  },
+  "settings": {
+    "optimizer": {
+      "enabled": true,
+      "runs": 200
+    },
+    "evmVersion": "paris",
+    "outputSelection": {
+      "*": {
+        "*": [
+          "abi",
+          "evm.bytecode",
+          "evm.deployedBytecode",
+          "evm.methodIdentifiers",
+          "metadata",
+          "devdoc",
+          "userdoc",
+          "storageLayout",
+          "evm.gasEstimates"
+        ],
+        "": [
+          "ast"
+        ]
+      }
+    },
+    "metadata": {
+      "useLiteralContent": true
+    }
+  }
+}

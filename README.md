@@ -1,80 +1,234 @@
-# 🏗 Scaffold-ETH 2
+# USDC AI Yield Optimizer
 
-<h4 align="center">
-  <a href="https://docs.scaffoldeth.io">Documentation</a> |
-  <a href="https://scaffoldeth.io">Website</a>
-</h4>
+**Cross-chain, ML-powered, and agentic USDC yield optimizer for next-gen DeFi.**
 
-🧪 An open-source, up-to-date toolkit for building decentralized applications (dapps) on the Ethereum blockchain. It's designed to make it easier for developers to create and deploy smart contracts and build user interfaces that interact with those contracts.
+---
 
-⚙️ Built using NextJS, RainbowKit, Hardhat, Wagmi, Viem, and Typescript.
+## Table of Contents
 
-- ✅ **Contract Hot Reload**: Your frontend auto-adapts to your smart contract as you edit it.
-- 🪝 **[Custom hooks](https://docs.scaffoldeth.io/hooks/)**: Collection of React hooks wrapper around [wagmi](https://wagmi.sh/) to simplify interactions with smart contracts with typescript autocompletion.
-- 🧱 [**Components**](https://docs.scaffoldeth.io/components/): Collection of common web3 components to quickly build your frontend.
-- 🔥 **Burner Wallet & Local Faucet**: Quickly test your application with a burner wallet and local faucet.
-- 🔐 **Integration with Wallet Providers**: Connect to different wallet providers and interact with the Ethereum network.
+- [Overview](https://www.perplexity.ai/search/can-you-find-me-all-the-ai-bas-XXZ2Fvp8Qb.Tp2Rkg5pElA#overview)
+    
+- [Key Features](https://www.perplexity.ai/search/can-you-find-me-all-the-ai-bas-XXZ2Fvp8Qb.Tp2Rkg5pElA#key-features)
+    
+- [Architecture](https://www.perplexity.ai/search/can-you-find-me-all-the-ai-bas-XXZ2Fvp8Qb.Tp2Rkg5pElA#architecture)
+    
+- [Installation](https://www.perplexity.ai/search/can-you-find-me-all-the-ai-bas-XXZ2Fvp8Qb.Tp2Rkg5pElA#installation)
+    
+- [Configuration](https://www.perplexity.ai/search/can-you-find-me-all-the-ai-bas-XXZ2Fvp8Qb.Tp2Rkg5pElA#configuration)
+    
+- [How It Works](https://www.perplexity.ai/search/can-you-find-me-all-the-ai-bas-XXZ2Fvp8Qb.Tp2Rkg5pElA#how-it-works)
+    
+- [Rebalancing & Monitoring](https://www.perplexity.ai/search/can-you-find-me-all-the-ai-bas-XXZ2Fvp8Qb.Tp2Rkg5pElA#rebalancing--monitoring)
+    
+- [ML & Data Layer](https://www.perplexity.ai/search/can-you-find-me-all-the-ai-bas-XXZ2Fvp8Qb.Tp2Rkg5pElA#ml--data-layer)
+    
+- [Integrations](https://www.perplexity.ai/search/can-you-find-me-all-the-ai-bas-XXZ2Fvp8Qb.Tp2Rkg5pElA#integrations)
+    
+- [CLI & Demo](https://www.perplexity.ai/search/can-you-find-me-all-the-ai-bas-XXZ2Fvp8Qb.Tp2Rkg5pElA#cli--demo)
+    
+- [For Hackathon Judges](https://www.perplexity.ai/search/can-you-find-me-all-the-ai-bas-XXZ2Fvp8Qb.Tp2Rkg5pElA#for-hackathon-judges)
+    
+- [Roadmap](https://www.perplexity.ai/search/can-you-find-me-all-the-ai-bas-XXZ2Fvp8Qb.Tp2Rkg5pElA#roadmap)
+    
+- [License](https://www.perplexity.ai/search/can-you-find-me-all-the-ai-bas-XXZ2Fvp8Qb.Tp2Rkg5pElA#license)
+    
 
-![Debug Contracts tab](https://github.com/scaffold-eth/scaffold-eth-2/assets/55535804/b237af0c-5027-4849-a5c1-2e31495cccb1)
+---
 
-## Requirements
+## Overview
 
-Before you begin, you need to install the following tools:
+USDC AI Yield Optimizer is a DeFi platform that finds, deploys, monitors, and rebalances optimal USDC strategies across top chains, powered by historical machine learning, Pyth oracle safety, and a novel AI multi-agent coordination system.
 
-- [Node (>= v20.18.3)](https://nodejs.org/en/download/)
-- Yarn ([v1](https://classic.yarnpkg.com/en/docs/install/) or [v2+](https://yarnpkg.com/getting-started/install))
-- [Git](https://git-scm.com/downloads)
+**Why?**  
+Most yield farms are single chain, slow or rule-driven. We use real cross-chain execution (via CCTP), real-time oracles, ML-predicted APY, automated rebalancing, and agentic AI for best-in-class safety and returns.
 
-## Quickstart
+---
 
-To get started with Scaffold-ETH 2, follow the steps below:
+## Key Features
 
-1. Install dependencies if it was skipped in CLI:
+- **Cross-Chain**: Supports Ethereum, Base, Arbitrum, and more
+    
+- **USDC Native**: Absolutely no wrapping/wrapped risks (CCTP support)
+    
+- **DeFiLlama Data**: Aggregates all major protocols for live rates
+    
+- **Historical ML Prediction**: Trains on years of simulated + on-chain data for sustainable APY forecasting
+    
+- **Pyth Oracle**: Real-time price/confidence checks mitigate attack risk
+    
+- **1inch API**: Optimal swaps, slippage calculation, and cost-minimized compounding
+    
+- **Multi-Agent AI**: Separate yield, risk, and LLM/strategy agents coordinate for robust yet optimal allocation
+    
+- **Continuous Monitoring**: 24/7 monitoring + alerting
+    
+- **Dynamic Rebalancer**: Auto-detects and moves funds to better, safer yields on any supported chain
+    
 
-```
-cd my-dapp-example
-yarn install
-```
+---
 
-2. Run a local network in the first terminal:
+## Architecture
 
-```
-yarn chain
-```
+text
 
-This command starts a local Ethereum network using Hardhat. The network runs on your local machine and can be used for testing and development. You can customize the network configuration in `packages/hardhat/hardhat.config.ts`.
+`┌─────────────────────────────┐ │   Data Sources              │ │ ─────────────────────────── │ │ DeFiLlama API, RPCs         │ │ The Graph (history, optl)   │ │ Pyth Oracles (price conf)   │ └──────────┬──────────────────┘            │ ┌──────────▼──────────────────┐ │   Data Processing & ML      │ │ ─────────────────────────── │ │ ML Model Trainer            │ │ Feature Engineering         │ │ Buffer/Cache                │ └──────────┬──────────────────┘            │ ┌──────────▼──────────────────┐ │   AI Layer (Agents)         │ │ ─────────────────────────── │ │ Yield Maximizer Agent       │ │ Risk Assessment Agent       │ │ LLM Coordinator (Claude)    │ └──────────┬──────────────────┘            │ ┌──────────▼──────────────────┐ │ Coordination & Rebalancer   │ │ ─────────────────────────── │ │ Debate+Consensus            │ │ Cost calculation w/ 1inch   │ │ CCTP planning for cross-ch. │ └──────────┬──────────────────┘            │ ┌──────────▼──────────────────┐ │ Execution Layer             │ │ ─────────────────────────── │ │ CCTP Native Bridge          │ │ 1inch Swaps                 │ └──────────┬──────────────────┘            │ ┌──────────▼──────────────────┐ │ Continuous Monitoring       │ │ ─────────────────────────── │ │ 24/7 Alerts                 │ │ Auto-rebalancer triggers    │ └─────────────────────────────┘`
 
-3. On a second terminal, deploy the test contract:
+---
 
-```
-yarn deploy
-```
+## Installation
 
-This command deploys a test smart contract to the local network. The contract is located in `packages/hardhat/contracts` and can be modified to suit your needs. The `yarn deploy` command uses the deploy script located in `packages/hardhat/deploy` to deploy the contract to the network. You can also customize the deploy script.
+bash
 
-4. On a third terminal, start your NextJS app:
+`git clone https://github.com/yourusername/usdc-ai-optimizer.git cd usdc-ai-optimizer python3 -m venv venv source venv/bin/activate pip install -r requirements.txt`
 
-```
-yarn start
-```
+---
 
-Visit your app on: `http://localhost:3000`. You can interact with your smart contract using the `Debug Contracts` page. You can tweak the app config in `packages/nextjs/scaffold.config.ts`.
+## Configuration
 
-Run smart contract test with `yarn hardhat:test`
+Create `.env` file from `.env.example`.  
+Add your DeFiLlama, Pyth, 1inch, Circle, and (optional) Claude API keys.
 
-- Edit your smart contracts in `packages/hardhat/contracts`
-- Edit your frontend homepage at `packages/nextjs/app/page.tsx`. For guidance on [routing](https://nextjs.org/docs/app/building-your-application/routing/defining-routes) and configuring [pages/layouts](https://nextjs.org/docs/app/building-your-application/routing/pages-and-layouts) checkout the Next.js documentation.
-- Edit your deployment scripts in `packages/hardhat/deploy`
+text
 
+`DEFILLAMA_API_KEY=... PYTH_ORACLE_KEY=... ONEINCH_API_KEY=... CLAUDE_API_KEY=...              # for LLM Coordination ALCHEMY_API_KEY=...             # for Ethereum RPC`
 
-## Documentation
+---
 
-Visit our [docs](https://docs.scaffoldeth.io) to learn how to start building with Scaffold-ETH 2.
+## How It Works
 
-To know more about its features, check out our [website](https://scaffoldeth.io).
+1. **Data Aggregation**: Unifies live on-chain and historical data; prepares features for ML.
+    
+2. **ML Model Training**: Trains APY sustainability predictor on two years of hourly/daily data.
+    
+3. **Live Opportunity Discovery**: Fetches/updates live yields continuously.
+    
+4. **Multi-Agent AI**:
+    
+    - **Yield Agent**: hunts best net APY (using ML outputs)
+        
+    - **Risk Agent**: flags sustainability/smart contract/diversification risks
+        
+    - **LLM Agent**: debates/justifies with natural language
+        
+5. **Smart Execution Planning**:
+    
+    - Crosses chains with CCTP if optimal yield is off-chain
+        
+    - Optimal swaps/routing using 1inch for reward compounding/cost minimization
+        
+6. **Execution**: Orchestrates all moves, presents plan, and (optionally) executes on testnet/mainnet.
+    
+7. **Monitoring & Rebalancing**: Watches all funds continuously. Alerts or rebalances automatically if market moves, APY drops, or better opportunities appear.
+    
 
-## Contributing to Scaffold-ETH 2
+---
 
-We welcome contributions to Scaffold-ETH 2!
+## Rebalancing & Monitoring
 
-Please see [CONTRIBUTING.MD](https://github.com/scaffold-eth/scaffold-eth-2/blob/main/CONTRIBUTING.md) for more information and guidelines for contributing to Scaffold-ETH 2.
+- **Dynamic Rebalancer**:
+    
+    - Detects drawdowns, new high-APY protocols, unhealthy risk, or sudden liquidity changes
+        
+    - Estimates costs & only rebalances if net net-positive after gas/bridging fees
+        
+- **24/7 Monitoring**:
+    
+    - Polls live APY, risk indicators, and oracle signals every 5 min (configurable)
+        
+    - Alerting via logging, customizable notification handlers
+        
+    - All repositioning actions are tracked & auditable
+        
+
+---
+
+## ML & Data Layer
+
+- **Training**: Generates and/or consumes DeFiLlama and The Graph subgraph histories, simulates regime shifts, and creates moving averages, volatilities, APY trend features.
+    
+- **Model**: Simple regression baseline (for speed), but can be swapped for XGBoost, LightGBM, or neural nets.
+    
+- **Scoring**: Combines on-chain, historical, and live features for robustness.
+    
+
+---
+
+## Integrations
+
+- **DeFiLlama**: Protocol TVL, APY, liquidity, rewards data
+    
+- **Pyth Oracles**: Live USDC and ETH price + confidence
+    
+- **1inch**: Swap routing, gas and slippage estimation, aggregation
+    
+- **CCTP**: Native Circle bridge for fast, safe, official USDC cross-chain
+    
+- **Claude/Anthropic**: Real LLM for explainability and complex strategic synthesis (plug and play, fallback rule system if no key)
+    
+
+---
+
+## CLI & Demo
+
+Basic hands-on (from project root):
+
+bash
+
+`python test_aggregator.py           # Test pure data + fallback python test_multi_agent.py          # End-to-end agent simulation python test_ml_enhanced.py          # ML and agentic hybrid python test_complete_system.py      # Full run with monitoring`
+
+---
+
+## For Hackathon Judges
+
+- **Technical Moat:**
+    
+    - Cross-chain native USDC: Unrivaled coverage/access
+        
+    - ML+AI multi-agent: Far beyond single-rulebots
+        
+    - 1inch as execution, not just pricing: can actually swap
+        
+    - Always-on safety: Oracle, live APY, and 24/7 monitoring
+        
+- **How We Beat YieldSeeker (and similar):**
+    
+    - Not limited to Base, works across all major USDC ecosystems
+        
+    - Trained strategy, not fixed rules. Adapts as yields/regimes change
+        
+    - Real execution, real fallback safety, multi-layered resiliency
+        
+
+---
+
+## Roadmap
+
+-  CCTP-native execution for base, Arbitrum, Ethereum
+    
+-  Real ML model pipelining for yield sustainability
+    
+-  3-agent AI coordination and consensus
+    
+-  Advanced 24/7 monitoring and dynamic rebalancer
+    
+-  Web interface & vault simulation
+    
+-  Permissionless agentic strategy plugins
+    
+-  zk-bridged onboarding support
+    
+
+---
+
+## License
+
+MIT License
+
+---
+
+**Built for ETHGlobal and the next generation of cross-chain DeFi.**
+
+---
+
+This README is ready to be copied directly to your `README.md` and used for your project site, hackathon submission, or GitHub repo.  
+If you need diagrams or want a Markdown flowchart, just ask!

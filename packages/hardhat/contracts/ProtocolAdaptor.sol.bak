@@ -1,0 +1,561 @@
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.20;
+
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+
+// Adapter interface for the YieldRouter
+interface IProtocolAdapter {
+    function deposit(address user, uint256 amount) external;
+    function withdraw(address user, uint256 amount) external;
+    function balanceOf(address user) external view returns (uint256);
+}
+
+// ERC-4626 vault adapter (Yearn, Beefy, etc.)
+interface IERC4626 {
+    function deposit(uint256 assets, address receiver) external returns (uint256 shares);
+    function withdraw(uint256 assets, address receiver, address owner) external returns (uint256 shares);
+    function balanceOf(address account) external view returns (uint256);
+}
+
+contract ERC4626Adapter is IProtocolAdapter {
+    address public vault;
+    address public asset;
+
+    constructor(address _vault, address _asset) {
+        vault = _vault;
+        asset = _asset;
+    }
+
+    function deposit(address user, uint256 amount) external override {
+        IERC20(asset).approve(vault, amount);
+        IERC4626(vault).deposit(amount, user);
+    }
+
+    function withdraw(address user, uint256 amount) external override {
+        IERC4626(vault).withdraw(amount, user, user);
+    }
+
+    function balanceOf(address user) external view override returns (uint256) {
+        return IERC4626(vault).balanceOf(user);
+    }
+}
+
+// For lending protocols, stub example for Aave V3 (modify for production)
+interface IAavePool {
+    function supply(address asset, uint256 amount, address onBehalfOf, uint16 referralCode) external;
+    function withdraw(address asset, uint256 amount, address to) external returns (uint256);
+    function getUserAccountData(address user) external view returns (
+        uint256 totalCollateralETH, uint256, uint256, uint256, uint256, uint256
+    );
+}
+
+contract AaveAdapter is IProtocolAdapter {
+    address public pool;
+    address public asset;
+    address public aToken;
+
+    constructor(address _pool, address _asset, address _aToken) {
+        pool = _pool;
+        asset = _asset;
+        aToken = _aToken;
+    }
+
+    function deposit(address user, uint256 amount) external override {
+        IERC20(asset).approve(pool, amount);
+        IAavePool(pool).supply(asset, amount, user, 0);
+    }
+
+    function withdraw(address user, uint256 amount) external override {
+        IAavePool(pool).withdraw(asset, amount, user);
+    }
+
+    function balanceOf(address user) external view override returns (uint256) {
+        return IERC20(aToken).balanceOf(user);
+    }
+
+    function getCurrentAPY() external pure override returns (uint256) {
+        return 500; // 5% placeholder
+    }
+
+    function getProtocolInfo() external pure override returns (
+        string memory name,
+        uint256 riskScore_,
+        uint256 tvl
+    ) {
+        return ("Aave V3", 15, 0);
+    }
+
+    function isDepositAllowed() external pure override returns (bool) {
+        return true;
+    }
+
+    function isWithdrawAllowed() external pure override returns (bool) {
+        return true;
+    }
+}
+
+// Moonwell Protocol Adapter (Base, Arbitrum)
+interface IMoonwellComptroller {
+    function enterMarkets(address[] calldata cTokens) external returns (uint256[] memory);
+    function exitMarket(address cToken) external returns (uint256);
+    function getAccountLiquidity(address account) external view returns (uint256, uint256, uint256);
+}
+
+interface IMoonwellCToken {
+    function mint(uint256 mintAmount) external returns (uint256);
+    function redeem(uint256 redeemTokens) external returns (uint256);
+    function redeemUnderlying(uint256 redeemAmount) external returns (uint256);
+    function balanceOf(address owner) external view returns (uint256);
+    function borrowBalanceStored(address account) external view returns (uint256);
+}
+
+contract MoonwellAdapter is IProtocolAdapter {
+    address public comptroller;
+    address public cToken;
+    address public underlying;
+
+    constructor(address _comptroller, address _cToken, address _underlying) {
+        comptroller = _comptroller;
+        cToken = _cToken;
+        underlying = _underlying;
+    }
+
+    function deposit(address user, uint256 amount) external override {
+        IERC20(underlying).approve(cToken, amount);
+        IMoonwellCToken(cToken).mint(amount);
+    }
+
+    function withdraw(address user, uint256 amount) external override {
+        IMoonwellCToken(cToken).redeemUnderlying(amount);
+    }
+
+    function balanceOf(address user) external view override returns (uint256) {
+        return IMoonwellCToken(cToken).balanceOf(user);
+    }
+
+    function getCurrentAPY() external pure override returns (uint256) {
+        return 750; // 7.5% placeholder
+    }
+
+    function getProtocolInfo() external pure override returns (
+        string memory name,
+        uint256 riskScore_,
+        uint256 tvl
+    ) {
+        return ("Moonwell", 25, 0);
+    }
+
+    function isDepositAllowed() external pure override returns (bool) {
+        return true;
+    }
+
+    function isWithdrawAllowed() external pure override returns (bool) {
+        return true;
+    }
+}
+
+// Radiant Capital Adapter (Arbitrum)
+interface IRadiantPool {
+    function deposit(address asset, uint256 amount, address onBehalfOf, uint16 referralCode) external;
+    function withdraw(address asset, uint256 amount, address to) external returns (uint256);
+    function getUserAccountData(address user) external view returns (
+        uint256 totalCollateralETH, uint256, uint256, uint256, uint256, uint256
+    );
+}
+
+contract RadiantAdapter is IProtocolAdapter {
+    address public pool;
+    address public asset;
+    address public rToken;
+
+    constructor(address _pool, address _asset, address _rToken) {
+        pool = _pool;
+        asset = _asset;
+        rToken = _rToken;
+    }
+
+    function deposit(address user, uint256 amount) external override {
+        IERC20(asset).approve(pool, amount);
+        IRadiantPool(pool).deposit(asset, amount, user, 0);
+    }
+
+    function withdraw(address user, uint256 amount) external override {
+        IRadiantPool(pool).withdraw(asset, amount, user);
+    }
+
+    function balanceOf(address user) external view override returns (uint256) {
+        return IERC20(rToken).balanceOf(user);
+    }
+
+    function getCurrentAPY() external pure override returns (uint256) {
+        return 850; // 8.5% placeholder
+    }
+
+    function getProtocolInfo() external pure override returns (
+        string memory name,
+        uint256 riskScore_,
+        uint256 tvl
+    ) {
+        return ("Radiant Capital", 35, 0);
+    }
+
+    function isDepositAllowed() external pure override returns (bool) {
+        return true;
+    }
+
+    function isWithdrawAllowed() external pure override returns (bool) {
+        return true;
+    }
+}
+
+// Curve Finance Adapter
+interface ICurvePool {
+    function add_liquidity(uint256[2] calldata amounts, uint256 min_mint_amount) external;
+    function remove_liquidity(uint256 _amount, uint256[2] calldata min_amounts) external;
+    function balanceOf(address account) external view returns (uint256);
+}
+
+contract CurveAdapter is IProtocolAdapter {
+    address public pool;
+    address public lpToken;
+
+    constructor(address _pool, address _lpToken) {
+        pool = _pool;
+        lpToken = _lpToken;
+    }
+
+    function deposit(address user, uint256 amount) external override {
+        // For Curve, we assume the user already has the LP tokens
+        // In practice, you'd need to handle the token swapping
+        IERC20(lpToken).transferFrom(user, address(this), amount);
+    }
+
+    function withdraw(address user, uint256 amount) external override {
+        IERC20(lpToken).transfer(user, amount);
+    }
+
+    function balanceOf(address user) external view override returns (uint256) {
+        return IERC20(lpToken).balanceOf(user);
+    }
+
+    function getCurrentAPY() external pure override returns (uint256) {
+        return 400; // 4% placeholder
+    }
+
+    function getProtocolInfo() external pure override returns (
+        string memory name,
+        uint256 riskScore_,
+        uint256 tvl
+    ) {
+        return ("Curve Finance", 20, 0);
+    }
+
+    function isDepositAllowed() external pure override returns (bool) {
+        return true;
+    }
+
+    function isWithdrawAllowed() external pure override returns (bool) {
+        return true;
+    }
+}
+
+// Beefy Finance Adapter (Multi-chain)
+interface IBeefyVault {
+    function deposit(uint256 amount) external;
+    function withdraw(uint256 shares) external;
+    function balanceOf(address account) external view returns (uint256);
+    function getPricePerFullShare() external view returns (uint256);
+}
+
+contract BeefyAdapter is IProtocolAdapter {
+    address public vault;
+    address public want; // Underlying token
+
+    constructor(address _vault, address _want) {
+        vault = _vault;
+        want = _want;
+    }
+
+    function deposit(address user, uint256 amount) external override {
+        IERC20(want).approve(vault, amount);
+        IBeefyVault(vault).deposit(amount);
+    }
+
+    function withdraw(address user, uint256 amount) external override {
+        IBeefyVault(vault).withdraw(amount);
+    }
+
+    function balanceOf(address user) external view override returns (uint256) {
+        return IBeefyVault(vault).balanceOf(user);
+    }
+
+    function getCurrentAPY() external pure override returns (uint256) {
+        return 1200; // 12% placeholder
+    }
+
+    function getProtocolInfo() external pure override returns (
+        string memory name,
+        uint256 riskScore_,
+        uint256 tvl
+    ) {
+        return ("Beefy Finance", 30, 0);
+    }
+
+    function isDepositAllowed() external pure override returns (bool) {
+        return true;
+    }
+
+    function isWithdrawAllowed() external pure override returns (bool) {
+        return true;
+    }
+}
+
+// Yearn Finance Adapter
+interface IYearnVault {
+    function deposit(uint256 amount, address recipient) external returns (uint256);
+    function withdraw(uint256 maxShares, address recipient, uint256 maxLoss) external returns (uint256);
+    function balanceOf(address account) external view returns (uint256);
+}
+
+contract YearnAdapter is IProtocolAdapter {
+    address public vault;
+    address public token;
+
+    constructor(address _vault, address _token) {
+        vault = _vault;
+        token = _token;
+    }
+
+    function deposit(address user, uint256 amount) external override {
+        IERC20(token).approve(vault, amount);
+        IYearnVault(vault).deposit(amount, user);
+    }
+
+    function withdraw(address user, uint256 amount) external override {
+        IYearnVault(vault).withdraw(amount, user, 100); // 1% max loss
+    }
+
+    function balanceOf(address user) external view override returns (uint256) {
+        return IYearnVault(vault).balanceOf(user);
+    }
+
+    function getCurrentAPY() external pure override returns (uint256) {
+        return 800; // 8% placeholder
+    }
+
+    function getProtocolInfo() external pure override returns (
+        string memory name,
+        uint256 riskScore_,
+        uint256 tvl
+    ) {
+        return ("Yearn Finance", 22, 0);
+    }
+
+    function isDepositAllowed() external pure override returns (bool) {
+        return true;
+    }
+
+    function isWithdrawAllowed() external pure override returns (bool) {
+        return true;
+    }
+}
+
+// Compound V3 Adapter
+interface ICompoundV3Comet {
+    function supply(address asset, uint256 amount) external;
+    function withdraw(address asset, uint256 amount) external;
+    function balanceOf(address account) external view returns (uint256);
+    function getSupplyRate(uint256 utilization) external view returns (uint64);
+    function totalSupply() external view returns (uint256);
+}
+
+contract CompoundV3Adapter is IProtocolAdapter {
+    address public comet;
+    address public baseToken;
+
+    constructor(address _comet, address _baseToken) {
+        comet = _comet;
+        baseToken = _baseToken;
+    }
+
+    function deposit(address user, uint256 amount) external override {
+        IERC20(baseToken).approve(comet, amount);
+        ICompoundV3Comet(comet).supply(baseToken, amount);
+    }
+
+    function withdraw(address user, uint256 amount) external override {
+        ICompoundV3Comet(comet).withdraw(baseToken, amount);
+    }
+
+    function balanceOf(address user) external view override returns (uint256) {
+        return ICompoundV3Comet(comet).balanceOf(user);
+    }
+
+    function getCurrentAPY() external view override returns (uint256) {
+        // Get current supply rate from Compound V3
+        uint64 supplyRate = ICompoundV3Comet(comet).getSupplyRate(5000); // Assuming 50% utilization
+        return uint256(supplyRate) / 1e14; // Convert to basis points
+    }
+
+    function getProtocolInfo() external view override returns (
+        string memory name,
+        uint256 riskScore_,
+        uint256 tvl
+    ) {
+        uint256 totalSupply = ICompoundV3Comet(comet).totalSupply();
+        return ("Compound V3", 18, totalSupply);
+    }
+
+    function isDepositAllowed() external pure override returns (bool) {
+        return true;
+    }
+
+    function isWithdrawAllowed() external pure override returns (bool) {
+        return true;
+    }
+}
+
+/**
+ * @notice Factory contract for deploying protocol adapters
+ */
+contract ProtocolAdapterFactory {
+    address public immutable owner;
+    mapping(string => address) public adapters;
+    string[] public supportedProtocols;
+
+    event AdapterDeployed(string indexed protocol, address indexed adapter);
+
+    constructor() {
+        owner = msg.sender;
+    }
+
+    modifier onlyOwner() {
+        require(msg.sender == owner, "Only owner");
+        _;
+    }
+
+    function deployAaveAdapter(
+        address pool,
+        address asset,
+        address aToken,
+        string memory name
+    ) external onlyOwner returns (address adapter) {
+        adapter = address(new AaveAdapter(pool, asset, aToken));
+        adapters[name] = adapter;
+        supportedProtocols.push(name);
+        emit AdapterDeployed(name, adapter);
+    }
+
+    function deployMoonwellAdapter(
+        address comptroller,
+        address cToken,
+        address underlying,
+        string memory name
+    ) external onlyOwner returns (address adapter) {
+        adapter = address(new MoonwellAdapter(comptroller, cToken, underlying));
+        adapters[name] = adapter;
+        supportedProtocols.push(name);
+        emit AdapterDeployed(name, adapter);
+    }
+
+    function deployRadiantAdapter(
+        address pool,
+        address asset,
+        address rToken,
+        string memory name
+    ) external onlyOwner returns (address adapter) {
+        adapter = address(new RadiantAdapter(pool, asset, rToken));
+        adapters[name] = adapter;
+        supportedProtocols.push(name);
+        emit AdapterDeployed(name, adapter);
+    }
+
+    function deployCompoundV3Adapter(
+        address comet,
+        address baseToken,
+        string memory name
+    ) external onlyOwner returns (address adapter) {
+        adapter = address(new CompoundV3Adapter(comet, baseToken));
+        adapters[name] = adapter;
+        supportedProtocols.push(name);
+        emit AdapterDeployed(name, adapter);
+    }
+
+    function getSupportedProtocols() external view returns (string[] memory) {
+        return supportedProtocols;
+    }
+
+    function getAdapter(string memory protocol) external view returns (address) {
+        return adapters[protocol];
+    }
+}
+
+// Generic Swap Adapter for 1inch integration
+interface ISwapRouter {
+    function swapExactTokensForTokens(
+        uint256 amountIn,
+        uint256 amountOutMin,
+        address[] calldata path,
+        address to,
+        uint256 deadline
+    ) external returns (uint256[] memory amounts);
+}
+
+contract SwapAdapter is IProtocolAdapter {
+    address public router;
+    address public tokenIn;
+    address public tokenOut;
+
+    constructor(address _router, address _tokenIn, address _tokenOut) {
+        router = _router;
+        tokenIn = _tokenIn;
+        tokenOut = _tokenOut;
+    }
+
+    function deposit(address user, uint256 amount) external override {
+        // This would be used for reward token conversion
+        IERC20(tokenIn).approve(router, amount);
+        address[] memory path = new address[](2);
+        path[0] = tokenIn;
+        path[1] = tokenOut;
+        
+        ISwapRouter(router).swapExactTokensForTokens(
+            amount,
+            0, // Accept any amount out
+            path,
+            user,
+            block.timestamp + 300
+        );
+    }
+
+    function withdraw(address user, uint256 amount) external override {
+        // For swap adapter, withdraw means converting back
+        // This would need to be implemented differently for actual withdrawal
+        // For now, we'll just transfer the token
+        IERC20(tokenOut).transfer(user, amount);
+    }
+
+    function balanceOf(address user) external view override returns (uint256) {
+        return IERC20(tokenOut).balanceOf(user);
+    }
+
+    function getCurrentAPY() external pure override returns (uint256) {
+        return 0; // Swap adapter doesn't provide yield
+    }
+
+    function getProtocolInfo() external pure override returns (
+        string memory name,
+        uint256 riskScore_,
+        uint256 tvl
+    ) {
+        return ("Swap Adapter", 10, 0);
+    }
+
+    function isDepositAllowed() external pure override returns (bool) {
+        return true;
+    }
+
+    function isWithdrawAllowed() external pure override returns (bool) {
+        return true;
+    }
+}

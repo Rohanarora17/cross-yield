@@ -5,6 +5,7 @@ import asyncio
 import sys
 import os
 from typing import Dict, List, Any, Optional
+from datetime import datetime
 
 # Add project root to path
 sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
@@ -17,14 +18,17 @@ from src.config import config
 
 class MultiAgentOrchestrator:
     """Orchestrates multiple AI agents for yield optimization"""
-    
+
     def __init__(self, claude_api_key: Optional[str] = None):
         print("🚀 Initializing Multi-Agent AI System...")
-        
+
         # Load API key from config if not provided
         if claude_api_key is None:
-            claude_api_key = config.CLAUDE_API_KEY
-        
+            try:
+                claude_api_key = config.CLAUDE_API_KEY
+            except:
+                claude_api_key = os.getenv('CLAUDE_API_KEY')
+
         # Initialize the three core agents
         self.yield_agent = YieldMaximizerAgent()
         self.risk_agent = RiskAssessmentAgent()
@@ -249,6 +253,184 @@ class MultiAgentOrchestrator:
         for position, weight in allocation.items():
             protocol, chain = position.split('_', 1)
             print(f"   {weight:.1%} → {protocol.upper()} on {chain.upper()}")
+
+    async def optimize_portfolio_for_user(self, user_address: str, current_portfolio: Any,
+                                         new_deposit: float, strategy: str,
+                                         target_chains: List[str]) -> Dict[str, Any]:
+        """
+        Optimize portfolio for individual user with smart wallet constraints
+
+        Args:
+            user_address: User's address
+            current_portfolio: Current portfolio state
+            new_deposit: New deposit amount in USDC
+            strategy: Investment strategy (conservative, balanced, aggressive)
+            target_chains: List of chains to consider
+
+        Returns:
+            Dict containing optimization actions and expected results
+        """
+        try:
+            print(f"🎯 Optimizing portfolio for user {user_address[:6]}...{user_address[-4:]}")
+            print(f"   💰 New deposit: ${new_deposit:,.2f} USDC")
+            print(f"   📊 Strategy: {strategy}")
+            print(f"   🔗 Target chains: {target_chains}")
+
+            # Create user profile based on strategy
+            user_profile = self._create_user_profile(strategy, new_deposit)
+
+            # Get current opportunities from target chains only
+            opportunities = await self._get_opportunities_for_chains(target_chains)
+
+            # Run multi-agent optimization
+            optimization_result = await self.optimize_portfolio(opportunities, user_profile)
+
+            # Convert result to actionable smart wallet operations
+            actions = self._convert_to_smart_wallet_actions(
+                optimization_result,
+                current_portfolio,
+                new_deposit,
+                target_chains
+            )
+
+            return {
+                "success": True,
+                "actions": actions,
+                "expected_apy": optimization_result['final_strategy']['expected_apy'],
+                "confidence": optimization_result['system_confidence'],
+                "total_gas_cost": self._estimate_gas_costs(actions),
+                "reasoning": optimization_result['final_strategy'].get('reasoning', ''),
+                "user_address": user_address
+            }
+
+        except Exception as e:
+            print(f"❌ Error optimizing portfolio for user: {e}")
+            return {
+                "success": False,
+                "error": str(e),
+                "actions": [],
+                "user_address": user_address
+            }
+
+    def _create_user_profile(self, strategy: str, deposit_amount: float) -> UserProfile:
+        """Create user profile based on strategy"""
+
+        risk_profiles = {
+            "conservative": {
+                "risk_tolerance": "conservative",
+                "min_apy_requirement": 3.0,
+            },
+            "balanced": {
+                "risk_tolerance": "moderate",
+                "min_apy_requirement": 5.0,
+            },
+            "aggressive": {
+                "risk_tolerance": "aggressive",
+                "min_apy_requirement": 8.0,
+            }
+        }
+
+        profile_config = risk_profiles.get(strategy, risk_profiles["balanced"])
+
+        return UserProfile(
+            amount=deposit_amount,
+            risk_tolerance=profile_config["risk_tolerance"],
+            time_horizon="6_months",
+            preferred_chains=["ethereum_sepolia", "base_sepolia", "arbitrum_sepolia"],
+            min_apy=profile_config["min_apy_requirement"]
+        )
+
+    async def _get_opportunities_for_chains(self, target_chains: List[str]) -> List[USDCOpportunity]:
+        """Get opportunities for specific chains"""
+        # Placeholder - in production this would fetch real opportunities
+        # For now, return mock opportunities for the target chains
+        opportunities = []
+
+        chain_protocols = {
+            "ethereum_sepolia": [
+                ("aave_v3", 5.2, 15), ("compound_v3", 4.8, 18)
+            ],
+            "base_sepolia": [
+                ("moonwell", 7.5, 25), ("uniswap_v3", 6.2, 30)
+            ],
+            "arbitrum_sepolia": [
+                ("radiant", 8.5, 35), ("camelot", 9.2, 40)
+            ]
+        }
+
+        for chain in target_chains:
+            if chain in chain_protocols:
+                for protocol, apy, risk_score in chain_protocols[chain]:
+                    opportunities.append(USDCOpportunity(
+                        protocol=protocol,
+                        chain=chain,
+                        pool_id=f"{protocol}_{chain}_pool",
+                        pool_name=f"{protocol.title()} USDC Pool",
+                        apy=apy,
+                        tvl_usd=1000000.0,  # $1M TVL
+                        usdc_liquidity=500000.0,  # $500K liquidity
+                        risk_score=risk_score,
+                        category="lending",
+                        last_updated=datetime.now()
+                    ))
+
+        return opportunities
+
+    def _convert_to_smart_wallet_actions(self, optimization_result: Dict,
+                                       current_portfolio: Any, new_deposit: float,
+                                       target_chains: List[str]) -> List[Dict]:
+        """Convert optimization result to smart wallet actions"""
+        actions = []
+
+        allocation = optimization_result['final_strategy']['allocation']
+
+        for position, weight in allocation.items():
+            protocol, chain = position.split('_', 1)
+            amount = new_deposit * weight
+
+            if amount > 10:  # Only allocate if amount > $10
+                actions.append({
+                    "type": "allocate",
+                    "protocol": protocol,
+                    "chain": chain,
+                    "amount": amount,
+                    "weight": weight
+                })
+
+        # Add cross-chain transfers if needed
+        # For now, assume funds start on ethereum_sepolia
+        source_chain = "ethereum_sepolia"
+
+        for action in actions:
+            if action["chain"] != source_chain and action["amount"] > 50:
+                # Add CCTP transfer action
+                transfer_action = {
+                    "type": "transfer",
+                    "source_chain": source_chain,
+                    "destination_chain": action["chain"],
+                    "amount": action["amount"]
+                }
+
+                # Insert transfer before allocation
+                transfer_index = actions.index(action)
+                actions.insert(transfer_index, transfer_action)
+
+        return actions
+
+    def _estimate_gas_costs(self, actions: List[Dict]) -> float:
+        """Estimate total gas costs for actions"""
+        gas_estimates = {
+            "allocate": 0.50,      # $0.50 per allocation
+            "transfer": 5.00,      # $5.00 per CCTP transfer
+            "rebalance": 1.00      # $1.00 per rebalance
+        }
+
+        total_cost = 0
+        for action in actions:
+            action_type = action.get("type", "allocate")
+            total_cost += gas_estimates.get(action_type, 0.50)
+
+        return total_cost
 
 # Test the multi-agent system
 async def test_multi_agent_system():

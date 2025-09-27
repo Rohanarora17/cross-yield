@@ -1,0 +1,1255 @@
+{
+  "address": "0x16eB87D9695D5502d38956703Cd3C8c861db2fd3",
+  "abi": [
+    {
+      "inputs": [],
+      "name": "AccessControlBadConfirmation",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "account",
+          "type": "address"
+        },
+        {
+          "internalType": "bytes32",
+          "name": "neededRole",
+          "type": "bytes32"
+        }
+      ],
+      "name": "AccessControlUnauthorizedAccount",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "InvalidInitialization",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "NotInitializing",
+      "type": "error"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "uint256",
+          "name": "chainId",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "string",
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "nativeToken",
+          "type": "address"
+        }
+      ],
+      "name": "ChainAdded",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "uint64",
+          "name": "version",
+          "type": "uint64"
+        }
+      ],
+      "name": "Initialized",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "string",
+          "name": "protocol",
+          "type": "string"
+        },
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "adapter",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "chainId",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "riskScore",
+          "type": "uint256"
+        }
+      ],
+      "name": "ProtocolAdded",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "string",
+          "name": "protocol",
+          "type": "string"
+        }
+      ],
+      "name": "ProtocolDeactivated",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "string",
+          "name": "protocol",
+          "type": "string"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "riskScore",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "minAPY",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "maxAPY",
+          "type": "uint256"
+        }
+      ],
+      "name": "ProtocolUpdated",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "bytes32",
+          "name": "role",
+          "type": "bytes32"
+        },
+        {
+          "indexed": true,
+          "internalType": "bytes32",
+          "name": "previousAdminRole",
+          "type": "bytes32"
+        },
+        {
+          "indexed": true,
+          "internalType": "bytes32",
+          "name": "newAdminRole",
+          "type": "bytes32"
+        }
+      ],
+      "name": "RoleAdminChanged",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "bytes32",
+          "name": "role",
+          "type": "bytes32"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "account",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "sender",
+          "type": "address"
+        }
+      ],
+      "name": "RoleGranted",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "bytes32",
+          "name": "role",
+          "type": "bytes32"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "account",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "sender",
+          "type": "address"
+        }
+      ],
+      "name": "RoleRevoked",
+      "type": "event"
+    },
+    {
+      "inputs": [],
+      "name": "ADMIN_ROLE",
+      "outputs": [
+        {
+          "internalType": "bytes32",
+          "name": "",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "DEFAULT_ADMIN_ROLE",
+      "outputs": [
+        {
+          "internalType": "bytes32",
+          "name": "",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "PROTOCOL_MANAGER_ROLE",
+      "outputs": [
+        {
+          "internalType": "bytes32",
+          "name": "",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "chainId",
+          "type": "uint256"
+        },
+        {
+          "internalType": "string",
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "internalType": "address",
+          "name": "nativeToken",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "gasPrice",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "bridgeCost",
+          "type": "uint256"
+        }
+      ],
+      "name": "addChain",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "string",
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "internalType": "address",
+          "name": "adapter",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "chainId",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "riskScore",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "minAPY",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "maxAPY",
+          "type": "uint256"
+        }
+      ],
+      "name": "addProtocol",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "name": "chainInfo",
+      "outputs": [
+        {
+          "internalType": "string",
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "internalType": "address",
+          "name": "nativeToken",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "gasPrice",
+          "type": "uint256"
+        },
+        {
+          "internalType": "bool",
+          "name": "isActive",
+          "type": "bool"
+        },
+        {
+          "internalType": "uint256",
+          "name": "bridgeCost",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "name": "chainProtocols",
+      "outputs": [
+        {
+          "internalType": "string",
+          "name": "",
+          "type": "string"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "string",
+          "name": "name",
+          "type": "string"
+        }
+      ],
+      "name": "deactivateProtocol",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "string",
+          "name": "name",
+          "type": "string"
+        }
+      ],
+      "name": "getAdapter",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "getAllProtocols",
+      "outputs": [
+        {
+          "internalType": "string[]",
+          "name": "",
+          "type": "string[]"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "chainId",
+          "type": "uint256"
+        }
+      ],
+      "name": "getChainInfo",
+      "outputs": [
+        {
+          "components": [
+            {
+              "internalType": "string",
+              "name": "name",
+              "type": "string"
+            },
+            {
+              "internalType": "address",
+              "name": "nativeToken",
+              "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "gasPrice",
+              "type": "uint256"
+            },
+            {
+              "internalType": "bool",
+              "name": "isActive",
+              "type": "bool"
+            },
+            {
+              "internalType": "uint256",
+              "name": "bridgeCost",
+              "type": "uint256"
+            }
+          ],
+          "internalType": "struct ChainRegistry.ChainInfo",
+          "name": "",
+          "type": "tuple"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "chainId",
+          "type": "uint256"
+        }
+      ],
+      "name": "getChainProtocols",
+      "outputs": [
+        {
+          "internalType": "string[]",
+          "name": "",
+          "type": "string[]"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "sourceChainId",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "targetChainId",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "minAPYImprovement",
+          "type": "uint256"
+        }
+      ],
+      "name": "getCrossChainOpportunities",
+      "outputs": [
+        {
+          "internalType": "string[]",
+          "name": "opportunities",
+          "type": "string[]"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "minAPY",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "maxRiskScore",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "chainId",
+          "type": "uint256"
+        }
+      ],
+      "name": "getOptimalProtocols",
+      "outputs": [
+        {
+          "internalType": "string[]",
+          "name": "optimalProtocols",
+          "type": "string[]"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "string",
+          "name": "name",
+          "type": "string"
+        }
+      ],
+      "name": "getProtocolInfo",
+      "outputs": [
+        {
+          "components": [
+            {
+              "internalType": "address",
+              "name": "adapter",
+              "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "chainId",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "riskScore",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "minAPY",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "maxAPY",
+              "type": "uint256"
+            },
+            {
+              "internalType": "bool",
+              "name": "isActive",
+              "type": "bool"
+            },
+            {
+              "internalType": "uint256",
+              "name": "tvl",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "lastUpdate",
+              "type": "uint256"
+            }
+          ],
+          "internalType": "struct ChainRegistry.ProtocolInfo",
+          "name": "",
+          "type": "tuple"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "maxRiskScore",
+          "type": "uint256"
+        }
+      ],
+      "name": "getProtocolsByRiskScore",
+      "outputs": [
+        {
+          "internalType": "string[]",
+          "name": "",
+          "type": "string[]"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "role",
+          "type": "bytes32"
+        }
+      ],
+      "name": "getRoleAdmin",
+      "outputs": [
+        {
+          "internalType": "bytes32",
+          "name": "",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "getSupportedChains",
+      "outputs": [
+        {
+          "internalType": "uint256[]",
+          "name": "",
+          "type": "uint256[]"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "role",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "address",
+          "name": "account",
+          "type": "address"
+        }
+      ],
+      "name": "grantRole",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "role",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "address",
+          "name": "account",
+          "type": "address"
+        }
+      ],
+      "name": "hasRole",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "admin",
+          "type": "address"
+        }
+      ],
+      "name": "initialize",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "string",
+          "name": "",
+          "type": "string"
+        }
+      ],
+      "name": "protocolAdapters",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "string",
+          "name": "",
+          "type": "string"
+        }
+      ],
+      "name": "protocolInfo",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "adapter",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "chainId",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "riskScore",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "minAPY",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "maxAPY",
+          "type": "uint256"
+        },
+        {
+          "internalType": "bool",
+          "name": "isActive",
+          "type": "bool"
+        },
+        {
+          "internalType": "uint256",
+          "name": "tvl",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "lastUpdate",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "name": "protocols",
+      "outputs": [
+        {
+          "internalType": "string",
+          "name": "",
+          "type": "string"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "role",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "address",
+          "name": "callerConfirmation",
+          "type": "address"
+        }
+      ],
+      "name": "renounceRole",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "role",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "address",
+          "name": "account",
+          "type": "address"
+        }
+      ],
+      "name": "revokeRole",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "name": "supportedChains",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes4",
+          "name": "interfaceId",
+          "type": "bytes4"
+        }
+      ],
+      "name": "supportsInterface",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "string",
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "internalType": "uint256",
+          "name": "riskScore",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "minAPY",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "maxAPY",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "tvl",
+          "type": "uint256"
+        }
+      ],
+      "name": "updateProtocolInfo",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    }
+  ],
+  "transactionHash": "0x3ef66a70d19be427b0ff59df3eb5ec9acde634ae86301d61ac5edfa0bf53f1b4",
+  "receipt": {
+    "to": null,
+    "from": "0xCE54cF5a0dE3843011cF20389C1b6a4AaC442d6A",
+    "contractAddress": "0x16eB87D9695D5502d38956703Cd3C8c861db2fd3",
+    "transactionIndex": 35,
+    "gasUsed": "2472072",
+    "logsBloom": "0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+    "blockHash": "0xffbdf6e4ca8aac9c8ceedee6f4ec3ebf1872f8db8a8542aab1edd3e8fa130dc9",
+    "transactionHash": "0x3ef66a70d19be427b0ff59df3eb5ec9acde634ae86301d61ac5edfa0bf53f1b4",
+    "logs": [],
+    "blockNumber": 31616928,
+    "cumulativeGasUsed": "8013145",
+    "status": 1,
+    "byzantium": true
+  },
+  "args": [],
+  "numDeployments": 1,
+  "solcInputHash": "e98586a13fa04cb18620ff30424ed588",
+  "metadata": "{\"compiler\":{\"version\":\"0.8.20+commit.a1b79de6\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[],\"name\":\"AccessControlBadConfirmation\",\"type\":\"error\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"},{\"internalType\":\"bytes32\",\"name\":\"neededRole\",\"type\":\"bytes32\"}],\"name\":\"AccessControlUnauthorizedAccount\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"InvalidInitialization\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"NotInitializing\",\"type\":\"error\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"chainId\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"string\",\"name\":\"name\",\"type\":\"string\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"nativeToken\",\"type\":\"address\"}],\"name\":\"ChainAdded\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint64\",\"name\":\"version\",\"type\":\"uint64\"}],\"name\":\"Initialized\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"string\",\"name\":\"protocol\",\"type\":\"string\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"adapter\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"chainId\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"riskScore\",\"type\":\"uint256\"}],\"name\":\"ProtocolAdded\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"string\",\"name\":\"protocol\",\"type\":\"string\"}],\"name\":\"ProtocolDeactivated\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"string\",\"name\":\"protocol\",\"type\":\"string\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"riskScore\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"minAPY\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"maxAPY\",\"type\":\"uint256\"}],\"name\":\"ProtocolUpdated\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"},{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"previousAdminRole\",\"type\":\"bytes32\"},{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"newAdminRole\",\"type\":\"bytes32\"}],\"name\":\"RoleAdminChanged\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"sender\",\"type\":\"address\"}],\"name\":\"RoleGranted\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"sender\",\"type\":\"address\"}],\"name\":\"RoleRevoked\",\"type\":\"event\"},{\"inputs\":[],\"name\":\"ADMIN_ROLE\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"DEFAULT_ADMIN_ROLE\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"PROTOCOL_MANAGER_ROLE\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"chainId\",\"type\":\"uint256\"},{\"internalType\":\"string\",\"name\":\"name\",\"type\":\"string\"},{\"internalType\":\"address\",\"name\":\"nativeToken\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"gasPrice\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"bridgeCost\",\"type\":\"uint256\"}],\"name\":\"addChain\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"name\",\"type\":\"string\"},{\"internalType\":\"address\",\"name\":\"adapter\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"chainId\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"riskScore\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"minAPY\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"maxAPY\",\"type\":\"uint256\"}],\"name\":\"addProtocol\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"name\":\"chainInfo\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"name\",\"type\":\"string\"},{\"internalType\":\"address\",\"name\":\"nativeToken\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"gasPrice\",\"type\":\"uint256\"},{\"internalType\":\"bool\",\"name\":\"isActive\",\"type\":\"bool\"},{\"internalType\":\"uint256\",\"name\":\"bridgeCost\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"name\":\"chainProtocols\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"\",\"type\":\"string\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"name\",\"type\":\"string\"}],\"name\":\"deactivateProtocol\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"name\",\"type\":\"string\"}],\"name\":\"getAdapter\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getAllProtocols\",\"outputs\":[{\"internalType\":\"string[]\",\"name\":\"\",\"type\":\"string[]\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"chainId\",\"type\":\"uint256\"}],\"name\":\"getChainInfo\",\"outputs\":[{\"components\":[{\"internalType\":\"string\",\"name\":\"name\",\"type\":\"string\"},{\"internalType\":\"address\",\"name\":\"nativeToken\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"gasPrice\",\"type\":\"uint256\"},{\"internalType\":\"bool\",\"name\":\"isActive\",\"type\":\"bool\"},{\"internalType\":\"uint256\",\"name\":\"bridgeCost\",\"type\":\"uint256\"}],\"internalType\":\"struct ChainRegistry.ChainInfo\",\"name\":\"\",\"type\":\"tuple\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"chainId\",\"type\":\"uint256\"}],\"name\":\"getChainProtocols\",\"outputs\":[{\"internalType\":\"string[]\",\"name\":\"\",\"type\":\"string[]\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"sourceChainId\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"targetChainId\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"minAPYImprovement\",\"type\":\"uint256\"}],\"name\":\"getCrossChainOpportunities\",\"outputs\":[{\"internalType\":\"string[]\",\"name\":\"opportunities\",\"type\":\"string[]\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"minAPY\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"maxRiskScore\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"chainId\",\"type\":\"uint256\"}],\"name\":\"getOptimalProtocols\",\"outputs\":[{\"internalType\":\"string[]\",\"name\":\"optimalProtocols\",\"type\":\"string[]\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"name\",\"type\":\"string\"}],\"name\":\"getProtocolInfo\",\"outputs\":[{\"components\":[{\"internalType\":\"address\",\"name\":\"adapter\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"chainId\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"riskScore\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"minAPY\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"maxAPY\",\"type\":\"uint256\"},{\"internalType\":\"bool\",\"name\":\"isActive\",\"type\":\"bool\"},{\"internalType\":\"uint256\",\"name\":\"tvl\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"lastUpdate\",\"type\":\"uint256\"}],\"internalType\":\"struct ChainRegistry.ProtocolInfo\",\"name\":\"\",\"type\":\"tuple\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"maxRiskScore\",\"type\":\"uint256\"}],\"name\":\"getProtocolsByRiskScore\",\"outputs\":[{\"internalType\":\"string[]\",\"name\":\"\",\"type\":\"string[]\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"}],\"name\":\"getRoleAdmin\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getSupportedChains\",\"outputs\":[{\"internalType\":\"uint256[]\",\"name\":\"\",\"type\":\"uint256[]\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"},{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"grantRole\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"},{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"hasRole\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"admin\",\"type\":\"address\"}],\"name\":\"initialize\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"\",\"type\":\"string\"}],\"name\":\"protocolAdapters\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"\",\"type\":\"string\"}],\"name\":\"protocolInfo\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"adapter\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"chainId\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"riskScore\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"minAPY\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"maxAPY\",\"type\":\"uint256\"},{\"internalType\":\"bool\",\"name\":\"isActive\",\"type\":\"bool\"},{\"internalType\":\"uint256\",\"name\":\"tvl\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"lastUpdate\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"name\":\"protocols\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"\",\"type\":\"string\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"},{\"internalType\":\"address\",\"name\":\"callerConfirmation\",\"type\":\"address\"}],\"name\":\"renounceRole\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"},{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"revokeRole\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"name\":\"supportedChains\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes4\",\"name\":\"interfaceId\",\"type\":\"bytes4\"}],\"name\":\"supportsInterface\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"name\",\"type\":\"string\"},{\"internalType\":\"uint256\",\"name\":\"riskScore\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"minAPY\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"maxAPY\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"tvl\",\"type\":\"uint256\"}],\"name\":\"updateProtocolInfo\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}],\"devdoc\":{\"errors\":{\"AccessControlBadConfirmation()\":[{\"details\":\"The caller of a function is not the expected one. NOTE: Don't confuse with {AccessControlUnauthorizedAccount}.\"}],\"AccessControlUnauthorizedAccount(address,bytes32)\":[{\"details\":\"The `account` is missing a role.\"}],\"InvalidInitialization()\":[{\"details\":\"The contract is already initialized.\"}],\"NotInitializing()\":[{\"details\":\"The contract is not initializing.\"}]},\"events\":{\"Initialized(uint64)\":{\"details\":\"Triggered when the contract has been initialized or reinitialized.\"},\"RoleAdminChanged(bytes32,bytes32,bytes32)\":{\"details\":\"Emitted when `newAdminRole` is set as ``role``'s admin role, replacing `previousAdminRole` `DEFAULT_ADMIN_ROLE` is the starting admin for all roles, despite {RoleAdminChanged} not being emitted signaling this.\"},\"RoleGranted(bytes32,address,address)\":{\"details\":\"Emitted when `account` is granted `role`. `sender` is the account that originated the contract call, an admin role bearer except when using {AccessControl-_setupRole}.\"},\"RoleRevoked(bytes32,address,address)\":{\"details\":\"Emitted when `account` is revoked `role`. `sender` is the account that originated the contract call:   - if using `revokeRole`, it is the admin role bearer   - if using `renounceRole`, it is the role bearer (i.e. `account`)\"}},\"kind\":\"dev\",\"methods\":{\"getRoleAdmin(bytes32)\":{\"details\":\"Returns the admin role that controls `role`. See {grantRole} and {revokeRole}. To change a role's admin, use {_setRoleAdmin}.\"},\"grantRole(bytes32,address)\":{\"details\":\"Grants `role` to `account`. If `account` had not been already granted `role`, emits a {RoleGranted} event. Requirements: - the caller must have ``role``'s admin role. May emit a {RoleGranted} event.\"},\"hasRole(bytes32,address)\":{\"details\":\"Returns `true` if `account` has been granted `role`.\"},\"renounceRole(bytes32,address)\":{\"details\":\"Revokes `role` from the calling account. Roles are often managed via {grantRole} and {revokeRole}: this function's purpose is to provide a mechanism for accounts to lose their privileges if they are compromised (such as when a trusted device is misplaced). If the calling account had been revoked `role`, emits a {RoleRevoked} event. Requirements: - the caller must be `callerConfirmation`. May emit a {RoleRevoked} event.\"},\"revokeRole(bytes32,address)\":{\"details\":\"Revokes `role` from `account`. If `account` had been granted `role`, emits a {RoleRevoked} event. Requirements: - the caller must have ``role``'s admin role. May emit a {RoleRevoked} event.\"},\"supportsInterface(bytes4)\":{\"details\":\"See {IERC165-supportsInterface}.\"}},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"contracts/ChainRegistry.sol\":\"ChainRegistry\"},\"evmVersion\":\"paris\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\",\"useLiteralContent\":true},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[]},\"sources\":{\"@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\n// OpenZeppelin Contracts (last updated v5.0.0) (access/AccessControl.sol)\\n\\npragma solidity ^0.8.20;\\n\\nimport {IAccessControl} from \\\"@openzeppelin/contracts/access/IAccessControl.sol\\\";\\nimport {ContextUpgradeable} from \\\"../utils/ContextUpgradeable.sol\\\";\\nimport {ERC165Upgradeable} from \\\"../utils/introspection/ERC165Upgradeable.sol\\\";\\nimport {Initializable} from \\\"../proxy/utils/Initializable.sol\\\";\\n\\n/**\\n * @dev Contract module that allows children to implement role-based access\\n * control mechanisms. This is a lightweight version that doesn't allow enumerating role\\n * members except through off-chain means by accessing the contract event logs. Some\\n * applications may benefit from on-chain enumerability, for those cases see\\n * {AccessControlEnumerable}.\\n *\\n * Roles are referred to by their `bytes32` identifier. These should be exposed\\n * in the external API and be unique. The best way to achieve this is by\\n * using `public constant` hash digests:\\n *\\n * ```solidity\\n * bytes32 public constant MY_ROLE = keccak256(\\\"MY_ROLE\\\");\\n * ```\\n *\\n * Roles can be used to represent a set of permissions. To restrict access to a\\n * function call, use {hasRole}:\\n *\\n * ```solidity\\n * function foo() public {\\n *     require(hasRole(MY_ROLE, msg.sender));\\n *     ...\\n * }\\n * ```\\n *\\n * Roles can be granted and revoked dynamically via the {grantRole} and\\n * {revokeRole} functions. Each role has an associated admin role, and only\\n * accounts that have a role's admin role can call {grantRole} and {revokeRole}.\\n *\\n * By default, the admin role for all roles is `DEFAULT_ADMIN_ROLE`, which means\\n * that only accounts with this role will be able to grant or revoke other\\n * roles. More complex role relationships can be created by using\\n * {_setRoleAdmin}.\\n *\\n * WARNING: The `DEFAULT_ADMIN_ROLE` is also its own admin: it has permission to\\n * grant and revoke this role. Extra precautions should be taken to secure\\n * accounts that have been granted it. We recommend using {AccessControlDefaultAdminRules}\\n * to enforce additional security measures for this role.\\n */\\nabstract contract AccessControlUpgradeable is Initializable, ContextUpgradeable, IAccessControl, ERC165Upgradeable {\\n    struct RoleData {\\n        mapping(address account => bool) hasRole;\\n        bytes32 adminRole;\\n    }\\n\\n    bytes32 public constant DEFAULT_ADMIN_ROLE = 0x00;\\n\\n\\n    /// @custom:storage-location erc7201:openzeppelin.storage.AccessControl\\n    struct AccessControlStorage {\\n        mapping(bytes32 role => RoleData) _roles;\\n    }\\n\\n    // keccak256(abi.encode(uint256(keccak256(\\\"openzeppelin.storage.AccessControl\\\")) - 1)) & ~bytes32(uint256(0xff))\\n    bytes32 private constant AccessControlStorageLocation = 0x02dd7bc7dec4dceedda775e58dd541e08a116c6c53815c0bd028192f7b626800;\\n\\n    function _getAccessControlStorage() private pure returns (AccessControlStorage storage $) {\\n        assembly {\\n            $.slot := AccessControlStorageLocation\\n        }\\n    }\\n\\n    /**\\n     * @dev Modifier that checks that an account has a specific role. Reverts\\n     * with an {AccessControlUnauthorizedAccount} error including the required role.\\n     */\\n    modifier onlyRole(bytes32 role) {\\n        _checkRole(role);\\n        _;\\n    }\\n\\n    function __AccessControl_init() internal onlyInitializing {\\n    }\\n\\n    function __AccessControl_init_unchained() internal onlyInitializing {\\n    }\\n    /**\\n     * @dev See {IERC165-supportsInterface}.\\n     */\\n    function supportsInterface(bytes4 interfaceId) public view virtual override returns (bool) {\\n        return interfaceId == type(IAccessControl).interfaceId || super.supportsInterface(interfaceId);\\n    }\\n\\n    /**\\n     * @dev Returns `true` if `account` has been granted `role`.\\n     */\\n    function hasRole(bytes32 role, address account) public view virtual returns (bool) {\\n        AccessControlStorage storage $ = _getAccessControlStorage();\\n        return $._roles[role].hasRole[account];\\n    }\\n\\n    /**\\n     * @dev Reverts with an {AccessControlUnauthorizedAccount} error if `_msgSender()`\\n     * is missing `role`. Overriding this function changes the behavior of the {onlyRole} modifier.\\n     */\\n    function _checkRole(bytes32 role) internal view virtual {\\n        _checkRole(role, _msgSender());\\n    }\\n\\n    /**\\n     * @dev Reverts with an {AccessControlUnauthorizedAccount} error if `account`\\n     * is missing `role`.\\n     */\\n    function _checkRole(bytes32 role, address account) internal view virtual {\\n        if (!hasRole(role, account)) {\\n            revert AccessControlUnauthorizedAccount(account, role);\\n        }\\n    }\\n\\n    /**\\n     * @dev Returns the admin role that controls `role`. See {grantRole} and\\n     * {revokeRole}.\\n     *\\n     * To change a role's admin, use {_setRoleAdmin}.\\n     */\\n    function getRoleAdmin(bytes32 role) public view virtual returns (bytes32) {\\n        AccessControlStorage storage $ = _getAccessControlStorage();\\n        return $._roles[role].adminRole;\\n    }\\n\\n    /**\\n     * @dev Grants `role` to `account`.\\n     *\\n     * If `account` had not been already granted `role`, emits a {RoleGranted}\\n     * event.\\n     *\\n     * Requirements:\\n     *\\n     * - the caller must have ``role``'s admin role.\\n     *\\n     * May emit a {RoleGranted} event.\\n     */\\n    function grantRole(bytes32 role, address account) public virtual onlyRole(getRoleAdmin(role)) {\\n        _grantRole(role, account);\\n    }\\n\\n    /**\\n     * @dev Revokes `role` from `account`.\\n     *\\n     * If `account` had been granted `role`, emits a {RoleRevoked} event.\\n     *\\n     * Requirements:\\n     *\\n     * - the caller must have ``role``'s admin role.\\n     *\\n     * May emit a {RoleRevoked} event.\\n     */\\n    function revokeRole(bytes32 role, address account) public virtual onlyRole(getRoleAdmin(role)) {\\n        _revokeRole(role, account);\\n    }\\n\\n    /**\\n     * @dev Revokes `role` from the calling account.\\n     *\\n     * Roles are often managed via {grantRole} and {revokeRole}: this function's\\n     * purpose is to provide a mechanism for accounts to lose their privileges\\n     * if they are compromised (such as when a trusted device is misplaced).\\n     *\\n     * If the calling account had been revoked `role`, emits a {RoleRevoked}\\n     * event.\\n     *\\n     * Requirements:\\n     *\\n     * - the caller must be `callerConfirmation`.\\n     *\\n     * May emit a {RoleRevoked} event.\\n     */\\n    function renounceRole(bytes32 role, address callerConfirmation) public virtual {\\n        if (callerConfirmation != _msgSender()) {\\n            revert AccessControlBadConfirmation();\\n        }\\n\\n        _revokeRole(role, callerConfirmation);\\n    }\\n\\n    /**\\n     * @dev Sets `adminRole` as ``role``'s admin role.\\n     *\\n     * Emits a {RoleAdminChanged} event.\\n     */\\n    function _setRoleAdmin(bytes32 role, bytes32 adminRole) internal virtual {\\n        AccessControlStorage storage $ = _getAccessControlStorage();\\n        bytes32 previousAdminRole = getRoleAdmin(role);\\n        $._roles[role].adminRole = adminRole;\\n        emit RoleAdminChanged(role, previousAdminRole, adminRole);\\n    }\\n\\n    /**\\n     * @dev Attempts to grant `role` to `account` and returns a boolean indicating if `role` was granted.\\n     *\\n     * Internal function without access restriction.\\n     *\\n     * May emit a {RoleGranted} event.\\n     */\\n    function _grantRole(bytes32 role, address account) internal virtual returns (bool) {\\n        AccessControlStorage storage $ = _getAccessControlStorage();\\n        if (!hasRole(role, account)) {\\n            $._roles[role].hasRole[account] = true;\\n            emit RoleGranted(role, account, _msgSender());\\n            return true;\\n        } else {\\n            return false;\\n        }\\n    }\\n\\n    /**\\n     * @dev Attempts to revoke `role` to `account` and returns a boolean indicating if `role` was revoked.\\n     *\\n     * Internal function without access restriction.\\n     *\\n     * May emit a {RoleRevoked} event.\\n     */\\n    function _revokeRole(bytes32 role, address account) internal virtual returns (bool) {\\n        AccessControlStorage storage $ = _getAccessControlStorage();\\n        if (hasRole(role, account)) {\\n            $._roles[role].hasRole[account] = false;\\n            emit RoleRevoked(role, account, _msgSender());\\n            return true;\\n        } else {\\n            return false;\\n        }\\n    }\\n}\\n\",\"keccak256\":\"0x6662ec4e5cefca03eeadd073e9469df8d2944bb2ee8ec8f7622c2c46aab5f225\",\"license\":\"MIT\"},\"@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\n// OpenZeppelin Contracts (last updated v5.0.0) (proxy/utils/Initializable.sol)\\n\\npragma solidity ^0.8.20;\\n\\n/**\\n * @dev This is a base contract to aid in writing upgradeable contracts, or any kind of contract that will be deployed\\n * behind a proxy. Since proxied contracts do not make use of a constructor, it's common to move constructor logic to an\\n * external initializer function, usually called `initialize`. It then becomes necessary to protect this initializer\\n * function so it can only be called once. The {initializer} modifier provided by this contract will have this effect.\\n *\\n * The initialization functions use a version number. Once a version number is used, it is consumed and cannot be\\n * reused. This mechanism prevents re-execution of each \\\"step\\\" but allows the creation of new initialization steps in\\n * case an upgrade adds a module that needs to be initialized.\\n *\\n * For example:\\n *\\n * [.hljs-theme-light.nopadding]\\n * ```solidity\\n * contract MyToken is ERC20Upgradeable {\\n *     function initialize() initializer public {\\n *         __ERC20_init(\\\"MyToken\\\", \\\"MTK\\\");\\n *     }\\n * }\\n *\\n * contract MyTokenV2 is MyToken, ERC20PermitUpgradeable {\\n *     function initializeV2() reinitializer(2) public {\\n *         __ERC20Permit_init(\\\"MyToken\\\");\\n *     }\\n * }\\n * ```\\n *\\n * TIP: To avoid leaving the proxy in an uninitialized state, the initializer function should be called as early as\\n * possible by providing the encoded function call as the `_data` argument to {ERC1967Proxy-constructor}.\\n *\\n * CAUTION: When used with inheritance, manual care must be taken to not invoke a parent initializer twice, or to ensure\\n * that all initializers are idempotent. This is not verified automatically as constructors are by Solidity.\\n *\\n * [CAUTION]\\n * ====\\n * Avoid leaving a contract uninitialized.\\n *\\n * An uninitialized contract can be taken over by an attacker. This applies to both a proxy and its implementation\\n * contract, which may impact the proxy. To prevent the implementation contract from being used, you should invoke\\n * the {_disableInitializers} function in the constructor to automatically lock it when it is deployed:\\n *\\n * [.hljs-theme-light.nopadding]\\n * ```\\n * /// @custom:oz-upgrades-unsafe-allow constructor\\n * constructor() {\\n *     _disableInitializers();\\n * }\\n * ```\\n * ====\\n */\\nabstract contract Initializable {\\n    /**\\n     * @dev Storage of the initializable contract.\\n     *\\n     * It's implemented on a custom ERC-7201 namespace to reduce the risk of storage collisions\\n     * when using with upgradeable contracts.\\n     *\\n     * @custom:storage-location erc7201:openzeppelin.storage.Initializable\\n     */\\n    struct InitializableStorage {\\n        /**\\n         * @dev Indicates that the contract has been initialized.\\n         */\\n        uint64 _initialized;\\n        /**\\n         * @dev Indicates that the contract is in the process of being initialized.\\n         */\\n        bool _initializing;\\n    }\\n\\n    // keccak256(abi.encode(uint256(keccak256(\\\"openzeppelin.storage.Initializable\\\")) - 1)) & ~bytes32(uint256(0xff))\\n    bytes32 private constant INITIALIZABLE_STORAGE = 0xf0c57e16840df040f15088dc2f81fe391c3923bec73e23a9662efc9c229c6a00;\\n\\n    /**\\n     * @dev The contract is already initialized.\\n     */\\n    error InvalidInitialization();\\n\\n    /**\\n     * @dev The contract is not initializing.\\n     */\\n    error NotInitializing();\\n\\n    /**\\n     * @dev Triggered when the contract has been initialized or reinitialized.\\n     */\\n    event Initialized(uint64 version);\\n\\n    /**\\n     * @dev A modifier that defines a protected initializer function that can be invoked at most once. In its scope,\\n     * `onlyInitializing` functions can be used to initialize parent contracts.\\n     *\\n     * Similar to `reinitializer(1)`, except that in the context of a constructor an `initializer` may be invoked any\\n     * number of times. This behavior in the constructor can be useful during testing and is not expected to be used in\\n     * production.\\n     *\\n     * Emits an {Initialized} event.\\n     */\\n    modifier initializer() {\\n        // solhint-disable-next-line var-name-mixedcase\\n        InitializableStorage storage $ = _getInitializableStorage();\\n\\n        // Cache values to avoid duplicated sloads\\n        bool isTopLevelCall = !$._initializing;\\n        uint64 initialized = $._initialized;\\n\\n        // Allowed calls:\\n        // - initialSetup: the contract is not in the initializing state and no previous version was\\n        //                 initialized\\n        // - construction: the contract is initialized at version 1 (no reininitialization) and the\\n        //                 current contract is just being deployed\\n        bool initialSetup = initialized == 0 && isTopLevelCall;\\n        bool construction = initialized == 1 && address(this).code.length == 0;\\n\\n        if (!initialSetup && !construction) {\\n            revert InvalidInitialization();\\n        }\\n        $._initialized = 1;\\n        if (isTopLevelCall) {\\n            $._initializing = true;\\n        }\\n        _;\\n        if (isTopLevelCall) {\\n            $._initializing = false;\\n            emit Initialized(1);\\n        }\\n    }\\n\\n    /**\\n     * @dev A modifier that defines a protected reinitializer function that can be invoked at most once, and only if the\\n     * contract hasn't been initialized to a greater version before. In its scope, `onlyInitializing` functions can be\\n     * used to initialize parent contracts.\\n     *\\n     * A reinitializer may be used after the original initialization step. This is essential to configure modules that\\n     * are added through upgrades and that require initialization.\\n     *\\n     * When `version` is 1, this modifier is similar to `initializer`, except that functions marked with `reinitializer`\\n     * cannot be nested. If one is invoked in the context of another, execution will revert.\\n     *\\n     * Note that versions can jump in increments greater than 1; this implies that if multiple reinitializers coexist in\\n     * a contract, executing them in the right order is up to the developer or operator.\\n     *\\n     * WARNING: Setting the version to 2**64 - 1 will prevent any future reinitialization.\\n     *\\n     * Emits an {Initialized} event.\\n     */\\n    modifier reinitializer(uint64 version) {\\n        // solhint-disable-next-line var-name-mixedcase\\n        InitializableStorage storage $ = _getInitializableStorage();\\n\\n        if ($._initializing || $._initialized >= version) {\\n            revert InvalidInitialization();\\n        }\\n        $._initialized = version;\\n        $._initializing = true;\\n        _;\\n        $._initializing = false;\\n        emit Initialized(version);\\n    }\\n\\n    /**\\n     * @dev Modifier to protect an initialization function so that it can only be invoked by functions with the\\n     * {initializer} and {reinitializer} modifiers, directly or indirectly.\\n     */\\n    modifier onlyInitializing() {\\n        _checkInitializing();\\n        _;\\n    }\\n\\n    /**\\n     * @dev Reverts if the contract is not in an initializing state. See {onlyInitializing}.\\n     */\\n    function _checkInitializing() internal view virtual {\\n        if (!_isInitializing()) {\\n            revert NotInitializing();\\n        }\\n    }\\n\\n    /**\\n     * @dev Locks the contract, preventing any future reinitialization. This cannot be part of an initializer call.\\n     * Calling this in the constructor of a contract will prevent that contract from being initialized or reinitialized\\n     * to any version. It is recommended to use this to lock implementation contracts that are designed to be called\\n     * through proxies.\\n     *\\n     * Emits an {Initialized} event the first time it is successfully executed.\\n     */\\n    function _disableInitializers() internal virtual {\\n        // solhint-disable-next-line var-name-mixedcase\\n        InitializableStorage storage $ = _getInitializableStorage();\\n\\n        if ($._initializing) {\\n            revert InvalidInitialization();\\n        }\\n        if ($._initialized != type(uint64).max) {\\n            $._initialized = type(uint64).max;\\n            emit Initialized(type(uint64).max);\\n        }\\n    }\\n\\n    /**\\n     * @dev Returns the highest version that has been initialized. See {reinitializer}.\\n     */\\n    function _getInitializedVersion() internal view returns (uint64) {\\n        return _getInitializableStorage()._initialized;\\n    }\\n\\n    /**\\n     * @dev Returns `true` if the contract is currently initializing. See {onlyInitializing}.\\n     */\\n    function _isInitializing() internal view returns (bool) {\\n        return _getInitializableStorage()._initializing;\\n    }\\n\\n    /**\\n     * @dev Returns a pointer to the storage namespace.\\n     */\\n    // solhint-disable-next-line var-name-mixedcase\\n    function _getInitializableStorage() private pure returns (InitializableStorage storage $) {\\n        assembly {\\n            $.slot := INITIALIZABLE_STORAGE\\n        }\\n    }\\n}\\n\",\"keccak256\":\"0x631188737069917d2f909d29ce62c4d48611d326686ba6683e26b72a23bfac0b\",\"license\":\"MIT\"},\"@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\n// OpenZeppelin Contracts (last updated v5.0.1) (utils/Context.sol)\\n\\npragma solidity ^0.8.20;\\nimport {Initializable} from \\\"../proxy/utils/Initializable.sol\\\";\\n\\n/**\\n * @dev Provides information about the current execution context, including the\\n * sender of the transaction and its data. While these are generally available\\n * via msg.sender and msg.data, they should not be accessed in such a direct\\n * manner, since when dealing with meta-transactions the account sending and\\n * paying for execution may not be the actual sender (as far as an application\\n * is concerned).\\n *\\n * This contract is only required for intermediate, library-like contracts.\\n */\\nabstract contract ContextUpgradeable is Initializable {\\n    function __Context_init() internal onlyInitializing {\\n    }\\n\\n    function __Context_init_unchained() internal onlyInitializing {\\n    }\\n    function _msgSender() internal view virtual returns (address) {\\n        return msg.sender;\\n    }\\n\\n    function _msgData() internal view virtual returns (bytes calldata) {\\n        return msg.data;\\n    }\\n\\n    function _contextSuffixLength() internal view virtual returns (uint256) {\\n        return 0;\\n    }\\n}\\n\",\"keccak256\":\"0xdbef5f0c787055227243a7318ef74c8a5a1108ca3a07f2b3a00ef67769e1e397\",\"license\":\"MIT\"},\"@openzeppelin/contracts-upgradeable/utils/introspection/ERC165Upgradeable.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\n// OpenZeppelin Contracts (last updated v5.0.0) (utils/introspection/ERC165.sol)\\n\\npragma solidity ^0.8.20;\\n\\nimport {IERC165} from \\\"@openzeppelin/contracts/utils/introspection/IERC165.sol\\\";\\nimport {Initializable} from \\\"../../proxy/utils/Initializable.sol\\\";\\n\\n/**\\n * @dev Implementation of the {IERC165} interface.\\n *\\n * Contracts that want to implement ERC165 should inherit from this contract and override {supportsInterface} to check\\n * for the additional interface id that will be supported. For example:\\n *\\n * ```solidity\\n * function supportsInterface(bytes4 interfaceId) public view virtual override returns (bool) {\\n *     return interfaceId == type(MyInterface).interfaceId || super.supportsInterface(interfaceId);\\n * }\\n * ```\\n */\\nabstract contract ERC165Upgradeable is Initializable, IERC165 {\\n    function __ERC165_init() internal onlyInitializing {\\n    }\\n\\n    function __ERC165_init_unchained() internal onlyInitializing {\\n    }\\n    /**\\n     * @dev See {IERC165-supportsInterface}.\\n     */\\n    function supportsInterface(bytes4 interfaceId) public view virtual returns (bool) {\\n        return interfaceId == type(IERC165).interfaceId;\\n    }\\n}\\n\",\"keccak256\":\"0xdaba3f7c42c55b2896353f32bd27d4d5f8bae741b3b05d4c53f67abc4dc47ce8\",\"license\":\"MIT\"},\"@openzeppelin/contracts/access/IAccessControl.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\n// OpenZeppelin Contracts (last updated v5.0.0) (access/IAccessControl.sol)\\n\\npragma solidity ^0.8.20;\\n\\n/**\\n * @dev External interface of AccessControl declared to support ERC165 detection.\\n */\\ninterface IAccessControl {\\n    /**\\n     * @dev The `account` is missing a role.\\n     */\\n    error AccessControlUnauthorizedAccount(address account, bytes32 neededRole);\\n\\n    /**\\n     * @dev The caller of a function is not the expected one.\\n     *\\n     * NOTE: Don't confuse with {AccessControlUnauthorizedAccount}.\\n     */\\n    error AccessControlBadConfirmation();\\n\\n    /**\\n     * @dev Emitted when `newAdminRole` is set as ``role``'s admin role, replacing `previousAdminRole`\\n     *\\n     * `DEFAULT_ADMIN_ROLE` is the starting admin for all roles, despite\\n     * {RoleAdminChanged} not being emitted signaling this.\\n     */\\n    event RoleAdminChanged(bytes32 indexed role, bytes32 indexed previousAdminRole, bytes32 indexed newAdminRole);\\n\\n    /**\\n     * @dev Emitted when `account` is granted `role`.\\n     *\\n     * `sender` is the account that originated the contract call, an admin role\\n     * bearer except when using {AccessControl-_setupRole}.\\n     */\\n    event RoleGranted(bytes32 indexed role, address indexed account, address indexed sender);\\n\\n    /**\\n     * @dev Emitted when `account` is revoked `role`.\\n     *\\n     * `sender` is the account that originated the contract call:\\n     *   - if using `revokeRole`, it is the admin role bearer\\n     *   - if using `renounceRole`, it is the role bearer (i.e. `account`)\\n     */\\n    event RoleRevoked(bytes32 indexed role, address indexed account, address indexed sender);\\n\\n    /**\\n     * @dev Returns `true` if `account` has been granted `role`.\\n     */\\n    function hasRole(bytes32 role, address account) external view returns (bool);\\n\\n    /**\\n     * @dev Returns the admin role that controls `role`. See {grantRole} and\\n     * {revokeRole}.\\n     *\\n     * To change a role's admin, use {AccessControl-_setRoleAdmin}.\\n     */\\n    function getRoleAdmin(bytes32 role) external view returns (bytes32);\\n\\n    /**\\n     * @dev Grants `role` to `account`.\\n     *\\n     * If `account` had not been already granted `role`, emits a {RoleGranted}\\n     * event.\\n     *\\n     * Requirements:\\n     *\\n     * - the caller must have ``role``'s admin role.\\n     */\\n    function grantRole(bytes32 role, address account) external;\\n\\n    /**\\n     * @dev Revokes `role` from `account`.\\n     *\\n     * If `account` had been granted `role`, emits a {RoleRevoked} event.\\n     *\\n     * Requirements:\\n     *\\n     * - the caller must have ``role``'s admin role.\\n     */\\n    function revokeRole(bytes32 role, address account) external;\\n\\n    /**\\n     * @dev Revokes `role` from the calling account.\\n     *\\n     * Roles are often managed via {grantRole} and {revokeRole}: this function's\\n     * purpose is to provide a mechanism for accounts to lose their privileges\\n     * if they are compromised (such as when a trusted device is misplaced).\\n     *\\n     * If the calling account had been granted `role`, emits a {RoleRevoked}\\n     * event.\\n     *\\n     * Requirements:\\n     *\\n     * - the caller must be `callerConfirmation`.\\n     */\\n    function renounceRole(bytes32 role, address callerConfirmation) external;\\n}\\n\",\"keccak256\":\"0xb6b36edd6a2999fd243ff226d6cbf84bd71af2432bbd0dfe19392996a1d9cb41\",\"license\":\"MIT\"},\"@openzeppelin/contracts/utils/introspection/IERC165.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\n// OpenZeppelin Contracts (last updated v5.0.0) (utils/introspection/IERC165.sol)\\n\\npragma solidity ^0.8.20;\\n\\n/**\\n * @dev Interface of the ERC165 standard, as defined in the\\n * https://eips.ethereum.org/EIPS/eip-165[EIP].\\n *\\n * Implementers can declare support of contract interfaces, which can then be\\n * queried by others ({ERC165Checker}).\\n *\\n * For an implementation, see {ERC165}.\\n */\\ninterface IERC165 {\\n    /**\\n     * @dev Returns true if this contract implements the interface defined by\\n     * `interfaceId`. See the corresponding\\n     * https://eips.ethereum.org/EIPS/eip-165#how-interfaces-are-identified[EIP section]\\n     * to learn more about how these ids are created.\\n     *\\n     * This function call must use less than 30 000 gas.\\n     */\\n    function supportsInterface(bytes4 interfaceId) external view returns (bool);\\n}\\n\",\"keccak256\":\"0x4296879f55019b23e135000eb36896057e7101fb7fb859c5ef690cf14643757b\",\"license\":\"MIT\"},\"contracts/ChainRegistry.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\npragma solidity ^0.8.20;\\nimport \\\"@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol\\\";\\nimport \\\"@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol\\\";\\n\\ncontract ChainRegistry is Initializable, AccessControlUpgradeable {\\n    bytes32 public constant ADMIN_ROLE = DEFAULT_ADMIN_ROLE;\\n    bytes32 public constant PROTOCOL_MANAGER_ROLE = keccak256(\\\"PROTOCOL_MANAGER_ROLE\\\");\\n    \\n    // Protocol management\\n    mapping(string => address) public protocolAdapters;\\n    mapping(string => ProtocolInfo) public protocolInfo;\\n    mapping(uint256 => string[]) public chainProtocols; // chainId => protocols\\n    string[] public protocols;\\n    \\n    // Chain management\\n    mapping(uint256 => ChainInfo) public chainInfo;\\n    uint256[] public supportedChains;\\n    \\n    struct ProtocolInfo {\\n        address adapter;\\n        uint256 chainId;\\n        uint256 riskScore; // 0-100, lower is safer\\n        uint256 minAPY; // Minimum expected APY in basis points\\n        uint256 maxAPY; // Maximum expected APY in basis points\\n        bool isActive;\\n        uint256 tvl; // Total Value Locked\\n        uint256 lastUpdate;\\n    }\\n    \\n    struct ChainInfo {\\n        string name;\\n        address nativeToken; // USDC address on this chain\\n        uint256 gasPrice; // Average gas price\\n        bool isActive;\\n        uint256 bridgeCost; // Cost to bridge to this chain\\n    }\\n    \\n    event ProtocolAdded(string indexed protocol, address adapter, uint256 chainId, uint256 riskScore);\\n    event ProtocolUpdated(string indexed protocol, uint256 riskScore, uint256 minAPY, uint256 maxAPY);\\n    event ChainAdded(uint256 indexed chainId, string name, address nativeToken);\\n    event ProtocolDeactivated(string indexed protocol);\\n\\n    function initialize(address admin) public initializer {\\n        __AccessControl_init();\\n        _grantRole(ADMIN_ROLE, admin);\\n        _grantRole(PROTOCOL_MANAGER_ROLE, admin);\\n    }\\n\\n    function addProtocol(\\n        string calldata name,\\n        address adapter,\\n        uint256 chainId,\\n        uint256 riskScore,\\n        uint256 minAPY,\\n        uint256 maxAPY\\n    ) external onlyRole(PROTOCOL_MANAGER_ROLE) {\\n        require(adapter != address(0), \\\"Invalid adapter\\\");\\n        require(riskScore <= 100, \\\"Risk score too high\\\");\\n        require(minAPY <= maxAPY, \\\"Invalid APY range\\\");\\n        \\n        protocolAdapters[name] = adapter;\\n        protocolInfo[name] = ProtocolInfo({\\n            adapter: adapter,\\n            chainId: chainId,\\n            riskScore: riskScore,\\n            minAPY: minAPY,\\n            maxAPY: maxAPY,\\n            isActive: true,\\n            tvl: 0,\\n            lastUpdate: block.timestamp\\n        });\\n        \\n        protocols.push(name);\\n        chainProtocols[chainId].push(name);\\n        \\n        emit ProtocolAdded(name, adapter, chainId, riskScore);\\n    }\\n    \\n    function updateProtocolInfo(\\n        string calldata name,\\n        uint256 riskScore,\\n        uint256 minAPY,\\n        uint256 maxAPY,\\n        uint256 tvl\\n    ) external onlyRole(PROTOCOL_MANAGER_ROLE) {\\n        require(protocolAdapters[name] != address(0), \\\"Protocol not found\\\");\\n        require(riskScore <= 100, \\\"Risk score too high\\\");\\n        require(minAPY <= maxAPY, \\\"Invalid APY range\\\");\\n        \\n        ProtocolInfo storage info = protocolInfo[name];\\n        info.riskScore = riskScore;\\n        info.minAPY = minAPY;\\n        info.maxAPY = maxAPY;\\n        info.tvl = tvl;\\n        info.lastUpdate = block.timestamp;\\n        \\n        emit ProtocolUpdated(name, riskScore, minAPY, maxAPY);\\n    }\\n    \\n    function deactivateProtocol(string calldata name) external onlyRole(PROTOCOL_MANAGER_ROLE) {\\n        require(protocolAdapters[name] != address(0), \\\"Protocol not found\\\");\\n        protocolInfo[name].isActive = false;\\n        emit ProtocolDeactivated(name);\\n    }\\n    \\n    function addChain(\\n        uint256 chainId,\\n        string calldata name,\\n        address nativeToken,\\n        uint256 gasPrice,\\n        uint256 bridgeCost\\n    ) external onlyRole(ADMIN_ROLE) {\\n        require(nativeToken != address(0), \\\"Invalid native token\\\");\\n        \\n        chainInfo[chainId] = ChainInfo({\\n            name: name,\\n            nativeToken: nativeToken,\\n            gasPrice: gasPrice,\\n            isActive: true,\\n            bridgeCost: bridgeCost\\n        });\\n        \\n        supportedChains.push(chainId);\\n        emit ChainAdded(chainId, name, nativeToken);\\n    }\\n    \\n    function getAdapter(string calldata name) public view returns (address) {\\n        return protocolAdapters[name];\\n    }\\n    \\n    function getProtocolInfo(string calldata name) external view returns (ProtocolInfo memory) {\\n        return protocolInfo[name];\\n    }\\n    \\n    function getAllProtocols() external view returns (string[] memory) {\\n        return protocols;\\n    }\\n    \\n    function getChainProtocols(uint256 chainId) external view returns (string[] memory) {\\n        return chainProtocols[chainId];\\n    }\\n    \\n    function getSupportedChains() external view returns (uint256[] memory) {\\n        return supportedChains;\\n    }\\n    \\n    function getChainInfo(uint256 chainId) external view returns (ChainInfo memory) {\\n        return chainInfo[chainId];\\n    }\\n    \\n    // AI optimization helpers\\n    function getOptimalProtocols(\\n        uint256 minAPY,\\n        uint256 maxRiskScore,\\n        uint256 chainId\\n    ) external view returns (string[] memory optimalProtocols) {\\n        string[] memory chainProtocolsList = chainProtocols[chainId];\\n        uint256 count = 0;\\n        \\n        // Count optimal protocols\\n        for (uint256 i = 0; i < chainProtocolsList.length; i++) {\\n            ProtocolInfo memory info = protocolInfo[chainProtocolsList[i]];\\n            if (info.isActive && info.minAPY >= minAPY && info.riskScore <= maxRiskScore) {\\n                count++;\\n            }\\n        }\\n        \\n        // Create result array\\n        optimalProtocols = new string[](count);\\n        uint256 index = 0;\\n        \\n        for (uint256 i = 0; i < chainProtocolsList.length; i++) {\\n            ProtocolInfo memory info = protocolInfo[chainProtocolsList[i]];\\n            if (info.isActive && info.minAPY >= minAPY && info.riskScore <= maxRiskScore) {\\n                optimalProtocols[index] = chainProtocolsList[i];\\n                index++;\\n            }\\n        }\\n    }\\n    \\n    function getProtocolsByRiskScore(uint256 maxRiskScore) external view returns (string[] memory) {\\n        uint256 count = 0;\\n        \\n        // Count protocols within risk limit\\n        for (uint256 i = 0; i < protocols.length; i++) {\\n            if (protocolInfo[protocols[i]].riskScore <= maxRiskScore && protocolInfo[protocols[i]].isActive) {\\n                count++;\\n            }\\n        }\\n        \\n        string[] memory result = new string[](count);\\n        uint256 index = 0;\\n        \\n        for (uint256 i = 0; i < protocols.length; i++) {\\n            if (protocolInfo[protocols[i]].riskScore <= maxRiskScore && protocolInfo[protocols[i]].isActive) {\\n                result[index] = protocols[i];\\n                index++;\\n            }\\n        }\\n        \\n        return result;\\n    }\\n    \\n    function getCrossChainOpportunities(\\n        uint256 sourceChainId,\\n        uint256 targetChainId,\\n        uint256 minAPYImprovement\\n    ) external view returns (string[] memory opportunities) {\\n        string[] memory sourceProtocols = chainProtocols[sourceChainId];\\n        string[] memory targetProtocols = chainProtocols[targetChainId];\\n        \\n        uint256 count = 0;\\n        \\n        // Count opportunities\\n        for (uint256 i = 0; i < sourceProtocols.length; i++) {\\n            for (uint256 j = 0; j < targetProtocols.length; j++) {\\n                ProtocolInfo memory sourceInfo = protocolInfo[sourceProtocols[i]];\\n                ProtocolInfo memory targetInfo = protocolInfo[targetProtocols[j]];\\n                \\n                if (sourceInfo.isActive && targetInfo.isActive && \\n                    targetInfo.minAPY > sourceInfo.maxAPY + minAPYImprovement) {\\n                    count++;\\n                }\\n            }\\n        }\\n        \\n        opportunities = new string[](count);\\n        uint256 index = 0;\\n        \\n        for (uint256 i = 0; i < sourceProtocols.length; i++) {\\n            for (uint256 j = 0; j < targetProtocols.length; j++) {\\n                ProtocolInfo memory sourceInfo = protocolInfo[sourceProtocols[i]];\\n                ProtocolInfo memory targetInfo = protocolInfo[targetProtocols[j]];\\n                \\n                if (sourceInfo.isActive && targetInfo.isActive && \\n                    targetInfo.minAPY > sourceInfo.maxAPY + minAPYImprovement) {\\n                    opportunities[index] = targetProtocols[j];\\n                    index++;\\n                }\\n            }\\n        }\\n    }\\n}\\n\",\"keccak256\":\"0xc4a50301630ff5bc590323e1b00698c38322a01a79dd0bd04d2e1929136fbef7\",\"license\":\"MIT\"}},\"version\":1}",
+  "bytecode": "0x608060405234801561001057600080fd5b50612bbd806100206000396000f3fe608060405234801561001057600080fd5b50600436106101cf5760003560e01c806375b238fc11610104578063af50f0a0116100a2578063c4d66de811610071578063c4d66de81461052b578063d547741f1461053e578063da253eac14610551578063f3cf92ed1461056657600080fd5b8063af50f0a01461043b578063b8062006146104f0578063bc4c221214610503578063c4bffe2b1461051657600080fd5b80638c396220116100de5780638c396220146103f557806391d1485414610415578063a217fddf146103ba578063aed6f3461461042857600080fd5b806375b238fc146103ba578063804ea334146103c257806386a0f052146103e257600080fd5b80633d0f1bbf11610171578063548d496f1161014b578063548d496f146103405780636c08b249146103535780636e1e3f6a1461039f578063741c53eb146103b257600080fd5b80633d0f1bbf146102fa578063450f9c361461031a5780634a2505911461032d57600080fd5b8063248a9ca3116101ad578063248a9ca3146102395780632f2ff15d1461025a57806336568abe1461026d578063370ca5bc1461028057600080fd5b80630157288b146101d457806301ffc9a714610201578063135ae33114610224575b600080fd5b6101e76101e23660046122d8565b610579565b6040516101f8959493929190612341565b60405180910390f35b61021461020f366004612381565b610640565b60405190151581526020016101f8565b610237610232366004612416565b610677565b005b61024c6102473660046122d8565b610828565b6040519081526020016101f8565b610237610268366004612485565b61084a565b61023761027b366004612485565b61086c565b61029361028e3660046124b1565b6108a4565b6040516101f8919081516001600160a01b031681526020808301519082015260408083015190820152606080830151908201526080808301519082015260a08281015115159082015260c0808301519082015260e091820151918101919091526101000190565b61030d6103083660046124f2565b610985565b6040516101f8919061251e565b6102376103283660046124b1565b610ce2565b61023761033b366004612580565b610dec565b61024c61034e3660046122d8565b6110d2565b61038761036136600461260e565b80516020818301810180516000825292820191909301209152546001600160a01b031681565b6040516001600160a01b0390911681526020016101f8565b61030d6103ad3660046122d8565b6110f3565b61030d6111df565b61024c600081565b6103d56103d03660046122d8565b6112b8565b6040516101f891906126be565b61030d6103f03660046122d8565b6113dc565b6104086104033660046122d8565b611679565b6040516101f89190612718565b610214610423366004612485565b611725565b61023761043636600461272b565b61175d565b6104a961044936600461260e565b805160208183018101805160018083529383019290940191909120929052815490820154600283015460038401546004850154600586015460068701546007909701546001600160a01b0390961696949593949293919260ff9091169188565b604080516001600160a01b03909916895260208901979097529587019490945260608601929092526080850152151560a084015260c083015260e0820152610100016101f8565b6104086104fe36600461278c565b611911565b6103876105113660046124b1565b611949565b61051e61197d565b6040516101f891906127ae565b6102376105393660046127f2565b6119d5565b61023761054c366004612485565b611b07565b61024c600080516020612b4883398151915281565b61030d6105743660046124f2565b611b23565b6004602052600090815260409020805481906105949061280d565b80601f01602080910402602001604051908101604052809291908181526020018280546105c09061280d565b801561060d5780601f106105e25761010080835404028352916020019161060d565b820191906000526020600020905b8154815290600101906020018083116105f057829003601f168201915b50505060018401546002850154600386015460049096015494956001600160a01b039092169490935060ff909116915085565b60006001600160e01b03198216637965db0b60e01b148061067157506301ffc9a760e01b6001600160e01b03198316145b92915050565b60006106828161211a565b6001600160a01b0384166106d45760405162461bcd60e51b815260206004820152601460248201527324b73b30b634b2103730ba34bb32903a37b5b2b760611b60448201526064015b60405180910390fd5b6040518060a0016040528087878080601f01602080910402602001604051908101604052809392919081815260200183838082843760009201829052509385525050506001600160a01b03871660208084019190915260408084018890526001606085015260809093018690528a8252600490522081518190610757908261288d565b506020820151600182810180546001600160a01b0319166001600160a01b03909316929092179091556040808401516002840155606084015160038401805460ff19169115159190911790556080909301516004909201919091556005805491820181556000527f036b6384b5eca791c62761152d0c79bb0604c104a5fb6f4eb0703f3154bb3db0018890555187907fd561e43d9bdfcde1ceb4f2cd9972b8f1667876d7df10a2b775f181b66ae5b39f906108179089908990899061294c565b60405180910390a250505050505050565b6000908152600080516020612b68833981519152602052604090206001015490565b61085382610828565b61085c8161211a565b6108668383612127565b50505050565b6001600160a01b03811633146108955760405163334bd91960e11b815260040160405180910390fd5b61089f82826121cc565b505050565b6108f760405180610100016040528060006001600160a01b031681526020016000815260200160008152602001600081526020016000815260200160001515815260200160008152602001600081525090565b6001838360405161090992919061298d565b9081526040805191829003602090810183206101008401835280546001600160a01b031684526001810154918401919091526002810154918301919091526003810154606083015260048101546080830152600581015460ff16151560a0830152600681015460c08301526007015460e0820152905092915050565b6000818152600260209081526040808320805482518185028101850190935280835260609493849084015b82821015610a5c5783829060005260206000200180546109cf9061280d565b80601f01602080910402602001604051908101604052809291908181526020018280546109fb9061280d565b8015610a485780601f10610a1d57610100808354040283529160200191610a48565b820191906000526020600020905b815481529060010190602001808311610a2b57829003601f168201915b5050505050815260200190600101906109b0565b5050505090506000805b8251811015610b595760006001848381518110610a8557610a8561299d565b6020026020010151604051610a9a91906129b3565b90815260408051602092819003830181206101008201835280546001600160a01b031682526001810154938201939093526002830154918101919091526003820154606082015260048201546080820152600582015460ff1615801560a08301819052600684015460c084015260079093015460e0830152909250610b23575087816060015110155b8015610b33575086816040015111155b15610b465782610b42816129e5565b9350505b5080610b51816129e5565b915050610a66565b50806001600160401b03811115610b7257610b726125f8565b604051908082528060200260200182016040528015610ba557816020015b6060815260200190600190039081610b905790505b5092506000805b8351811015610cd75760006001858381518110610bcb57610bcb61299d565b6020026020010151604051610be091906129b3565b90815260408051602092819003830181206101008201835280546001600160a01b031682526001810154938201939093526002830154918101919091526003820154606082015260048201546080820152600582015460ff1615801560a08301819052600684015460c084015260079093015460e0830152909250610c69575088816060015110155b8015610c79575087816040015111155b15610cc457848281518110610c9057610c9061299d565b6020026020010151868481518110610caa57610caa61299d565b60200260200101819052508280610cc0906129e5565b9350505b5080610ccf816129e5565b915050610bac565b505050509392505050565b600080516020612b48833981519152610cfa8161211a565b60006001600160a01b031660008484604051610d1792919061298d565b908152604051908190036020019020546001600160a01b031603610d725760405162461bcd60e51b8152602060048201526012602482015271141c9bdd1bd8dbdb081b9bdd08199bdd5b9960721b60448201526064016106cb565b600060018484604051610d8692919061298d565b908152604051908190036020018120600501805492151560ff1990931692909217909155610db7908490849061298d565b604051908190038120907fc7724ac0d1432663dfaeca86c97b9664a725928c68c661685f85da64a1cdd24490600090a2505050565b600080516020612b48833981519152610e048161211a565b6001600160a01b038616610e4c5760405162461bcd60e51b815260206004820152600f60248201526e24b73b30b634b21030b230b83a32b960891b60448201526064016106cb565b6064841115610e935760405162461bcd60e51b81526020600482015260136024820152720a4d2e6d640e6c6dee4ca40e8dede40d0d2ced606b1b60448201526064016106cb565b81831115610ed75760405162461bcd60e51b8152602060048201526011602482015270496e76616c6964204150592072616e676560781b60448201526064016106cb565b8560008989604051610eea92919061298d565b908152602001604051809103902060006101000a8154816001600160a01b0302191690836001600160a01b03160217905550604051806101000160405280876001600160a01b03168152602001868152602001858152602001848152602001838152602001600115158152602001600081526020014281525060018989604051610f7592919061298d565b9081526040805160209281900383019020835181546001600160a01b0319166001600160a01b039091161781559183015160018084019190915590830151600283015560608301516003808401919091556080840151600484015560a084015160058401805460ff191691151591909117905560c0840151600684015560e090930151600790920191909155815490810182556000919091527fc2575a0e9e593c00f959f8c92f12db2869c3395a3b0502d05e2516446f71f85b0161103b888a836129fe565b50600085815260026020908152604082208054600181018255908352912001611065888a836129fe565b50878760405161107692919061298d565b604080519182900382206001600160a01b038916835260208301889052908201869052907f27c8373c6f4b65f599796fd1980ffd82583fb8979fc4c0a516c1618e4f606ad9906060015b60405180910390a25050505050505050565b600581815481106110e257600080fd5b600091825260209091200154905081565b606060026000838152602001908152602001600020805480602002602001604051908101604052809291908181526020016000905b828210156111d45783829060005260206000200180546111479061280d565b80601f01602080910402602001604051908101604052809291908181526020018280546111739061280d565b80156111c05780601f10611195576101008083540402835291602001916111c0565b820191906000526020600020905b8154815290600101906020018083116111a357829003601f168201915b505050505081526020019060010190611128565b505050509050919050565b60606003805480602002602001604051908101604052809291908181526020016000905b828210156112af5783829060005260206000200180546112229061280d565b80601f016020809104026020016040519081016040528092919081815260200182805461124e9061280d565b801561129b5780601f106112705761010080835404028352916020019161129b565b820191906000526020600020905b81548152906001019060200180831161127e57829003601f168201915b505050505081526020019060010190611203565b50505050905090565b6112f56040518060a001604052806060815260200160006001600160a01b0316815260200160008152602001600015158152602001600081525090565b60008281526004602052604090819020815160a0810190925280548290829061131d9061280d565b80601f01602080910402602001604051908101604052809291908181526020018280546113499061280d565b80156113965780601f1061136b57610100808354040283529160200191611396565b820191906000526020600020905b81548152906001019060200180831161137957829003601f168201915b505050918352505060018201546001600160a01b0316602082015260028201546040820152600382015460ff161515606082015260049091015460809091015292915050565b60606000805b60035481101561149c57836001600383815481106114025761140261299d565b906000526020600020016040516114199190612abe565b9081526020016040518091039020600201541115801561147757506001600382815481106114495761144961299d565b906000526020600020016040516114609190612abe565b9081526040519081900360200190206005015460ff165b1561148a5781611486816129e5565b9250505b80611494816129e5565b9150506113e2565b506000816001600160401b038111156114b7576114b76125f8565b6040519080825280602002602001820160405280156114ea57816020015b60608152602001906001900390816114d55790505b5090506000805b60035481101561166f57856001600383815481106115115761151161299d565b906000526020600020016040516115289190612abe565b9081526020016040518091039020600201541115801561158657506001600382815481106115585761155861299d565b9060005260206000200160405161156f9190612abe565b9081526040519081900360200190206005015460ff165b1561165d576003818154811061159e5761159e61299d565b9060005260206000200180546115b39061280d565b80601f01602080910402602001604051908101604052809291908181526020018280546115df9061280d565b801561162c5780601f106116015761010080835404028352916020019161162c565b820191906000526020600020905b81548152906001019060200180831161160f57829003601f168201915b50505050508383815181106116435761164361299d565b60200260200101819052508180611659906129e5565b9250505b80611667816129e5565b9150506114f1565b5090949350505050565b6003818154811061168957600080fd5b9060005260206000200160009150905080546116a49061280d565b80601f01602080910402602001604051908101604052809291908181526020018280546116d09061280d565b801561171d5780601f106116f25761010080835404028352916020019161171d565b820191906000526020600020905b81548152906001019060200180831161170057829003601f168201915b505050505081565b6000918252600080516020612b68833981519152602090815260408084206001600160a01b0393909316845291905290205460ff1690565b600080516020612b488339815191526117758161211a565b60006001600160a01b03166000888860405161179292919061298d565b908152604051908190036020019020546001600160a01b0316036117ed5760405162461bcd60e51b8152602060048201526012602482015271141c9bdd1bd8dbdb081b9bdd08199bdd5b9960721b60448201526064016106cb565b60648511156118345760405162461bcd60e51b81526020600482015260136024820152720a4d2e6d640e6c6dee4ca40e8dede40d0d2ced606b1b60448201526064016106cb565b828411156118785760405162461bcd60e51b8152602060048201526011602482015270496e76616c6964204150592072616e676560781b60448201526064016106cb565b60006001888860405161188c92919061298d565b9081526040519081900360200181206002810188905560038101879055600481018690556006810185905542600782015591506118cc908990899061298d565b6040805191829003822088835260208301889052908201869052907f3695d2299117db5971508d1a27dbc2066af3a351d28ff923828f726d725e300a906060016110c0565b6002602052816000526040600020818154811061192d57600080fd5b906000526020600020016000915091505080546116a49061280d565b600080838360405161195c92919061298d565b908152604051908190036020019020546001600160a01b0316905092915050565b606060058054806020026020016040519081016040528092919081815260200182805480156119cb57602002820191906000526020600020905b8154815260200190600101908083116119b7575b5050505050905090565b7ff0c57e16840df040f15088dc2f81fe391c3923bec73e23a9662efc9c229c6a008054600160401b810460ff1615906001600160401b0316600081158015611a1a5750825b90506000826001600160401b03166001148015611a365750303b155b905081158015611a44575080155b15611a625760405163f92ee8a960e01b815260040160405180910390fd5b845467ffffffffffffffff191660011785558315611a8c57845460ff60401b1916600160401b1785555b611a94612248565b611a9f600087612127565b50611ab8600080516020612b4883398151915287612127565b508315611aff57845460ff60401b19168555604051600181527fc7f505b2f371ae2175ee4913f4499e1f2633a7b5936321eed1cdaeb6115181d29060200160405180910390a15b505050505050565b611b1082610828565b611b198161211a565b61086683836121cc565b6000838152600260209081526040808320805482518185028101850190935280835260609493849084015b82821015611bfa578382906000526020600020018054611b6d9061280d565b80601f0160208091040260200160405190810160405280929190818152602001828054611b999061280d565b8015611be65780601f10611bbb57610100808354040283529160200191611be6565b820191906000526020600020905b815481529060010190602001808311611bc957829003601f168201915b505050505081526020019060010190611b4e565b505050509050600060026000868152602001908152602001600020805480602002602001604051908101604052809291908181526020016000905b82821015611ce1578382906000526020600020018054611c549061280d565b80601f0160208091040260200160405190810160405280929190818152602001828054611c809061280d565b8015611ccd5780601f10611ca257610100808354040283529160200191611ccd565b820191906000526020600020905b815481529060010190602001808311611cb057829003601f168201915b505050505081526020019060010190611c35565b5050505090506000805b8351811015611eb75760005b8351811015611ea45760006001868481518110611d1657611d1661299d565b6020026020010151604051611d2b91906129b3565b9081526040805191829003602090810183206101008401835280546001600160a01b03168452600180820154928501929092526002810154928401929092526003820154606084015260048201546080840152600582015460ff16151560a0840152600682015460c084015260079091015460e08301528651919250600091879085908110611dbc57611dbc61299d565b6020026020010151604051611dd191906129b3565b9081526040805191829003602090810183206101008401835280546001600160a01b031684526001810154918401919091526002810154918301919091526003810154606083015260048101546080830152600581015460ff16151560a080840191909152600682015460c084015260079091015460e08301528301519091508015611e5e57508060a001515b8015611e7c5750888260800151611e759190612b34565b8160600151115b15611e8f5784611e8b816129e5565b9550505b50508080611e9c906129e5565b915050611cf7565b5080611eaf816129e5565b915050611ceb565b50806001600160401b03811115611ed057611ed06125f8565b604051908082528060200260200182016040528015611f0357816020015b6060815260200190600190039081611eee5790505b5093506000805b845181101561210e5760005b84518110156120fb5760006001878481518110611f3557611f3561299d565b6020026020010151604051611f4a91906129b3565b9081526040805191829003602090810183206101008401835280546001600160a01b03168452600180820154928501929092526002810154928401929092526003820154606084015260048201546080840152600582015460ff16151560a0840152600682015460c084015260079091015460e08301528751919250600091889085908110611fdb57611fdb61299d565b6020026020010151604051611ff091906129b3565b9081526040805191829003602090810183206101008401835280546001600160a01b031684526001810154918401919091526002810154918301919091526003810154606083015260048101546080830152600581015460ff16151560a080840191909152600682015460c084015260079091015460e0830152830151909150801561207d57508060a001515b801561209b57508982608001516120949190612b34565b8160600151115b156120e6578683815181106120b2576120b261299d565b60200260200101518986815181106120cc576120cc61299d565b602002602001018190525084806120e2906129e5565b9550505b505080806120f3906129e5565b915050611f16565b5080612106816129e5565b915050611f0a565b50505050509392505050565b6121248133612252565b50565b6000600080516020612b688339815191526121428484611725565b6121c2576000848152602082815260408083206001600160a01b03871684529091529020805460ff191660011790556121783390565b6001600160a01b0316836001600160a01b0316857f2f8788117e7eff1d82e926ec794901d17c78024a50270940304540a733656f0d60405160405180910390a46001915050610671565b6000915050610671565b6000600080516020612b688339815191526121e78484611725565b156121c2576000848152602082815260408083206001600160a01b0387168085529252808320805460ff1916905551339287917ff6391f5c32d9c69d2a47ea670b442974b53935d1edc7fd64eb21e047a839171b9190a46001915050610671565b61225061228f565b565b61225c8282611725565b61228b5760405163e2517d3f60e01b81526001600160a01b0382166004820152602481018390526044016106cb565b5050565b7ff0c57e16840df040f15088dc2f81fe391c3923bec73e23a9662efc9c229c6a0054600160401b900460ff1661225057604051631afcd79f60e31b815260040160405180910390fd5b6000602082840312156122ea57600080fd5b5035919050565b60005b8381101561230c5781810151838201526020016122f4565b50506000910152565b6000815180845261232d8160208601602086016122f1565b601f01601f19169290920160200192915050565b60a08152600061235460a0830188612315565b6001600160a01b039690961660208301525060408101939093529015156060830152608090910152919050565b60006020828403121561239357600080fd5b81356001600160e01b0319811681146123ab57600080fd5b9392505050565b60008083601f8401126123c457600080fd5b5081356001600160401b038111156123db57600080fd5b6020830191508360208285010111156123f357600080fd5b9250929050565b80356001600160a01b038116811461241157600080fd5b919050565b60008060008060008060a0878903121561242f57600080fd5b8635955060208701356001600160401b0381111561244c57600080fd5b61245889828a016123b2565b909650945061246b9050604088016123fa565b925060608701359150608087013590509295509295509295565b6000806040838503121561249857600080fd5b823591506124a8602084016123fa565b90509250929050565b600080602083850312156124c457600080fd5b82356001600160401b038111156124da57600080fd5b6124e6858286016123b2565b90969095509350505050565b60008060006060848603121561250757600080fd5b505081359360208301359350604090920135919050565b6000602080830181845280855180835260408601915060408160051b870101925083870160005b8281101561257357603f19888603018452612561858351612315565b94509285019290850190600101612545565b5092979650505050505050565b600080600080600080600060c0888a03121561259b57600080fd5b87356001600160401b038111156125b157600080fd5b6125bd8a828b016123b2565b90985096506125d09050602089016123fa565b96999598509596604081013596506060810135956080820135955060a0909101359350915050565b634e487b7160e01b600052604160045260246000fd5b60006020828403121561262057600080fd5b81356001600160401b038082111561263757600080fd5b818401915084601f83011261264b57600080fd5b81358181111561265d5761265d6125f8565b604051601f8201601f19908116603f01168101908382118183101715612685576126856125f8565b8160405282815287602084870101111561269e57600080fd5b826020860160208301376000928101602001929092525095945050505050565b602081526000825160a060208401526126da60c0840182612315565b905060018060a01b03602085015116604084015260408401516060840152606084015115156080840152608084015160a08401528091505092915050565b6020815260006123ab6020830184612315565b60008060008060008060a0878903121561274457600080fd5b86356001600160401b0381111561275a57600080fd5b61276689828a016123b2565b909a90995060208901359860408101359850606081013597506080013595509350505050565b6000806040838503121561279f57600080fd5b50508035926020909101359150565b6020808252825182820181905260009190848201906040850190845b818110156127e6578351835292840192918401916001016127ca565b50909695505050505050565b60006020828403121561280457600080fd5b6123ab826123fa565b600181811c9082168061282157607f821691505b60208210810361284157634e487b7160e01b600052602260045260246000fd5b50919050565b601f82111561089f57600081815260208120601f850160051c8101602086101561286e5750805b601f850160051c820191505b81811015611aff5782815560010161287a565b81516001600160401b038111156128a6576128a66125f8565b6128ba816128b4845461280d565b84612847565b602080601f8311600181146128ef57600084156128d75750858301515b600019600386901b1c1916600185901b178555611aff565b600085815260208120601f198616915b8281101561291e578886015182559484019460019091019084016128ff565b508582101561293c5787850151600019600388901b60f8161c191681555b5050505050600190811b01905550565b6040815282604082015282846060830137600060608483018101919091526001600160a01b03929092166020820152601f909201601f191690910101919050565b8183823760009101908152919050565b634e487b7160e01b600052603260045260246000fd5b600082516129c58184602087016122f1565b9190910192915050565b634e487b7160e01b600052601160045260246000fd5b6000600182016129f7576129f76129cf565b5060010190565b6001600160401b03831115612a1557612a156125f8565b612a2983612a23835461280d565b83612847565b6000601f841160018114612a5d5760008515612a455750838201355b600019600387901b1c1916600186901b178355612ab7565b600083815260209020601f19861690835b82811015612a8e5786850135825560209485019460019092019101612a6e565b5086821015612aab5760001960f88860031b161c19848701351681555b505060018560011b0183555b5050505050565b6000808354612acc8161280d565b60018281168015612ae45760018114612af957612b28565b60ff1984168752821515830287019450612b28565b8760005260208060002060005b85811015612b1f5781548a820152908401908201612b06565b50505082870194505b50929695505050505050565b80820180821115610671576106716129cf56feda3bb1ed6d0047074a23ab55d6b8b4ebc655563ba5a668a4ed7540883cb393b002dd7bc7dec4dceedda775e58dd541e08a116c6c53815c0bd028192f7b626800a2646970667358221220e30486cfd69854588ec7b346a0d84a1d47898222d7d8d26abe13b348db423b6164736f6c63430008140033",
+  "deployedBytecode": "0x608060405234801561001057600080fd5b50600436106101cf5760003560e01c806375b238fc11610104578063af50f0a0116100a2578063c4d66de811610071578063c4d66de81461052b578063d547741f1461053e578063da253eac14610551578063f3cf92ed1461056657600080fd5b8063af50f0a01461043b578063b8062006146104f0578063bc4c221214610503578063c4bffe2b1461051657600080fd5b80638c396220116100de5780638c396220146103f557806391d1485414610415578063a217fddf146103ba578063aed6f3461461042857600080fd5b806375b238fc146103ba578063804ea334146103c257806386a0f052146103e257600080fd5b80633d0f1bbf11610171578063548d496f1161014b578063548d496f146103405780636c08b249146103535780636e1e3f6a1461039f578063741c53eb146103b257600080fd5b80633d0f1bbf146102fa578063450f9c361461031a5780634a2505911461032d57600080fd5b8063248a9ca3116101ad578063248a9ca3146102395780632f2ff15d1461025a57806336568abe1461026d578063370ca5bc1461028057600080fd5b80630157288b146101d457806301ffc9a714610201578063135ae33114610224575b600080fd5b6101e76101e23660046122d8565b610579565b6040516101f8959493929190612341565b60405180910390f35b61021461020f366004612381565b610640565b60405190151581526020016101f8565b610237610232366004612416565b610677565b005b61024c6102473660046122d8565b610828565b6040519081526020016101f8565b610237610268366004612485565b61084a565b61023761027b366004612485565b61086c565b61029361028e3660046124b1565b6108a4565b6040516101f8919081516001600160a01b031681526020808301519082015260408083015190820152606080830151908201526080808301519082015260a08281015115159082015260c0808301519082015260e091820151918101919091526101000190565b61030d6103083660046124f2565b610985565b6040516101f8919061251e565b6102376103283660046124b1565b610ce2565b61023761033b366004612580565b610dec565b61024c61034e3660046122d8565b6110d2565b61038761036136600461260e565b80516020818301810180516000825292820191909301209152546001600160a01b031681565b6040516001600160a01b0390911681526020016101f8565b61030d6103ad3660046122d8565b6110f3565b61030d6111df565b61024c600081565b6103d56103d03660046122d8565b6112b8565b6040516101f891906126be565b61030d6103f03660046122d8565b6113dc565b6104086104033660046122d8565b611679565b6040516101f89190612718565b610214610423366004612485565b611725565b61023761043636600461272b565b61175d565b6104a961044936600461260e565b805160208183018101805160018083529383019290940191909120929052815490820154600283015460038401546004850154600586015460068701546007909701546001600160a01b0390961696949593949293919260ff9091169188565b604080516001600160a01b03909916895260208901979097529587019490945260608601929092526080850152151560a084015260c083015260e0820152610100016101f8565b6104086104fe36600461278c565b611911565b6103876105113660046124b1565b611949565b61051e61197d565b6040516101f891906127ae565b6102376105393660046127f2565b6119d5565b61023761054c366004612485565b611b07565b61024c600080516020612b4883398151915281565b61030d6105743660046124f2565b611b23565b6004602052600090815260409020805481906105949061280d565b80601f01602080910402602001604051908101604052809291908181526020018280546105c09061280d565b801561060d5780601f106105e25761010080835404028352916020019161060d565b820191906000526020600020905b8154815290600101906020018083116105f057829003601f168201915b50505060018401546002850154600386015460049096015494956001600160a01b039092169490935060ff909116915085565b60006001600160e01b03198216637965db0b60e01b148061067157506301ffc9a760e01b6001600160e01b03198316145b92915050565b60006106828161211a565b6001600160a01b0384166106d45760405162461bcd60e51b815260206004820152601460248201527324b73b30b634b2103730ba34bb32903a37b5b2b760611b60448201526064015b60405180910390fd5b6040518060a0016040528087878080601f01602080910402602001604051908101604052809392919081815260200183838082843760009201829052509385525050506001600160a01b03871660208084019190915260408084018890526001606085015260809093018690528a8252600490522081518190610757908261288d565b506020820151600182810180546001600160a01b0319166001600160a01b03909316929092179091556040808401516002840155606084015160038401805460ff19169115159190911790556080909301516004909201919091556005805491820181556000527f036b6384b5eca791c62761152d0c79bb0604c104a5fb6f4eb0703f3154bb3db0018890555187907fd561e43d9bdfcde1ceb4f2cd9972b8f1667876d7df10a2b775f181b66ae5b39f906108179089908990899061294c565b60405180910390a250505050505050565b6000908152600080516020612b68833981519152602052604090206001015490565b61085382610828565b61085c8161211a565b6108668383612127565b50505050565b6001600160a01b03811633146108955760405163334bd91960e11b815260040160405180910390fd5b61089f82826121cc565b505050565b6108f760405180610100016040528060006001600160a01b031681526020016000815260200160008152602001600081526020016000815260200160001515815260200160008152602001600081525090565b6001838360405161090992919061298d565b9081526040805191829003602090810183206101008401835280546001600160a01b031684526001810154918401919091526002810154918301919091526003810154606083015260048101546080830152600581015460ff16151560a0830152600681015460c08301526007015460e0820152905092915050565b6000818152600260209081526040808320805482518185028101850190935280835260609493849084015b82821015610a5c5783829060005260206000200180546109cf9061280d565b80601f01602080910402602001604051908101604052809291908181526020018280546109fb9061280d565b8015610a485780601f10610a1d57610100808354040283529160200191610a48565b820191906000526020600020905b815481529060010190602001808311610a2b57829003601f168201915b5050505050815260200190600101906109b0565b5050505090506000805b8251811015610b595760006001848381518110610a8557610a8561299d565b6020026020010151604051610a9a91906129b3565b90815260408051602092819003830181206101008201835280546001600160a01b031682526001810154938201939093526002830154918101919091526003820154606082015260048201546080820152600582015460ff1615801560a08301819052600684015460c084015260079093015460e0830152909250610b23575087816060015110155b8015610b33575086816040015111155b15610b465782610b42816129e5565b9350505b5080610b51816129e5565b915050610a66565b50806001600160401b03811115610b7257610b726125f8565b604051908082528060200260200182016040528015610ba557816020015b6060815260200190600190039081610b905790505b5092506000805b8351811015610cd75760006001858381518110610bcb57610bcb61299d565b6020026020010151604051610be091906129b3565b90815260408051602092819003830181206101008201835280546001600160a01b031682526001810154938201939093526002830154918101919091526003820154606082015260048201546080820152600582015460ff1615801560a08301819052600684015460c084015260079093015460e0830152909250610c69575088816060015110155b8015610c79575087816040015111155b15610cc457848281518110610c9057610c9061299d565b6020026020010151868481518110610caa57610caa61299d565b60200260200101819052508280610cc0906129e5565b9350505b5080610ccf816129e5565b915050610bac565b505050509392505050565b600080516020612b48833981519152610cfa8161211a565b60006001600160a01b031660008484604051610d1792919061298d565b908152604051908190036020019020546001600160a01b031603610d725760405162461bcd60e51b8152602060048201526012602482015271141c9bdd1bd8dbdb081b9bdd08199bdd5b9960721b60448201526064016106cb565b600060018484604051610d8692919061298d565b908152604051908190036020018120600501805492151560ff1990931692909217909155610db7908490849061298d565b604051908190038120907fc7724ac0d1432663dfaeca86c97b9664a725928c68c661685f85da64a1cdd24490600090a2505050565b600080516020612b48833981519152610e048161211a565b6001600160a01b038616610e4c5760405162461bcd60e51b815260206004820152600f60248201526e24b73b30b634b21030b230b83a32b960891b60448201526064016106cb565b6064841115610e935760405162461bcd60e51b81526020600482015260136024820152720a4d2e6d640e6c6dee4ca40e8dede40d0d2ced606b1b60448201526064016106cb565b81831115610ed75760405162461bcd60e51b8152602060048201526011602482015270496e76616c6964204150592072616e676560781b60448201526064016106cb565b8560008989604051610eea92919061298d565b908152602001604051809103902060006101000a8154816001600160a01b0302191690836001600160a01b03160217905550604051806101000160405280876001600160a01b03168152602001868152602001858152602001848152602001838152602001600115158152602001600081526020014281525060018989604051610f7592919061298d565b9081526040805160209281900383019020835181546001600160a01b0319166001600160a01b039091161781559183015160018084019190915590830151600283015560608301516003808401919091556080840151600484015560a084015160058401805460ff191691151591909117905560c0840151600684015560e090930151600790920191909155815490810182556000919091527fc2575a0e9e593c00f959f8c92f12db2869c3395a3b0502d05e2516446f71f85b0161103b888a836129fe565b50600085815260026020908152604082208054600181018255908352912001611065888a836129fe565b50878760405161107692919061298d565b604080519182900382206001600160a01b038916835260208301889052908201869052907f27c8373c6f4b65f599796fd1980ffd82583fb8979fc4c0a516c1618e4f606ad9906060015b60405180910390a25050505050505050565b600581815481106110e257600080fd5b600091825260209091200154905081565b606060026000838152602001908152602001600020805480602002602001604051908101604052809291908181526020016000905b828210156111d45783829060005260206000200180546111479061280d565b80601f01602080910402602001604051908101604052809291908181526020018280546111739061280d565b80156111c05780601f10611195576101008083540402835291602001916111c0565b820191906000526020600020905b8154815290600101906020018083116111a357829003601f168201915b505050505081526020019060010190611128565b505050509050919050565b60606003805480602002602001604051908101604052809291908181526020016000905b828210156112af5783829060005260206000200180546112229061280d565b80601f016020809104026020016040519081016040528092919081815260200182805461124e9061280d565b801561129b5780601f106112705761010080835404028352916020019161129b565b820191906000526020600020905b81548152906001019060200180831161127e57829003601f168201915b505050505081526020019060010190611203565b50505050905090565b6112f56040518060a001604052806060815260200160006001600160a01b0316815260200160008152602001600015158152602001600081525090565b60008281526004602052604090819020815160a0810190925280548290829061131d9061280d565b80601f01602080910402602001604051908101604052809291908181526020018280546113499061280d565b80156113965780601f1061136b57610100808354040283529160200191611396565b820191906000526020600020905b81548152906001019060200180831161137957829003601f168201915b505050918352505060018201546001600160a01b0316602082015260028201546040820152600382015460ff161515606082015260049091015460809091015292915050565b60606000805b60035481101561149c57836001600383815481106114025761140261299d565b906000526020600020016040516114199190612abe565b9081526020016040518091039020600201541115801561147757506001600382815481106114495761144961299d565b906000526020600020016040516114609190612abe565b9081526040519081900360200190206005015460ff165b1561148a5781611486816129e5565b9250505b80611494816129e5565b9150506113e2565b506000816001600160401b038111156114b7576114b76125f8565b6040519080825280602002602001820160405280156114ea57816020015b60608152602001906001900390816114d55790505b5090506000805b60035481101561166f57856001600383815481106115115761151161299d565b906000526020600020016040516115289190612abe565b9081526020016040518091039020600201541115801561158657506001600382815481106115585761155861299d565b9060005260206000200160405161156f9190612abe565b9081526040519081900360200190206005015460ff165b1561165d576003818154811061159e5761159e61299d565b9060005260206000200180546115b39061280d565b80601f01602080910402602001604051908101604052809291908181526020018280546115df9061280d565b801561162c5780601f106116015761010080835404028352916020019161162c565b820191906000526020600020905b81548152906001019060200180831161160f57829003601f168201915b50505050508383815181106116435761164361299d565b60200260200101819052508180611659906129e5565b9250505b80611667816129e5565b9150506114f1565b5090949350505050565b6003818154811061168957600080fd5b9060005260206000200160009150905080546116a49061280d565b80601f01602080910402602001604051908101604052809291908181526020018280546116d09061280d565b801561171d5780601f106116f25761010080835404028352916020019161171d565b820191906000526020600020905b81548152906001019060200180831161170057829003601f168201915b505050505081565b6000918252600080516020612b68833981519152602090815260408084206001600160a01b0393909316845291905290205460ff1690565b600080516020612b488339815191526117758161211a565b60006001600160a01b03166000888860405161179292919061298d565b908152604051908190036020019020546001600160a01b0316036117ed5760405162461bcd60e51b8152602060048201526012602482015271141c9bdd1bd8dbdb081b9bdd08199bdd5b9960721b60448201526064016106cb565b60648511156118345760405162461bcd60e51b81526020600482015260136024820152720a4d2e6d640e6c6dee4ca40e8dede40d0d2ced606b1b60448201526064016106cb565b828411156118785760405162461bcd60e51b8152602060048201526011602482015270496e76616c6964204150592072616e676560781b60448201526064016106cb565b60006001888860405161188c92919061298d565b9081526040519081900360200181206002810188905560038101879055600481018690556006810185905542600782015591506118cc908990899061298d565b6040805191829003822088835260208301889052908201869052907f3695d2299117db5971508d1a27dbc2066af3a351d28ff923828f726d725e300a906060016110c0565b6002602052816000526040600020818154811061192d57600080fd5b906000526020600020016000915091505080546116a49061280d565b600080838360405161195c92919061298d565b908152604051908190036020019020546001600160a01b0316905092915050565b606060058054806020026020016040519081016040528092919081815260200182805480156119cb57602002820191906000526020600020905b8154815260200190600101908083116119b7575b5050505050905090565b7ff0c57e16840df040f15088dc2f81fe391c3923bec73e23a9662efc9c229c6a008054600160401b810460ff1615906001600160401b0316600081158015611a1a5750825b90506000826001600160401b03166001148015611a365750303b155b905081158015611a44575080155b15611a625760405163f92ee8a960e01b815260040160405180910390fd5b845467ffffffffffffffff191660011785558315611a8c57845460ff60401b1916600160401b1785555b611a94612248565b611a9f600087612127565b50611ab8600080516020612b4883398151915287612127565b508315611aff57845460ff60401b19168555604051600181527fc7f505b2f371ae2175ee4913f4499e1f2633a7b5936321eed1cdaeb6115181d29060200160405180910390a15b505050505050565b611b1082610828565b611b198161211a565b61086683836121cc565b6000838152600260209081526040808320805482518185028101850190935280835260609493849084015b82821015611bfa578382906000526020600020018054611b6d9061280d565b80601f0160208091040260200160405190810160405280929190818152602001828054611b999061280d565b8015611be65780601f10611bbb57610100808354040283529160200191611be6565b820191906000526020600020905b815481529060010190602001808311611bc957829003601f168201915b505050505081526020019060010190611b4e565b505050509050600060026000868152602001908152602001600020805480602002602001604051908101604052809291908181526020016000905b82821015611ce1578382906000526020600020018054611c549061280d565b80601f0160208091040260200160405190810160405280929190818152602001828054611c809061280d565b8015611ccd5780601f10611ca257610100808354040283529160200191611ccd565b820191906000526020600020905b815481529060010190602001808311611cb057829003601f168201915b505050505081526020019060010190611c35565b5050505090506000805b8351811015611eb75760005b8351811015611ea45760006001868481518110611d1657611d1661299d565b6020026020010151604051611d2b91906129b3565b9081526040805191829003602090810183206101008401835280546001600160a01b03168452600180820154928501929092526002810154928401929092526003820154606084015260048201546080840152600582015460ff16151560a0840152600682015460c084015260079091015460e08301528651919250600091879085908110611dbc57611dbc61299d565b6020026020010151604051611dd191906129b3565b9081526040805191829003602090810183206101008401835280546001600160a01b031684526001810154918401919091526002810154918301919091526003810154606083015260048101546080830152600581015460ff16151560a080840191909152600682015460c084015260079091015460e08301528301519091508015611e5e57508060a001515b8015611e7c5750888260800151611e759190612b34565b8160600151115b15611e8f5784611e8b816129e5565b9550505b50508080611e9c906129e5565b915050611cf7565b5080611eaf816129e5565b915050611ceb565b50806001600160401b03811115611ed057611ed06125f8565b604051908082528060200260200182016040528015611f0357816020015b6060815260200190600190039081611eee5790505b5093506000805b845181101561210e5760005b84518110156120fb5760006001878481518110611f3557611f3561299d565b6020026020010151604051611f4a91906129b3565b9081526040805191829003602090810183206101008401835280546001600160a01b03168452600180820154928501929092526002810154928401929092526003820154606084015260048201546080840152600582015460ff16151560a0840152600682015460c084015260079091015460e08301528751919250600091889085908110611fdb57611fdb61299d565b6020026020010151604051611ff091906129b3565b9081526040805191829003602090810183206101008401835280546001600160a01b031684526001810154918401919091526002810154918301919091526003810154606083015260048101546080830152600581015460ff16151560a080840191909152600682015460c084015260079091015460e0830152830151909150801561207d57508060a001515b801561209b57508982608001516120949190612b34565b8160600151115b156120e6578683815181106120b2576120b261299d565b60200260200101518986815181106120cc576120cc61299d565b602002602001018190525084806120e2906129e5565b9550505b505080806120f3906129e5565b915050611f16565b5080612106816129e5565b915050611f0a565b50505050509392505050565b6121248133612252565b50565b6000600080516020612b688339815191526121428484611725565b6121c2576000848152602082815260408083206001600160a01b03871684529091529020805460ff191660011790556121783390565b6001600160a01b0316836001600160a01b0316857f2f8788117e7eff1d82e926ec794901d17c78024a50270940304540a733656f0d60405160405180910390a46001915050610671565b6000915050610671565b6000600080516020612b688339815191526121e78484611725565b156121c2576000848152602082815260408083206001600160a01b0387168085529252808320805460ff1916905551339287917ff6391f5c32d9c69d2a47ea670b442974b53935d1edc7fd64eb21e047a839171b9190a46001915050610671565b61225061228f565b565b61225c8282611725565b61228b5760405163e2517d3f60e01b81526001600160a01b0382166004820152602481018390526044016106cb565b5050565b7ff0c57e16840df040f15088dc2f81fe391c3923bec73e23a9662efc9c229c6a0054600160401b900460ff1661225057604051631afcd79f60e31b815260040160405180910390fd5b6000602082840312156122ea57600080fd5b5035919050565b60005b8381101561230c5781810151838201526020016122f4565b50506000910152565b6000815180845261232d8160208601602086016122f1565b601f01601f19169290920160200192915050565b60a08152600061235460a0830188612315565b6001600160a01b039690961660208301525060408101939093529015156060830152608090910152919050565b60006020828403121561239357600080fd5b81356001600160e01b0319811681146123ab57600080fd5b9392505050565b60008083601f8401126123c457600080fd5b5081356001600160401b038111156123db57600080fd5b6020830191508360208285010111156123f357600080fd5b9250929050565b80356001600160a01b038116811461241157600080fd5b919050565b60008060008060008060a0878903121561242f57600080fd5b8635955060208701356001600160401b0381111561244c57600080fd5b61245889828a016123b2565b909650945061246b9050604088016123fa565b925060608701359150608087013590509295509295509295565b6000806040838503121561249857600080fd5b823591506124a8602084016123fa565b90509250929050565b600080602083850312156124c457600080fd5b82356001600160401b038111156124da57600080fd5b6124e6858286016123b2565b90969095509350505050565b60008060006060848603121561250757600080fd5b505081359360208301359350604090920135919050565b6000602080830181845280855180835260408601915060408160051b870101925083870160005b8281101561257357603f19888603018452612561858351612315565b94509285019290850190600101612545565b5092979650505050505050565b600080600080600080600060c0888a03121561259b57600080fd5b87356001600160401b038111156125b157600080fd5b6125bd8a828b016123b2565b90985096506125d09050602089016123fa565b96999598509596604081013596506060810135956080820135955060a0909101359350915050565b634e487b7160e01b600052604160045260246000fd5b60006020828403121561262057600080fd5b81356001600160401b038082111561263757600080fd5b818401915084601f83011261264b57600080fd5b81358181111561265d5761265d6125f8565b604051601f8201601f19908116603f01168101908382118183101715612685576126856125f8565b8160405282815287602084870101111561269e57600080fd5b826020860160208301376000928101602001929092525095945050505050565b602081526000825160a060208401526126da60c0840182612315565b905060018060a01b03602085015116604084015260408401516060840152606084015115156080840152608084015160a08401528091505092915050565b6020815260006123ab6020830184612315565b60008060008060008060a0878903121561274457600080fd5b86356001600160401b0381111561275a57600080fd5b61276689828a016123b2565b909a90995060208901359860408101359850606081013597506080013595509350505050565b6000806040838503121561279f57600080fd5b50508035926020909101359150565b6020808252825182820181905260009190848201906040850190845b818110156127e6578351835292840192918401916001016127ca565b50909695505050505050565b60006020828403121561280457600080fd5b6123ab826123fa565b600181811c9082168061282157607f821691505b60208210810361284157634e487b7160e01b600052602260045260246000fd5b50919050565b601f82111561089f57600081815260208120601f850160051c8101602086101561286e5750805b601f850160051c820191505b81811015611aff5782815560010161287a565b81516001600160401b038111156128a6576128a66125f8565b6128ba816128b4845461280d565b84612847565b602080601f8311600181146128ef57600084156128d75750858301515b600019600386901b1c1916600185901b178555611aff565b600085815260208120601f198616915b8281101561291e578886015182559484019460019091019084016128ff565b508582101561293c5787850151600019600388901b60f8161c191681555b5050505050600190811b01905550565b6040815282604082015282846060830137600060608483018101919091526001600160a01b03929092166020820152601f909201601f191690910101919050565b8183823760009101908152919050565b634e487b7160e01b600052603260045260246000fd5b600082516129c58184602087016122f1565b9190910192915050565b634e487b7160e01b600052601160045260246000fd5b6000600182016129f7576129f76129cf565b5060010190565b6001600160401b03831115612a1557612a156125f8565b612a2983612a23835461280d565b83612847565b6000601f841160018114612a5d5760008515612a455750838201355b600019600387901b1c1916600186901b178355612ab7565b600083815260209020601f19861690835b82811015612a8e5786850135825560209485019460019092019101612a6e565b5086821015612aab5760001960f88860031b161c19848701351681555b505060018560011b0183555b5050505050565b6000808354612acc8161280d565b60018281168015612ae45760018114612af957612b28565b60ff1984168752821515830287019450612b28565b8760005260208060002060005b85811015612b1f5781548a820152908401908201612b06565b50505082870194505b50929695505050505050565b80820180821115610671576106716129cf56feda3bb1ed6d0047074a23ab55d6b8b4ebc655563ba5a668a4ed7540883cb393b002dd7bc7dec4dceedda775e58dd541e08a116c6c53815c0bd028192f7b626800a2646970667358221220e30486cfd69854588ec7b346a0d84a1d47898222d7d8d26abe13b348db423b6164736f6c63430008140033",
+  "devdoc": {
+    "errors": {
+      "AccessControlBadConfirmation()": [
+        {
+          "details": "The caller of a function is not the expected one. NOTE: Don't confuse with {AccessControlUnauthorizedAccount}."
+        }
+      ],
+      "AccessControlUnauthorizedAccount(address,bytes32)": [
+        {
+          "details": "The `account` is missing a role."
+        }
+      ],
+      "InvalidInitialization()": [
+        {
+          "details": "The contract is already initialized."
+        }
+      ],
+      "NotInitializing()": [
+        {
+          "details": "The contract is not initializing."
+        }
+      ]
+    },
+    "events": {
+      "Initialized(uint64)": {
+        "details": "Triggered when the contract has been initialized or reinitialized."
+      },
+      "RoleAdminChanged(bytes32,bytes32,bytes32)": {
+        "details": "Emitted when `newAdminRole` is set as ``role``'s admin role, replacing `previousAdminRole` `DEFAULT_ADMIN_ROLE` is the starting admin for all roles, despite {RoleAdminChanged} not being emitted signaling this."
+      },
+      "RoleGranted(bytes32,address,address)": {
+        "details": "Emitted when `account` is granted `role`. `sender` is the account that originated the contract call, an admin role bearer except when using {AccessControl-_setupRole}."
+      },
+      "RoleRevoked(bytes32,address,address)": {
+        "details": "Emitted when `account` is revoked `role`. `sender` is the account that originated the contract call:   - if using `revokeRole`, it is the admin role bearer   - if using `renounceRole`, it is the role bearer (i.e. `account`)"
+      }
+    },
+    "kind": "dev",
+    "methods": {
+      "getRoleAdmin(bytes32)": {
+        "details": "Returns the admin role that controls `role`. See {grantRole} and {revokeRole}. To change a role's admin, use {_setRoleAdmin}."
+      },
+      "grantRole(bytes32,address)": {
+        "details": "Grants `role` to `account`. If `account` had not been already granted `role`, emits a {RoleGranted} event. Requirements: - the caller must have ``role``'s admin role. May emit a {RoleGranted} event."
+      },
+      "hasRole(bytes32,address)": {
+        "details": "Returns `true` if `account` has been granted `role`."
+      },
+      "renounceRole(bytes32,address)": {
+        "details": "Revokes `role` from the calling account. Roles are often managed via {grantRole} and {revokeRole}: this function's purpose is to provide a mechanism for accounts to lose their privileges if they are compromised (such as when a trusted device is misplaced). If the calling account had been revoked `role`, emits a {RoleRevoked} event. Requirements: - the caller must be `callerConfirmation`. May emit a {RoleRevoked} event."
+      },
+      "revokeRole(bytes32,address)": {
+        "details": "Revokes `role` from `account`. If `account` had been granted `role`, emits a {RoleRevoked} event. Requirements: - the caller must have ``role``'s admin role. May emit a {RoleRevoked} event."
+      },
+      "supportsInterface(bytes4)": {
+        "details": "See {IERC165-supportsInterface}."
+      }
+    },
+    "version": 1
+  },
+  "userdoc": {
+    "kind": "user",
+    "methods": {},
+    "version": 1
+  },
+  "storageLayout": {
+    "storage": [
+      {
+        "astId": 1763,
+        "contract": "contracts/ChainRegistry.sol:ChainRegistry",
+        "label": "protocolAdapters",
+        "offset": 0,
+        "slot": "0",
+        "type": "t_mapping(t_string_memory_ptr,t_address)"
+      },
+      {
+        "astId": 1768,
+        "contract": "contracts/ChainRegistry.sol:ChainRegistry",
+        "label": "protocolInfo",
+        "offset": 0,
+        "slot": "1",
+        "type": "t_mapping(t_string_memory_ptr,t_struct(ProtocolInfo)1801_storage)"
+      },
+      {
+        "astId": 1773,
+        "contract": "contracts/ChainRegistry.sol:ChainRegistry",
+        "label": "chainProtocols",
+        "offset": 0,
+        "slot": "2",
+        "type": "t_mapping(t_uint256,t_array(t_string_storage)dyn_storage)"
+      },
+      {
+        "astId": 1776,
+        "contract": "contracts/ChainRegistry.sol:ChainRegistry",
+        "label": "protocols",
+        "offset": 0,
+        "slot": "3",
+        "type": "t_array(t_string_storage)dyn_storage"
+      },
+      {
+        "astId": 1781,
+        "contract": "contracts/ChainRegistry.sol:ChainRegistry",
+        "label": "chainInfo",
+        "offset": 0,
+        "slot": "4",
+        "type": "t_mapping(t_uint256,t_struct(ChainInfo)1812_storage)"
+      },
+      {
+        "astId": 1784,
+        "contract": "contracts/ChainRegistry.sol:ChainRegistry",
+        "label": "supportedChains",
+        "offset": 0,
+        "slot": "5",
+        "type": "t_array(t_uint256)dyn_storage"
+      }
+    ],
+    "types": {
+      "t_address": {
+        "encoding": "inplace",
+        "label": "address",
+        "numberOfBytes": "20"
+      },
+      "t_array(t_string_storage)dyn_storage": {
+        "base": "t_string_storage",
+        "encoding": "dynamic_array",
+        "label": "string[]",
+        "numberOfBytes": "32"
+      },
+      "t_array(t_uint256)dyn_storage": {
+        "base": "t_uint256",
+        "encoding": "dynamic_array",
+        "label": "uint256[]",
+        "numberOfBytes": "32"
+      },
+      "t_bool": {
+        "encoding": "inplace",
+        "label": "bool",
+        "numberOfBytes": "1"
+      },
+      "t_mapping(t_string_memory_ptr,t_address)": {
+        "encoding": "mapping",
+        "key": "t_string_memory_ptr",
+        "label": "mapping(string => address)",
+        "numberOfBytes": "32",
+        "value": "t_address"
+      },
+      "t_mapping(t_string_memory_ptr,t_struct(ProtocolInfo)1801_storage)": {
+        "encoding": "mapping",
+        "key": "t_string_memory_ptr",
+        "label": "mapping(string => struct ChainRegistry.ProtocolInfo)",
+        "numberOfBytes": "32",
+        "value": "t_struct(ProtocolInfo)1801_storage"
+      },
+      "t_mapping(t_uint256,t_array(t_string_storage)dyn_storage)": {
+        "encoding": "mapping",
+        "key": "t_uint256",
+        "label": "mapping(uint256 => string[])",
+        "numberOfBytes": "32",
+        "value": "t_array(t_string_storage)dyn_storage"
+      },
+      "t_mapping(t_uint256,t_struct(ChainInfo)1812_storage)": {
+        "encoding": "mapping",
+        "key": "t_uint256",
+        "label": "mapping(uint256 => struct ChainRegistry.ChainInfo)",
+        "numberOfBytes": "32",
+        "value": "t_struct(ChainInfo)1812_storage"
+      },
+      "t_string_memory_ptr": {
+        "encoding": "bytes",
+        "label": "string",
+        "numberOfBytes": "32"
+      },
+      "t_string_storage": {
+        "encoding": "bytes",
+        "label": "string",
+        "numberOfBytes": "32"
+      },
+      "t_struct(ChainInfo)1812_storage": {
+        "encoding": "inplace",
+        "label": "struct ChainRegistry.ChainInfo",
+        "members": [
+          {
+            "astId": 1803,
+            "contract": "contracts/ChainRegistry.sol:ChainRegistry",
+            "label": "name",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_string_storage"
+          },
+          {
+            "astId": 1805,
+            "contract": "contracts/ChainRegistry.sol:ChainRegistry",
+            "label": "nativeToken",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_address"
+          },
+          {
+            "astId": 1807,
+            "contract": "contracts/ChainRegistry.sol:ChainRegistry",
+            "label": "gasPrice",
+            "offset": 0,
+            "slot": "2",
+            "type": "t_uint256"
+          },
+          {
+            "astId": 1809,
+            "contract": "contracts/ChainRegistry.sol:ChainRegistry",
+            "label": "isActive",
+            "offset": 0,
+            "slot": "3",
+            "type": "t_bool"
+          },
+          {
+            "astId": 1811,
+            "contract": "contracts/ChainRegistry.sol:ChainRegistry",
+            "label": "bridgeCost",
+            "offset": 0,
+            "slot": "4",
+            "type": "t_uint256"
+          }
+        ],
+        "numberOfBytes": "160"
+      },
+      "t_struct(ProtocolInfo)1801_storage": {
+        "encoding": "inplace",
+        "label": "struct ChainRegistry.ProtocolInfo",
+        "members": [
+          {
+            "astId": 1786,
+            "contract": "contracts/ChainRegistry.sol:ChainRegistry",
+            "label": "adapter",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_address"
+          },
+          {
+            "astId": 1788,
+            "contract": "contracts/ChainRegistry.sol:ChainRegistry",
+            "label": "chainId",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_uint256"
+          },
+          {
+            "astId": 1790,
+            "contract": "contracts/ChainRegistry.sol:ChainRegistry",
+            "label": "riskScore",
+            "offset": 0,
+            "slot": "2",
+            "type": "t_uint256"
+          },
+          {
+            "astId": 1792,
+            "contract": "contracts/ChainRegistry.sol:ChainRegistry",
+            "label": "minAPY",
+            "offset": 0,
+            "slot": "3",
+            "type": "t_uint256"
+          },
+          {
+            "astId": 1794,
+            "contract": "contracts/ChainRegistry.sol:ChainRegistry",
+            "label": "maxAPY",
+            "offset": 0,
+            "slot": "4",
+            "type": "t_uint256"
+          },
+          {
+            "astId": 1796,
+            "contract": "contracts/ChainRegistry.sol:ChainRegistry",
+            "label": "isActive",
+            "offset": 0,
+            "slot": "5",
+            "type": "t_bool"
+          },
+          {
+            "astId": 1798,
+            "contract": "contracts/ChainRegistry.sol:ChainRegistry",
+            "label": "tvl",
+            "offset": 0,
+            "slot": "6",
+            "type": "t_uint256"
+          },
+          {
+            "astId": 1800,
+            "contract": "contracts/ChainRegistry.sol:ChainRegistry",
+            "label": "lastUpdate",
+            "offset": 0,
+            "slot": "7",
+            "type": "t_uint256"
+          }
+        ],
+        "numberOfBytes": "256"
+      },
+      "t_uint256": {
+        "encoding": "inplace",
+        "label": "uint256",
+        "numberOfBytes": "32"
+      }
+    }
+  }
+}

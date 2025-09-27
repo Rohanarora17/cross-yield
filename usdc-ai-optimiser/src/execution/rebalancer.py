@@ -1,5 +1,5 @@
 # src/execution/rebalancer.py
-"""USDC AI Optimizer Rebalancer - Automated Portfolio Management"""
+"""CrossYield Smart Wallet Rebalancer - Individual Portfolio Management"""
 
 import asyncio
 import json
@@ -13,12 +13,18 @@ import pandas as pd
 import numpy as np
 from dotenv import load_dotenv
 
+# Import our smart wallet integrations
+from ..contract_integration import contract_manager
+from ..smart_wallet_cctp import smart_wallet_cctp
+
 # Load environment variables
 load_dotenv()
 
 @dataclass
-class PortfolioPosition:
-    """Portfolio position data"""
+class UserPortfolioPosition:
+    """Individual user portfolio position data"""
+    user_address: str
+    smart_wallet_address: str
     protocol: str
     chain: str
     pool_address: str
@@ -53,10 +59,12 @@ class USDAIRebalancer:
         from ..apis.graph_integration import GraphIntegration
         from ..apis.cctp_integration import CCTPIntegration
         from ..data.enhanced_aggregator import EnhancedUSDCDataAggregator
+        from ..protocols.protocol_investor import ProtocolInvestor
 
         self.graph = GraphIntegration()
         self.cctp = CCTPIntegration()
         self.aggregator = EnhancedUSDCDataAggregator()
+        self.investor = ProtocolInvestor()
 
         # Rebalancing parameters
         self.rebalance_threshold = 0.05  # 5% deviation triggers rebalance
@@ -514,6 +522,208 @@ class USDAIRebalancer:
         
         print(f"   Optimized to {len(optimized_actions)} actions")
         return optimized_actions
+
+    async def invest_portfolio(self, strategy: str = "balanced", total_amount: float = None) -> Dict:
+        """Actually invest the portfolio into DeFi protocols"""
+        
+        print(f"💰 INVESTING PORTFOLIO - {strategy.upper()} STRATEGY")
+        print("=" * 60)
+        
+        try:
+            # Get current wallet balances
+            current_positions = await self.get_current_portfolio()
+            total_value = sum(pos.amount_usdc for pos in current_positions)
+            
+            if total_amount is None:
+                total_amount = total_value
+            
+            print(f"Total Portfolio Value: ${total_value:.2f}")
+            print(f"Amount to Invest: ${total_amount:.2f}")
+            
+            if total_amount < 10.0:
+                print("❌ Portfolio too small for investment (minimum $10)")
+                return {"status": "failed", "reason": "insufficient_amount"}
+            
+            # Get target allocations
+            target_allocations = await self.get_optimization_targets(strategy)
+            
+            print(f"\nInvestment Plan:")
+            investments = []
+            total_invested = 0.0
+            
+            for target in target_allocations:
+                target_amount = (target['allocation_percentage'] / 100) * total_amount
+                
+                if target_amount >= 1.0:  # Minimum $1 investment
+                    print(f"   {target['protocol']} ({target['chain']}): ${target_amount:.2f}")
+                    
+                    # Map to protocol investor format
+                    protocol_key = f"{target['protocol']}_{target['chain']}"
+                    
+                    # Execute investment
+                    investment = await self.investor.invest_in_protocol(
+                        protocol=protocol_key,
+                        amount_usdc=target_amount,
+                        apy=target['target_apy'],
+                        risk_score=target['risk_score']
+                    )
+                    
+                    investments.append(investment)
+                    total_invested += target_amount if investment.status == "invested" else 0
+            
+            # Get final protocol balances
+            print(f"\n📊 Final Protocol Balances:")
+            protocol_balances = await self.investor.get_all_protocol_balances()
+            
+            for protocol, balance in protocol_balances.items():
+                if balance > 0:
+                    print(f"   {protocol}: ${balance:.2f} USDC")
+            
+            result = {
+                "status": "completed",
+                "strategy": strategy,
+                "total_amount": total_amount,
+                "total_invested": total_invested,
+                "investments_count": len(investments),
+                "successful_investments": len([i for i in investments if i.status == "invested"]),
+                "protocol_balances": protocol_balances,
+                "timestamp": datetime.now().isoformat()
+            }
+            
+            print(f"\n🎯 INVESTMENT SUMMARY:")
+            print(f"   Strategy: {strategy}")
+            print(f"   Total Invested: ${total_invested:.2f}")
+            print(f"   Successful Investments: {result['successful_investments']}")
+            print(f"   Protocol Positions: {len([b for b in protocol_balances.values() if b > 0])}")
+            
+            return result
+            
+        except Exception as e:
+            print(f"❌ Portfolio investment failed: {e}")
+            return {
+                "status": "failed",
+                "error": str(e),
+                "timestamp": datetime.now().isoformat()
+            }
+
+    async def rebalance_invested_portfolio(self, strategy: str = "balanced") -> Dict:
+        """Rebalance an already invested portfolio"""
+        
+        print(f"🔄 REBALANCING INVESTED PORTFOLIO - {strategy.upper()} STRATEGY")
+        print("=" * 60)
+        
+        try:
+            # Get current protocol balances
+            protocol_balances = await self.investor.get_all_protocol_balances()
+            total_invested = sum(protocol_balances.values())
+            
+            print(f"Total Invested Value: ${total_invested:.2f}")
+            
+            if total_invested < 10.0:
+                print("❌ Portfolio too small for rebalancing")
+                return {"status": "skipped", "reason": "insufficient_amount"}
+            
+            # Get target allocations
+            target_allocations = await self.get_optimization_targets(strategy)
+            
+            # Calculate rebalancing actions
+            rebalance_actions = []
+            
+            for target in target_allocations:
+                protocol_key = f"{target['protocol']}_{target['chain']}"
+                target_amount = (target['allocation_percentage'] / 100) * total_invested
+                current_amount = protocol_balances.get(protocol_key, 0.0)
+                difference = target_amount - current_amount
+                
+                if abs(difference) > 1.0:  # Minimum $1 rebalancing
+                    if difference > 0:
+                        # Need to invest more
+                        rebalance_actions.append({
+                            "action": "invest",
+                            "protocol": protocol_key,
+                            "amount": difference,
+                            "reason": f"Rebalance to {target['allocation_percentage']}%"
+                        })
+                    else:
+                        # Need to withdraw
+                        rebalance_actions.append({
+                            "action": "withdraw",
+                            "protocol": protocol_key,
+                            "amount": abs(difference),
+                            "reason": f"Rebalance from {target['allocation_percentage']}%"
+                        })
+            
+            if not rebalance_actions:
+                print("✅ Portfolio already optimally balanced!")
+                return {"status": "no_action_needed"}
+            
+            print(f"Rebalancing Actions Needed: {len(rebalance_actions)}")
+            
+            # Execute rebalancing actions
+            executed_actions = []
+            
+            for action in rebalance_actions:
+                print(f"\nAction: {action['action']} ${action['amount']:.2f} in {action['protocol']}")
+                
+                try:
+                    if action['action'] == 'invest':
+                        investment = await self.investor.invest_in_protocol(
+                            protocol=action['protocol'],
+                            amount_usdc=action['amount'],
+                            apy=0.05,  # Default APY
+                            risk_score=0.2  # Default risk
+                        )
+                        executed_actions.append(investment)
+                    elif action['action'] == 'withdraw':
+                        tx_hash = await self.investor.withdraw_from_protocol(
+                            protocol=action['protocol'],
+                            amount_usdc=action['amount']
+                        )
+                        executed_actions.append({
+                            "action": "withdraw",
+                            "protocol": action['protocol'],
+                            "amount": action['amount'],
+                            "tx_hash": tx_hash,
+                            "status": "completed"
+                        })
+                        
+                except Exception as e:
+                    print(f"   ❌ Action failed: {e}")
+                    executed_actions.append({
+                        "action": action['action'],
+                        "protocol": action['protocol'],
+                        "amount": action['amount'],
+                        "status": "failed",
+                        "error": str(e)
+                    })
+            
+            # Get final balances
+            final_balances = await self.investor.get_all_protocol_balances()
+            
+            result = {
+                "status": "completed",
+                "strategy": strategy,
+                "total_value": total_invested,
+                "actions_executed": len(executed_actions),
+                "successful_actions": len([a for a in executed_actions if a.get('status') == 'completed' or a.get('status') == 'invested']),
+                "final_balances": final_balances,
+                "timestamp": datetime.now().isoformat()
+            }
+            
+            print(f"\n🎯 REBALANCING SUMMARY:")
+            print(f"   Actions Executed: {result['actions_executed']}")
+            print(f"   Successful Actions: {result['successful_actions']}")
+            print(f"   Final Value: ${sum(final_balances.values()):.2f}")
+            
+            return result
+            
+        except Exception as e:
+            print(f"❌ Portfolio rebalancing failed: {e}")
+            return {
+                "status": "failed",
+                "error": str(e),
+                "timestamp": datetime.now().isoformat()
+            }
 
 # Test the rebalancer
 async def test_rebalancer():
