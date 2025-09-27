@@ -1,3 +1,10 @@
+# Environment variables
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
 # dependencies
 node_modules
 
@@ -18,6 +25,22 @@ node_modules
 # IDE
 .vscode
 .idea
+
+# Production builds
+/build
+/dist
+/.next/
+/out/
+
+# Hardhat
+cache/
+artifacts/
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
 
 # cli
 dist
