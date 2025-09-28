@@ -6,7 +6,7 @@ import { Button } from "../components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../components/ui/card";
 import { Activity, ArrowRight, Bot, Brain, Database, DollarSign, Eye, Globe, Network, Wallet } from "lucide-react";
 import { useAccount } from "wagmi";
-import { Address, Balance, RainbowKitCustomConnectButton } from "~~/components/scaffold-eth";
+import { Address, Balance, ConnectButton } from "~~/components/scaffold-eth";
 
 export default function Home() {
   const { address: connectedAddress } = useAccount();
@@ -48,7 +48,7 @@ export default function Home() {
                   <Balance address={connectedAddress} />
                 </div>
               ) : (
-                <RainbowKitCustomConnectButton />
+                <ConnectButton />
               )}
             </div>
           </div>

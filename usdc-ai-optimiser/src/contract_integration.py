@@ -13,22 +13,25 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-# Deployed contract addresses
+# Deployed contract addresses (updated with latest deployments)
 DEPLOYED_CONTRACTS = {
     "ethereum_sepolia": {
         "chainRegistry": "0xa9714b3C50DfAabF4c828ed62e02D6eDcf9F6CA3",
-        "smartWalletFactory": "0x9c18A0863F62b141D766Ec2AC0E712FA35857D6f",
-        "yieldRouter": "0x67580b8d789aAE646cC34d30794cE89b1B2963B1"
+        "smartWalletFactory": "0xCE2C6Cb2cc38c82920D1a860978890085aB3F1b8",
+        "yieldRouter": "0x26Ee4397414A5670772c96d1a2fF52BC39bf9A11",  # Proxy address
+        "yieldRouterImpl": "0x26Ee4397414A5670772c96d1a2fF52BC39bf9A11"
     },
     "base_sepolia": {
-        "chainRegistry": "0x16eB87D9695D5502d38956703Cd3C8c861db2fd3",
-        "smartWalletFactory": "0x078572F22e95021d2b0172B989553522184D89e5",
-        "yieldRouter": "0x940CAAA3E0268EFDA3cAF3754Ea6123CbF3c92e4"
+        "chainRegistry": "0x01f6A4b9E0fA914C59950F89E701E3eF032cF966",
+        "smartWalletFactory": "0x3fCb812C6CAe20C254662A619096EB698ebd6ef3",
+        "yieldRouter": "0x0FAE5e7b22ca43Ba521021627Fe32796882c1f2d",  # Proxy address
+        "yieldRouterImpl": "0x0FAE5e7b22ca43Ba521021627Fe32796882c1f2d"
     },
     "arbitrum_sepolia": {
-        "chainRegistry": "0xc1690B23fF7212489560D4e37DC568a5ae7877ac",
-        "smartWalletFactory": "0x23F68aA80985C3765d5857be625802bf7E5F8211",
-        "yieldRouter": "0x26Ee4397414A5670772c96d1a2fF52BC39bf9A11"
+        "chainRegistry": "0xa767A250819a4813061DF666c1AaCF60e5b5a2D4",
+        "smartWalletFactory": "0x97Ce69a3b569903B64bc49e6D91077e1ce59959b",
+        "yieldRouter": "0x780BE3b0aDf2189b4fa72086A48F2a8BD19B14b8",  # Proxy address
+        "yieldRouterImpl": "0x780BE3b0aDf2189b4fa72086A48F2a8BD19B14b8"
     }
 }
 
@@ -71,7 +74,12 @@ class SmartWalletInfo:
     chain: str
     isActive: bool
     totalDeposited: int
+    totalWithdrawn: int
+    totalAllocated: int
+    protocolCount: int
     backendCoordinator: str
+    factory: str
+    usdcBalance: int
 
 @dataclass
 class OptimizationRequest:
@@ -122,14 +130,14 @@ class CrossYieldContractManager:
                 {
                     "inputs": [{"name": "user", "type": "address"}],
                     "name": "createWallet",
-                    "outputs": [],
+                    "outputs": [{"name": "wallet", "type": "address"}],
                     "stateMutability": "nonpayable",
                     "type": "function"
                 },
                 {
                     "inputs": [{"name": "user", "type": "address"}],
                     "name": "getWallet",
-                    "outputs": [{"name": "", "type": "address"}],
+                    "outputs": [{"name": "wallet", "type": "address"}],
                     "stateMutability": "view",
                     "type": "function"
                 },
@@ -143,9 +151,40 @@ class CrossYieldContractManager:
                 {
                     "inputs": [{"name": "user", "type": "address"}],
                     "name": "predictWalletAddress",
-                    "outputs": [{"name": "", "type": "address"}],
+                    "outputs": [{"name": "predictedAddress", "type": "address"}],
                     "stateMutability": "view",
                     "type": "function"
+                },
+                {
+                    "inputs": [{"name": "wallet", "type": "address"}],
+                    "name": "isWalletValid",
+                    "outputs": [{"name": "valid", "type": "bool"}],
+                    "stateMutability": "view",
+                    "type": "function"
+                },
+                {
+                    "inputs": [{"name": "wallet", "type": "address"}],
+                    "name": "getWalletOwner",
+                    "outputs": [{"name": "owner", "type": "address"}],
+                    "stateMutability": "view",
+                    "type": "function"
+                },
+                {
+                    "inputs": [{"name": "agentWallet", "type": "address"}],
+                    "name": "getUserForAgent",
+                    "outputs": [{"name": "user", "type": "address"}],
+                    "stateMutability": "view",
+                    "type": "function"
+                },
+                {
+                    "anonymous": False,
+                    "inputs": [
+                        {"indexed": True, "name": "user", "type": "address"},
+                        {"indexed": True, "name": "wallet", "type": "address"},
+                        {"indexed": False, "name": "salt", "type": "bytes32"}
+                    ],
+                    "name": "WalletCreated",
+                    "type": "event"
                 }
             ]
         elif contract_type == "yieldRouter":
@@ -191,6 +230,139 @@ class CrossYieldContractManager:
                     ],
                     "stateMutability": "view",
                     "type": "function"
+                }
+            ]
+        elif contract_type == "userSmartWallet":
+            abi = [
+                {
+                    "inputs": [
+                        {"name": "amount", "type": "uint256"},
+                        {"name": "strategy", "type": "string"}
+                    ],
+                    "name": "deposit",
+                    "outputs": [],
+                    "stateMutability": "nonpayable",
+                    "type": "function"
+                },
+                {
+                    "inputs": [
+                        {"name": "amount", "type": "uint256"},
+                        {"name": "destinationDomain", "type": "uint32"},
+                        {"name": "recipient", "type": "address"}
+                    ],
+                    "name": "executeCCTP",
+                    "outputs": [],
+                    "stateMutability": "nonpayable",
+                    "type": "function"
+                },
+                {
+                    "inputs": [
+                        {"name": "protocolName", "type": "string"},
+                        {"name": "adapter", "type": "address"},
+                        {"name": "amount", "type": "uint256"}
+                    ],
+                    "name": "allocateToProtocol",
+                    "outputs": [],
+                    "stateMutability": "nonpayable",
+                    "type": "function"
+                },
+                {
+                    "inputs": [
+                        {"name": "protocolNames", "type": "string[]"},
+                        {"name": "adapters", "type": "address[]"},
+                        {"name": "amounts", "type": "uint256[]"}
+                    ],
+                    "name": "batchAllocate",
+                    "outputs": [],
+                    "stateMutability": "nonpayable",
+                    "type": "function"
+                },
+                {
+                    "inputs": [],
+                    "name": "getBalance",
+                    "outputs": [{"name": "balance", "type": "uint256"}],
+                    "stateMutability": "view",
+                    "type": "function"
+                },
+                {
+                    "inputs": [],
+                    "name": "getWalletSummary",
+                    "outputs": [
+                        {"name": "usdcBalance", "type": "uint256"},
+                        {"name": "totalAllocated", "type": "uint256"},
+                        {"name": "protocolCount", "type": "uint256"},
+                        {"name": "active", "type": "bool"}
+                    ],
+                    "stateMutability": "view",
+                    "type": "function"
+                },
+                {
+                    "inputs": [],
+                    "name": "getTotalValue",
+                    "outputs": [{"name": "totalValue", "type": "uint256"}],
+                    "stateMutability": "view",
+                    "type": "function"
+                },
+                {
+                    "inputs": [],
+                    "name": "getActiveProtocols",
+                    "outputs": [{"name": "protocols", "type": "string[]"}],
+                    "stateMutability": "view",
+                    "type": "function"
+                },
+                {
+                    "inputs": [{"name": "protocolName", "type": "string"}],
+                    "name": "getProtocolBalance",
+                    "outputs": [{"name": "balance", "type": "uint256"}],
+                    "stateMutability": "view",
+                    "type": "function"
+                },
+                {
+                    "inputs": [],
+                    "name": "owner",
+                    "outputs": [{"name": "", "type": "address"}],
+                    "stateMutability": "view",
+                    "type": "function"
+                },
+                {
+                    "inputs": [],
+                    "name": "isActive",
+                    "outputs": [{"name": "", "type": "bool"}],
+                    "stateMutability": "view",
+                    "type": "function"
+                },
+                {
+                    "anonymous": False,
+                    "inputs": [
+                        {"indexed": True, "name": "user", "type": "address"},
+                        {"indexed": False, "name": "amount", "type": "uint256"},
+                        {"indexed": False, "name": "strategy", "type": "string"},
+                        {"indexed": False, "name": "timestamp", "type": "uint256"}
+                    ],
+                    "name": "Deposited",
+                    "type": "event"
+                },
+                {
+                    "anonymous": False,
+                    "inputs": [
+                        {"indexed": True, "name": "protocol", "type": "string"},
+                        {"indexed": False, "name": "adapter", "type": "address"},
+                        {"indexed": False, "name": "amount", "type": "uint256"},
+                        {"indexed": False, "name": "timestamp", "type": "uint256"}
+                    ],
+                    "name": "ProtocolAllocation",
+                    "type": "event"
+                },
+                {
+                    "anonymous": False,
+                    "inputs": [
+                        {"indexed": False, "name": "amount", "type": "uint256"},
+                        {"indexed": False, "name": "destinationDomain", "type": "uint32"},
+                        {"indexed": False, "name": "recipient", "type": "address"},
+                        {"indexed": False, "name": "timestamp", "type": "uint256"}
+                    ],
+                    "name": "CCTPTransferInitiated",
+                    "type": "event"
                 }
             ]
         else:
@@ -251,6 +423,300 @@ class CrossYieldContractManager:
         """Predict wallet address for a user"""
         factory = self.get_contract(chain, "smartWalletFactory")
         return factory.functions.predictWalletAddress(user_address).call()
+
+    def get_user_smart_wallet_contract(self, user_address: str, chain: str):
+        """Get UserSmartWallet contract instance for a user"""
+        wallet_address = self.get_or_create_wallet(user_address, chain)
+        w3 = self.web3_clients[chain]
+
+        # Get UserSmartWallet ABI
+        abi = self.get_contract_abi("userSmartWallet")
+        return w3.eth.contract(address=wallet_address, abi=abi)
+
+    def get_contract_abi(self, contract_type: str) -> list:
+        """Get ABI for contract type (helper method)"""
+        # This duplicates the ABI logic from get_contract but returns just the ABI
+        if contract_type == "userSmartWallet":
+            return [
+                {
+                    "inputs": [
+                        {"name": "amount", "type": "uint256"},
+                        {"name": "strategy", "type": "string"}
+                    ],
+                    "name": "deposit",
+                    "outputs": [],
+                    "stateMutability": "nonpayable",
+                    "type": "function"
+                },
+                {
+                    "inputs": [
+                        {"name": "amount", "type": "uint256"},
+                        {"name": "destinationDomain", "type": "uint32"},
+                        {"name": "recipient", "type": "address"}
+                    ],
+                    "name": "executeCCTP",
+                    "outputs": [],
+                    "stateMutability": "nonpayable",
+                    "type": "function"
+                },
+                {
+                    "inputs": [
+                        {"name": "protocolName", "type": "string"},
+                        {"name": "adapter", "type": "address"},
+                        {"name": "amount", "type": "uint256"}
+                    ],
+                    "name": "allocateToProtocol",
+                    "outputs": [],
+                    "stateMutability": "nonpayable",
+                    "type": "function"
+                },
+                {
+                    "inputs": [
+                        {"name": "protocolNames", "type": "string[]"},
+                        {"name": "adapters", "type": "address[]"},
+                        {"name": "amounts", "type": "uint256[]"}
+                    ],
+                    "name": "batchAllocate",
+                    "outputs": [],
+                    "stateMutability": "nonpayable",
+                    "type": "function"
+                },
+                {
+                    "inputs": [],
+                    "name": "getBalance",
+                    "outputs": [{"name": "balance", "type": "uint256"}],
+                    "stateMutability": "view",
+                    "type": "function"
+                },
+                {
+                    "inputs": [],
+                    "name": "getWalletSummary",
+                    "outputs": [
+                        {"name": "usdcBalance", "type": "uint256"},
+                        {"name": "totalAllocated", "type": "uint256"},
+                        {"name": "protocolCount", "type": "uint256"},
+                        {"name": "active", "type": "bool"}
+                    ],
+                    "stateMutability": "view",
+                    "type": "function"
+                },
+                {
+                    "inputs": [],
+                    "name": "getTotalValue",
+                    "outputs": [{"name": "totalValue", "type": "uint256"}],
+                    "stateMutability": "view",
+                    "type": "function"
+                },
+                {
+                    "inputs": [],
+                    "name": "getActiveProtocols",
+                    "outputs": [{"name": "protocols", "type": "string[]"}],
+                    "stateMutability": "view",
+                    "type": "function"
+                },
+                {
+                    "inputs": [{"name": "protocolName", "type": "string"}],
+                    "name": "getProtocolBalance",
+                    "outputs": [{"name": "balance", "type": "uint256"}],
+                    "stateMutability": "view",
+                    "type": "function"
+                },
+                {
+                    "inputs": [],
+                    "name": "owner",
+                    "outputs": [{"name": "", "type": "address"}],
+                    "stateMutability": "view",
+                    "type": "function"
+                },
+                {
+                    "inputs": [],
+                    "name": "isActive",
+                    "outputs": [{"name": "", "type": "bool"}],
+                    "stateMutability": "view",
+                    "type": "function"
+                }
+            ]
+        return []
+
+    async def execute_cctp_transfer(self, user_address: str, amount: int, destination_domain: int, recipient_address: str, source_chain: str) -> str:
+        """Execute CCTP transfer through user's smart wallet"""
+        try:
+            wallet_address = await self.get_or_create_wallet(user_address, source_chain)
+            w3 = self.web3_clients[source_chain]
+
+            # Get smart wallet contract
+            wallet_contract = w3.eth.contract(
+                address=wallet_address,
+                abi=self.get_contract_abi("userSmartWallet")
+            )
+
+            txn = wallet_contract.functions.executeCCTP(
+                amount, destination_domain, recipient_address
+            ).build_transaction({
+                'chainId': CHAIN_CONFIGS[source_chain]["chainId"],
+                'gas': 400000,
+                'gasPrice': w3.to_wei('2', 'gwei'),
+                'nonce': w3.eth.get_transaction_count(self.account.address),
+            })
+
+            signed_txn = w3.eth.account.sign_transaction(txn, self.private_key)
+            tx_hash = w3.eth.send_raw_transaction(signed_txn.rawTransaction)
+            receipt = w3.eth.wait_for_transaction_receipt(tx_hash)
+
+            if receipt.status == 1:
+                print(f"✅ CCTP transfer executed: {tx_hash.hex()}")
+                return tx_hash.hex()
+            else:
+                raise Exception("CCTP transaction failed")
+
+        except Exception as e:
+            print(f"❌ Error executing CCTP transfer: {e}")
+            raise
+
+    async def allocate_to_protocol(self, user_address: str, protocol_name: str, adapter_address: str, amount: int, chain: str) -> str:
+        """Allocate funds to a DeFi protocol through user's smart wallet"""
+        try:
+            wallet_address = await self.get_or_create_wallet(user_address, chain)
+            w3 = self.web3_clients[chain]
+
+            # Get smart wallet contract
+            wallet_contract = w3.eth.contract(
+                address=wallet_address,
+                abi=self.get_contract_abi("userSmartWallet")
+            )
+
+            txn = wallet_contract.functions.allocateToProtocol(
+                protocol_name, adapter_address, amount
+            ).build_transaction({
+                'chainId': CHAIN_CONFIGS[chain]["chainId"],
+                'gas': 500000,
+                'gasPrice': w3.to_wei('2', 'gwei'),
+                'nonce': w3.eth.get_transaction_count(self.account.address),
+            })
+
+            signed_txn = w3.eth.account.sign_transaction(txn, self.private_key)
+            tx_hash = w3.eth.send_raw_transaction(signed_txn.rawTransaction)
+            receipt = w3.eth.wait_for_transaction_receipt(tx_hash)
+
+            if receipt.status == 1:
+                print(f"✅ Protocol allocation executed: {tx_hash.hex()}")
+                return tx_hash.hex()
+            else:
+                raise Exception("Protocol allocation failed")
+
+        except Exception as e:
+            print(f"❌ Error allocating to protocol: {e}")
+            raise
+
+    async def batch_allocate_protocols(self, user_address: str, protocol_names: list, adapter_addresses: list, amounts: list, chain: str) -> str:
+        """Batch allocate to multiple protocols"""
+        try:
+            wallet_address = await self.get_or_create_wallet(user_address, chain)
+            w3 = self.web3_clients[chain]
+
+            # Get smart wallet contract
+            wallet_contract = w3.eth.contract(
+                address=wallet_address,
+                abi=self.get_contract_abi("userSmartWallet")
+            )
+
+            txn = wallet_contract.functions.batchAllocate(
+                protocol_names, adapter_addresses, amounts
+            ).build_transaction({
+                'chainId': CHAIN_CONFIGS[chain]["chainId"],
+                'gas': 800000,  # Higher gas for batch operation
+                'gasPrice': w3.to_wei('2', 'gwei'),
+                'nonce': w3.eth.get_transaction_count(self.account.address),
+            })
+
+            signed_txn = w3.eth.account.sign_transaction(txn, self.private_key)
+            tx_hash = w3.eth.send_raw_transaction(signed_txn.rawTransaction)
+            receipt = w3.eth.wait_for_transaction_receipt(tx_hash)
+
+            if receipt.status == 1:
+                print(f"✅ Batch allocation executed: {tx_hash.hex()}")
+                return tx_hash.hex()
+            else:
+                raise Exception("Batch allocation failed")
+
+        except Exception as e:
+            print(f"❌ Error in batch allocation: {e}")
+            raise
+
+    def get_wallet_summary(self, user_address: str, chain: str) -> SmartWalletInfo:
+        """Get comprehensive wallet summary"""
+        try:
+            wallet_address = self.get_or_create_wallet(user_address, chain)
+            w3 = self.web3_clients[chain]
+
+            # Get smart wallet contract
+            wallet_contract = w3.eth.contract(
+                address=wallet_address,
+                abi=self.get_contract_abi("userSmartWallet")
+            )
+
+            # Get wallet summary data
+            summary = wallet_contract.functions.getWalletSummary().call()
+            is_active = wallet_contract.functions.isActive().call()
+            owner = wallet_contract.functions.owner().call()
+
+            # Get factory info
+            factory = self.get_contract(chain, "smartWalletFactory")
+            backend_coordinator = CHAIN_CONFIGS[chain].get("backendCoordinator", self.account.address)
+
+            return SmartWalletInfo(
+                address=wallet_address,
+                owner=owner,
+                chain=chain,
+                isActive=is_active,
+                totalDeposited=0,  # Would need to track this separately
+                totalWithdrawn=0,  # Would need to track this separately
+                totalAllocated=summary[1],  # totalAllocated from getWalletSummary
+                protocolCount=summary[2],   # protocolCount from getWalletSummary
+                backendCoordinator=backend_coordinator,
+                factory=DEPLOYED_CONTRACTS[chain]["smartWalletFactory"],
+                usdcBalance=summary[0]      # usdcBalance from getWalletSummary
+            )
+
+        except Exception as e:
+            print(f"❌ Error getting wallet summary: {e}")
+            return None
+
+    def get_protocol_allocations(self, user_address: str, chain: str) -> dict:
+        """Get protocol allocation details"""
+        try:
+            wallet_address = self.get_or_create_wallet(user_address, chain)
+            w3 = self.web3_clients[chain]
+
+            # Get smart wallet contract
+            wallet_contract = w3.eth.contract(
+                address=wallet_address,
+                abi=self.get_contract_abi("userSmartWallet")
+            )
+
+            # Get active protocols
+            active_protocols = wallet_contract.functions.getActiveProtocols().call()
+
+            allocations = []
+            for protocol in active_protocols:
+                balance = wallet_contract.functions.getProtocolBalance(protocol).call()
+                allocations.append({
+                    "protocol": protocol,
+                    "balance": balance,
+                    "chain": chain
+                })
+
+            total_value = wallet_contract.functions.getTotalValue().call()
+
+            return {
+                "totalValue": total_value,
+                "allocations": allocations,
+                "activeProtocolCount": len(active_protocols)
+            }
+
+        except Exception as e:
+            print(f"❌ Error getting protocol allocations: {e}")
+            return None
 
     async def request_optimization(self, user_address: str, amount: int, strategy: str, chain: str) -> str:
         """Request portfolio optimization"""

@@ -19,10 +19,20 @@ export const AddressQRCodeModal = ({ address, modalId }: AddressQRCodeModalProps
             <label htmlFor={`${modalId}`} className="btn btn-ghost btn-sm btn-circle absolute right-3 top-3">
               ✕
             </label>
-            <div className="space-y-3 py-6">
-              <div className="flex flex-col items-center gap-6">
-                <QRCodeSVG value={address} size={256} />
-                <Address address={address} format="long" disableAddressLink onlyEnsOrAddress />
+            <div className="space-y-4 py-6">
+              <div className="text-center">
+                <h3 className="text-lg font-semibold">Wallet Address QR Code</h3>
+                <p className="text-sm text-muted-foreground mt-1">
+                  Scan to copy address
+                </p>
+              </div>
+              <div className="flex flex-col items-center gap-4">
+                <div className="p-4 bg-white rounded-lg border-2 border-gray-200">
+                  <QRCodeSVG value={address} size={200} />
+                </div>
+                <div className="text-center">
+                  <Address address={address} format="long" disableAddressLink onlyEnsOrAddress />
+                </div>
               </div>
             </div>
           </label>

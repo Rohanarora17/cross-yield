@@ -7,14 +7,14 @@
 #### **Deployed Contracts on Testnets:**
 - **Ethereum Sepolia (Chain ID: 11155111)**
   - SmartWalletFactory: `0x9c18A0863F62b141D766Ec2AC0E712FA35857D6f`
-  - ChainRegistry: `0xa9714b3C50DfAabF4c828ed62e02D6eDcf9F6CA3`
+  - ChainRegistry: `0x0a6cC6425c004f6F11a9138524e83c8270AA9419`
   - YieldRouter: `0x83e877c9580E51F837489D7A3c79284A366D2404`
   - YieldRouter Proxy: `0x67580b8d789aAE646cC34d30794cE89b1B2963B1`
 
 - **Base Sepolia (Chain ID: 84532)**
-  - SmartWalletFactory: `0x078572F22e95021d2b0172B989553522184D89e5`
-  - ChainRegistry: `0x16eB87D9695D5502d38956703Cd3C8c861db2fd3`
-  - YieldRouter: `0x105bfdA57Ece4c01e116B60978CC669E6608FbAb`
+  - SmartWalletFactory: `0x3fCb812C6CAe20C254662A619096EB698ebd6ef3`
+  - ChainRegistry: `0x01f6A4b9E0fA914C59950F89E701E3eF032cF966`
+  - YieldRouter: `0x0FAE5e7b22ca43Ba521021627Fe32796882c1f2d`
   - YieldRouter Proxy: `0x940CAAA3E0268EFDA3cAF3754Ea6123CbF3c92e4`
 
 - **Arbitrum Sepolia (Chain ID: 421614)**

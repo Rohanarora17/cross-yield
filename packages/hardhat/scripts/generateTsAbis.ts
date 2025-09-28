@@ -30,8 +30,9 @@ function getDirectories(path: string) {
 function getContractNames(path: string) {
   return fs
     .readdirSync(path, { withFileTypes: true })
-    .filter(dirent => dirent.isFile() && dirent.name.endsWith(".json"))
-    .map(dirent => dirent.name.split(".")[0]);
+    .filter(dirent => dirent.isFile() && dirent.name.endsWith(".json") && dirent.name.length > 5) // Filter out empty or very short names
+    .map(dirent => dirent.name.split(".")[0])
+    .filter(name => name.length > 0); // Additional filter for empty names
 }
 
 function getActualSourcesForContract(sources: Record<string, any>, contractName: string) {
@@ -93,11 +94,22 @@ function getContractDataFromDeployments() {
 
     const contracts = {} as Record<string, any>;
     for (const contractName of getContractNames(`${DEPLOYMENTS_DIR}/${chainName}`)) {
-      const { abi, address, metadata, receipt } = JSON.parse(
-        fs.readFileSync(`${DEPLOYMENTS_DIR}/${chainName}/${contractName}.json`).toString(),
-      );
-      const inheritedFunctions = metadata ? getInheritedFunctions(JSON.parse(metadata).sources, contractName) : {};
-      contracts[contractName] = { address, abi, inheritedFunctions, deployedOnBlock: receipt?.blockNumber };
+      try {
+        const contractFilePath = `${DEPLOYMENTS_DIR}/${chainName}/${contractName}.json`;
+        if (!fs.existsSync(contractFilePath)) {
+          console.warn(`Contract file not found: ${contractFilePath}`);
+          continue;
+        }
+        
+        const { abi, address, metadata, receipt } = JSON.parse(
+          fs.readFileSync(contractFilePath).toString(),
+        );
+        const inheritedFunctions = metadata ? getInheritedFunctions(JSON.parse(metadata).sources, contractName) : {};
+        contracts[contractName] = { address, abi, inheritedFunctions, deployedOnBlock: receipt?.blockNumber };
+      } catch (error) {
+        console.warn(`Failed to process contract ${contractName}:`, error);
+        continue;
+      }
     }
     output[chainId] = contracts;
   }

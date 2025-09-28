@@ -20,7 +20,7 @@ contract UserSmartWallet is ReentrancyGuard {
     address public immutable factory;
 
     // USDC token address (will be set per chain)
-    IERC20 public constant USDC = IERC20(0xA0B86a33E6417C33B2f2e5D8A7c0c5A3c0f9E2b3); // Placeholder
+    IERC20 public immutable USDC;
 
     // Wallet state
     bool public isActive;
@@ -80,19 +80,22 @@ contract UserSmartWallet is ReentrancyGuard {
      * @param _owner Address of the wallet owner (user)
      * @param _backendCoordinator Address of the backend coordinator
      * @param _factory Address of the factory contract
+     * @param _usdcAddress Address of the USDC token for this chain
      */
     constructor(
         address _owner,
         address _backendCoordinator,
-        address _factory
+        address _factory,
+        address _usdcAddress
     ) {
-        if (_owner == address(0) || _backendCoordinator == address(0) || _factory == address(0)) {
+        if (_owner == address(0) || _backendCoordinator == address(0) || _factory == address(0) || _usdcAddress == address(0)) {
             revert ZeroAddress();
         }
 
         owner = _owner;
         backendCoordinator = _backendCoordinator;
         factory = _factory;
+        USDC = IERC20(_usdcAddress);
         isActive = true;
     }
 

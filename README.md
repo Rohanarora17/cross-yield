@@ -1,4 +1,4 @@
-# USDC AI Yield Optimizer
+# USDC AI Yield Optimizer (CrossYield)
 
 **Cross-chain, ML-powered, and agentic USDC yield optimizer for next-gen DeFi.**
 
@@ -6,41 +6,29 @@
 
 ## Table of Contents
 
-- [Overview](https://www.perplexity.ai/search/can-you-find-me-all-the-ai-bas-XXZ2Fvp8Qb.Tp2Rkg5pElA#overview)
-    
-- [Key Features](https://www.perplexity.ai/search/can-you-find-me-all-the-ai-bas-XXZ2Fvp8Qb.Tp2Rkg5pElA#key-features)
-    
-- [Architecture](https://www.perplexity.ai/search/can-you-find-me-all-the-ai-bas-XXZ2Fvp8Qb.Tp2Rkg5pElA#architecture)
-    
-- [Installation](https://www.perplexity.ai/search/can-you-find-me-all-the-ai-bas-XXZ2Fvp8Qb.Tp2Rkg5pElA#installation)
-    
-- [Configuration](https://www.perplexity.ai/search/can-you-find-me-all-the-ai-bas-XXZ2Fvp8Qb.Tp2Rkg5pElA#configuration)
-    
-- [How It Works](https://www.perplexity.ai/search/can-you-find-me-all-the-ai-bas-XXZ2Fvp8Qb.Tp2Rkg5pElA#how-it-works)
-    
-- [Rebalancing & Monitoring](https://www.perplexity.ai/search/can-you-find-me-all-the-ai-bas-XXZ2Fvp8Qb.Tp2Rkg5pElA#rebalancing--monitoring)
-    
-- [ML & Data Layer](https://www.perplexity.ai/search/can-you-find-me-all-the-ai-bas-XXZ2Fvp8Qb.Tp2Rkg5pElA#ml--data-layer)
-    
-- [Integrations](https://www.perplexity.ai/search/can-you-find-me-all-the-ai-bas-XXZ2Fvp8Qb.Tp2Rkg5pElA#integrations)
-    
-- [CLI & Demo](https://www.perplexity.ai/search/can-you-find-me-all-the-ai-bas-XXZ2Fvp8Qb.Tp2Rkg5pElA#cli--demo)
-    
-- [For Hackathon Judges](https://www.perplexity.ai/search/can-you-find-me-all-the-ai-bas-XXZ2Fvp8Qb.Tp2Rkg5pElA#for-hackathon-judges)
-    
-- [Roadmap](https://www.perplexity.ai/search/can-you-find-me-all-the-ai-bas-XXZ2Fvp8Qb.Tp2Rkg5pElA#roadmap)
-    
-- [License](https://www.perplexity.ai/search/can-you-find-me-all-the-ai-bas-XXZ2Fvp8Qb.Tp2Rkg5pElA#license)
+- [Overview](#overview)
+- [Key Features](#key-features)
+- [Architecture](#architecture)
+- [Installation](#installation)
+- [Configuration](#configuration)
+- [How It Works](#how-it-works)
+- [Rebalancing & Monitoring](#rebalancing--monitoring)
+- [ML & Data Layer](#ml--data-layer)
+- [Integrations](#integrations)
+- [CLI & Demo](#cli--demo)
+- [For Hackathon Judges](#for-hackathon-judges)
+- [Roadmap](#roadmap)
+- [License](#license)
     
 
 ---
 
 ## Overview
 
-USDC AI Yield Optimizer is a DeFi platform that finds, deploys, monitors, and rebalances optimal USDC strategies across top chains, powered by historical machine learning, Pyth oracle safety, and a novel AI multi-agent coordination system.
+**CrossYield** is a DeFi platform that finds, deploys, monitors, and rebalances optimal USDC strategies across top chains—powered by historical machine learning, Pyth oracle safety, and a novel multi-agent AI coordination system.
 
-**Why?**  
-Most yield farms are single chain, slow or rule-driven. We use real cross-chain execution (via CCTP), real-time oracles, ML-predicted APY, automated rebalancing, and agentic AI for best-in-class safety and returns.
+**Why use CrossYield?**  
+Most yield farms are single chain and rule-driven. We bring cross-chain execution (with CCTP native bridging), real-time oracles, ML-predicted APY, automated rebalancing, and agentic AI for best-in-class safety and returns.
 
 ---
 
@@ -48,21 +36,21 @@ Most yield farms are single chain, slow or rule-driven. We use real cross-chain 
 
 - **Cross-Chain**: Supports Ethereum, Base, Arbitrum, and more
     
-- **USDC Native**: Absolutely no wrapping/wrapped risks (CCTP support)
+- **USDC Native**: No wrapping risks; real Circle CCTP support
     
-- **DeFiLlama Data**: Aggregates all major protocols for live rates
+- **Aggregated Data**: DeFiLlama and The Graph for live & historic rates
     
-- **Historical ML Prediction**: Trains on years of simulated + on-chain data for sustainable APY forecasting
+- **ML Prediction**: Trains on years of on-chain data for robust APY
     
-- **Pyth Oracle**: Real-time price/confidence checks mitigate attack risk
+- **Pyth Oracle**: Real-time price/confidence checks to mitigate risk
     
-- **1inch API**: Optimal swaps, slippage calculation, and cost-minimized compounding
+- **1inch API**: Swaps, slippage checking, and cost-minimized compounding
     
-- **Multi-Agent AI**: Separate yield, risk, and LLM/strategy agents coordinate for robust yet optimal allocation
+- **Multi-Agent AI**: Separate yield and risk agents, coordinated by LLM (Claude)
     
-- **Continuous Monitoring**: 24/7 monitoring + alerting
+- **Continuous Monitoring**: 24/7 alerts and rebalancing
     
-- **Dynamic Rebalancer**: Auto-detects and moves funds to better, safer yields on any supported chain
+- **Dynamic Rebalancer**: Auto-moves funds to safer, better yields anytime
     
 
 ---
@@ -71,7 +59,7 @@ Most yield farms are single chain, slow or rule-driven. We use real cross-chain 
 
 text
 
-`┌─────────────────────────────┐ │   Data Sources              │ │ ─────────────────────────── │ │ DeFiLlama API, RPCs         │ │ The Graph (history, optl)   │ │ Pyth Oracles (price conf)   │ └──────────┬──────────────────┘            │ ┌──────────▼──────────────────┐ │   Data Processing & ML      │ │ ─────────────────────────── │ │ ML Model Trainer            │ │ Feature Engineering         │ │ Buffer/Cache                │ └──────────┬──────────────────┘            │ ┌──────────▼──────────────────┐ │   AI Layer (Agents)         │ │ ─────────────────────────── │ │ Yield Maximizer Agent       │ │ Risk Assessment Agent       │ │ LLM Coordinator (Claude)    │ └──────────┬──────────────────┘            │ ┌──────────▼──────────────────┐ │ Coordination & Rebalancer   │ │ ─────────────────────────── │ │ Debate+Consensus            │ │ Cost calculation w/ 1inch   │ │ CCTP planning for cross-ch. │ └──────────┬──────────────────┘            │ ┌──────────▼──────────────────┐ │ Execution Layer             │ │ ─────────────────────────── │ │ CCTP Native Bridge          │ │ 1inch Swaps                 │ └──────────┬──────────────────┘            │ ┌──────────▼──────────────────┐ │ Continuous Monitoring       │ │ ─────────────────────────── │ │ 24/7 Alerts                 │ │ Auto-rebalancer triggers    │ └─────────────────────────────┘`
+`┌─────────────────────────────┐ │   Data Sources              │ │ ─────────────────────────── │ │ DeFiLlama API, The Graph    │ │ Pyth Oracles (price/conf)   │ └──────────┬──────────────────┘            │ ┌──────────▼──────────────────┐ │   Data Processing & ML      │ │ ─────────────────────────── │ │ ML Model Trainer            │ │ Feature Engineering         │ └──────────┬──────────────────┘            │ ┌──────────▼──────────────────┐ │   AI Layer (Agents)         │ │ ─────────────────────────── │ │ Yield Maximizer Agent       │ │ Risk Assessment Agent       │ │ LLM Coordinator (Claude)    │ └──────────┬──────────────────┘            │ ┌──────────▼──────────────────┐ │ Coordination & Rebalancer   │ │ ─────────────────────────── │ │ Debate & Consensus          │ │ 1inch Swap Cost Calculation │ │ CCTP cross-chain planning   │ └──────────┬──────────────────┘            │ ┌──────────▼──────────────────┐ │ Execution Layer             │ │ ─────────────────────────── │ │ CCTP Native Bridge          │ │ 1inch Swaps                 │ └──────────┬──────────────────┘            │ ┌──────────▼──────────────────┐ │ Monitoring                  │ │ ─────────────────────────── │ │ 24/7 Alerts                 │ │ Auto-rebalancer triggers    │ └─────────────────────────────┘`
 
 ---
 
@@ -85,150 +73,93 @@ bash
 
 ## Configuration
 
-Create `.env` file from `.env.example`.  
-Add your DeFiLlama, Pyth, 1inch, Circle, and (optional) Claude API keys.
+Create a `.env` from `.env.example` and add:
 
 text
 
-`DEFILLAMA_API_KEY=... PYTH_ORACLE_KEY=... ONEINCH_API_KEY=... CLAUDE_API_KEY=...              # for LLM Coordination ALCHEMY_API_KEY=...             # for Ethereum RPC`
+`DEFILLAMA_API_KEY=... PYTH_ORACLE_KEY=... ONEINCH_API_KEY=... CLAUDE_API_KEY=...         # LLM Coordination ALCHEMY_API_KEY=...        # Ethereum RPC`
 
 ---
 
 ## How It Works
 
-1. **Data Aggregation**: Unifies live on-chain and historical data; prepares features for ML.
+1. **Data Aggregation** brings live and historical on-chain info together.
     
-2. **ML Model Training**: Trains APY sustainability predictor on two years of hourly/daily data.
+2. **ML Model** trains on years of data to predict sustainable APY.
     
-3. **Live Opportunity Discovery**: Fetches/updates live yields continuously.
+3. **Agents** hunt best APY, flag risks, and coordinate with an LLM for optimal strategies.
     
-4. **Multi-Agent AI**:
+4. **Execution Layer** moves funds cross-chain (CCTP) and swaps rewards (1inch) for net-positive returns.
     
-    - **Yield Agent**: hunts best net APY (using ML outputs)
-        
-    - **Risk Agent**: flags sustainability/smart contract/diversification risks
-        
-    - **LLM Agent**: debates/justifies with natural language
-        
-5. **Smart Execution Planning**:
-    
-    - Crosses chains with CCTP if optimal yield is off-chain
-        
-    - Optimal swaps/routing using 1inch for reward compounding/cost minimization
-        
-6. **Execution**: Orchestrates all moves, presents plan, and (optionally) executes on testnet/mainnet.
-    
-7. **Monitoring & Rebalancing**: Watches all funds continuously. Alerts or rebalances automatically if market moves, APY drops, or better opportunities appear.
+5. **Automated Monitoring** watches all positions and rebalances anytime a better yield is found.
     
 
 ---
 
 ## Rebalancing & Monitoring
 
-- **Dynamic Rebalancer**:
+- **Rebalancer**: Detects drawdowns, new high APY, or unhealthy protocols. Only moves if it's net-quality after fees.
     
-    - Detects drawdowns, new high-APY protocols, unhealthy risk, or sudden liquidity changes
-        
-    - Estimates costs & only rebalances if net net-positive after gas/bridging fees
-        
-- **24/7 Monitoring**:
+- **Monitoring**: Polls APY, risks, and prices every few minutes. Full audit trail, customizable alerts.
     
-    - Polls live APY, risk indicators, and oracle signals every 5 min (configurable)
-        
-    - Alerting via logging, customizable notification handlers
-        
-    - All repositioning actions are tracked & auditable
-        
 
 ---
 
 ## ML & Data Layer
 
-- **Training**: Generates and/or consumes DeFiLlama and The Graph subgraph histories, simulates regime shifts, and creates moving averages, volatilities, APY trend features.
+- **Training**: Uses DeFiLlama and The Graph for APY, volatility, and regime simulations.
     
-- **Model**: Simple regression baseline (for speed), but can be swapped for XGBoost, LightGBM, or neural nets.
+- **Model**: Fast regression, XGBoost or neural net (swap-in ready).
     
-- **Scoring**: Combines on-chain, historical, and live features for robustness.
+- **Scoring**: Robust mix of live, historical, and predicted features.
     
 
 ---
 
 ## Integrations
 
-- **DeFiLlama**: Protocol TVL, APY, liquidity, rewards data
+- **DeFiLlama**: Protocol TVL, APY, rewards, liquidity
     
-- **Pyth Oracles**: Live USDC and ETH price + confidence
+- **The Graph**: Historic vault/event data
     
-- **1inch**: Swap routing, gas and slippage estimation, aggregation
+- **Pyth**: Real-time price and market confidence
     
-- **CCTP**: Native Circle bridge for fast, safe, official USDC cross-chain
+- **1inch**: Route, swap, aggregate—all fully automated
     
-- **Claude/Anthropic**: Real LLM for explainability and complex strategic synthesis (plug and play, fallback rule system if no key)
+- **CCTP**: Pure USDC bridging, uncompromised safety
+    
+- **Claude/Anthropic LLM**: Human-like strategy coordination
     
 
 ---
 
 ## CLI & Demo
 
-Basic hands-on (from project root):
+Example usage (run from repo root):
 
 bash
 
-`python test_aggregator.py           # Test pure data + fallback python test_multi_agent.py          # End-to-end agent simulation python test_ml_enhanced.py          # ML and agentic hybrid python test_complete_system.py      # Full run with monitoring`
+`python test_aggregator.py           # Test aggregation python test_multi_agent.py          # Simulate multi-agent allocation python test_ml_enhanced.py          # ML + agentic strategy python test_complete_system.py      # All-in-one run`
 
 ---
 
 ## For Hackathon Judges
 
-- **Technical Moat:**
-    
-    - Cross-chain native USDC: Unrivaled coverage/access
-        
-    - ML+AI multi-agent: Far beyond single-rulebots
-        
-    - 1inch as execution, not just pricing: can actually swap
-        
-    - Always-on safety: Oracle, live APY, and 24/7 monitoring
-        
-- **How We Beat YieldSeeker (and similar):**
-    
-    - Not limited to Base, works across all major USDC ecosystems
-        
-    - Trained strategy, not fixed rules. Adapts as yields/regimes change
-        
-    - Real execution, real fallback safety, multi-layered resiliency
-        
+**Tech Moat:**
 
----
-
-## Roadmap
-
--  CCTP-native execution for base, Arbitrum, Ethereum
+- Native USDC coverage across chains
     
--  Real ML model pipelining for yield sustainability
+- AI multi-agent, not just rules
     
--  3-agent AI coordination and consensus
+- 1inch for real swaps—not just prices
     
--  Advanced 24/7 monitoring and dynamic rebalancer
-    
--  Web interface & vault simulation
-    
--  Permissionless agentic strategy plugins
-    
--  zk-bridged onboarding support
+- 24/7 oracle monitoring, fallback, and live alerts
     
 
----
+**How We Beat Others:**
 
-## License
-
-MIT License
-
----
-
-**Built for ETHGlobal and the next generation of cross-chain DeFi.**
-
----
-
-This README is ready to be copied directly to your `README.md` and used for your project site, hackathon submission, or GitHub repo.  
-If you need diagrams or want a Markdown flowchart, just ask!
+- Not stuck on any single chain or protocol
+    
+- Adaptive, retrained strategies that respond to the market
+    
+- Execution, not just dashboards—your yield is actually moved and maximized

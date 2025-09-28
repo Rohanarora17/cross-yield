@@ -27,20 +27,40 @@ const deployContracts: DeployFunction = async function (hre: HardhatRuntimeEnvir
     waitConfirmations: 1,
   });
 
-  // Initialize ChainRegistry
+  // Initialize ChainRegistry (only if newly deployed)
   const chainRegistryContract = await hre.ethers.getContractAt("ChainRegistry", chainRegistry.address);
   if (chainRegistry.newlyDeployed) {
     const initTx = await chainRegistryContract.initialize(deployer);
     await initTx.wait();
     console.log("✅ ChainRegistry initialized");
+  } else {
+    console.log("✅ ChainRegistry already initialized");
+  }
+
+  // Get USDC address from chain config first
+  const network = await hre.ethers.provider.getNetwork();
+  const chainId = network.chainId;
+
+  // Get USDC address from chain config
+  const { CHAIN_CONFIGS } = await import("./config/chains");
+  let usdcAddress = "0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238"; // Default Sepolia USDC
+
+  // Find matching chain config
+  for (const [, config] of Object.entries(CHAIN_CONFIGS)) {
+    if (config.chainId === chainId) {
+      usdcAddress = config.usdcAddress;
+      break;
+    }
   }
 
   // Step 2: Deploy SmartWalletFactory
   console.log("\n🏭 Deploying SmartWalletFactory...");
+  console.log(`Using USDC address: ${usdcAddress}`);
   const smartWalletFactory = await deploy("SmartWalletFactory", {
     from: deployer,
     args: [
       deployer, // Backend coordinator (initially deployer)
+      usdcAddress, // USDC address for this chain
       deployer, // Owner
     ],
     log: true,
@@ -65,33 +85,21 @@ const deployContracts: DeployFunction = async function (hre: HardhatRuntimeEnvir
     waitConfirmations: 1,
   });
 
-  // Initialize YieldRouter through proxy
-  const yieldRouter = await hre.ethers.getContractAt("YieldRouter", yieldRouterProxy.address);
-  const initTx = await yieldRouter.initialize(chainRegistry.address, smartWalletFactory.address, deployer);
-  await initTx.wait();
-  console.log("✅ YieldRouter initialized");
+  // Initialize YieldRouter through proxy (only if newly deployed)
+  if (yieldRouterProxy.newlyDeployed) {
+    const yieldRouter = await hre.ethers.getContractAt("YieldRouter", yieldRouterProxy.address);
+    const initTx = await yieldRouter.initialize(chainRegistry.address, smartWalletFactory.address, deployer);
+    await initTx.wait();
+    console.log("✅ YieldRouter initialized");
+  } else {
+    console.log("✅ YieldRouter already initialized");
+  }
 
   // Step 4: Skip Protocol Adapters for now (will be chain-specific)
   console.log("\n⏭️  Skipping protocol adapters (will be deployed per-chain later)...");
 
   // Step 5: Configure ChainRegistry with initial protocols
   console.log("\n⚙️  Configuring ChainRegistry...");
-
-  // Add current chain info
-  const network = await hre.ethers.provider.getNetwork();
-  const chainId = network.chainId;
-
-  // Get USDC address from chain config
-  const { CHAIN_CONFIGS } = await import("./config/chains");
-  let usdcAddress = "0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238"; // Default Sepolia USDC
-
-  // Find matching chain config
-  for (const [, config] of Object.entries(CHAIN_CONFIGS)) {
-    if (config.chainId === chainId) {
-      usdcAddress = config.usdcAddress;
-      break;
-    }
-  }
 
   try {
     const addChainTx = await chainRegistryContract.addChain(
@@ -112,11 +120,12 @@ const deployContracts: DeployFunction = async function (hre: HardhatRuntimeEnvir
 
   // Grant backend role to deployer (for testing)
   try {
-    const grantRoleTx = await yieldRouter.grantBackendRole(deployer);
+    const yieldRouterContract = await hre.ethers.getContractAt("YieldRouter", yieldRouterProxy.address);
+    const grantRoleTx = await yieldRouterContract.grantBackendRole(deployer);
     await grantRoleTx.wait();
     console.log("✅ Granted backend role to deployer");
-  } catch {
-    console.log("⚠️  Role might already be granted");
+  } catch (error) {
+    console.log("⚠️  Role might already be granted:", error.message);
   }
 
   // Final summary

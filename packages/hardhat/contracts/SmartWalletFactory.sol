@@ -14,7 +14,9 @@ contract SmartWalletFactory is Ownable {
     // State variables
     mapping(address => address) public userWallets;
     mapping(address => bool) public isValidWallet;
+    mapping(address => address) public agentToUser; // Reverse mapping: agent => user
     address public immutable backendCoordinator;
+    address public immutable usdcAddress;
 
     // Events
     event WalletCreated(address indexed user, address indexed wallet, bytes32 salt);
@@ -28,11 +30,14 @@ contract SmartWalletFactory is Ownable {
     /**
      * @notice Constructor
      * @param _backendCoordinator Address of the backend coordinator
+     * @param _usdcAddress Address of the USDC token for this chain
      * @param _owner Address of the contract owner
      */
-    constructor(address _backendCoordinator, address _owner) Ownable(_owner) {
+    constructor(address _backendCoordinator, address _usdcAddress, address _owner) Ownable(_owner) {
         require(_backendCoordinator != address(0), "Invalid backend coordinator");
+        require(_usdcAddress != address(0), "Invalid USDC address");
         backendCoordinator = _backendCoordinator;
+        usdcAddress = _usdcAddress;
     }
 
     /**
@@ -51,7 +56,8 @@ contract SmartWalletFactory is Ownable {
         wallet = address(new UserSmartWallet{salt: salt}(
             user,
             backendCoordinator,
-            address(this)
+            address(this),
+            usdcAddress
         ));
 
         if (wallet == address(0)) revert WalletCreationFailed();
@@ -59,6 +65,7 @@ contract SmartWalletFactory is Ownable {
         // Store wallet mapping
         userWallets[user] = wallet;
         isValidWallet[wallet] = true;
+        agentToUser[wallet] = user; // Store reverse mapping
 
         emit WalletCreated(user, wallet, salt);
     }
@@ -82,7 +89,7 @@ contract SmartWalletFactory is Ownable {
 
         bytes memory bytecode = abi.encodePacked(
             type(UserSmartWallet).creationCode,
-            abi.encode(user, backendCoordinator, address(this))
+            abi.encode(user, backendCoordinator, address(this), usdcAddress)
         );
 
         bytes32 hash = keccak256(abi.encodePacked(
@@ -121,6 +128,15 @@ contract SmartWalletFactory is Ownable {
     function getWalletOwner(address wallet) external view returns (address owner) {
         if (!isValidWallet[wallet]) return address(0);
         return UserSmartWallet(payable(wallet)).owner();
+    }
+
+    /**
+     * @notice Get the user address for a given agent wallet
+     * @param agentWallet Address of the agent wallet
+     * @return user Address of the user who owns this agent wallet
+     */
+    function getUserForAgent(address agentWallet) external view returns (address user) {
+        return agentToUser[agentWallet];
     }
 
     /**

@@ -58,3 +58,48 @@ class ExecutionPlan(BaseModel):
     cctp_transfers: List[Dict]
     oneinch_swaps: List[Dict]
 
+class ProtocolInfo(BaseModel):
+    """Protocol information model"""
+    name: str
+    chain: str
+    category: str  # "lending", "liquidity", "yield_farm"
+    risk_level: str  # "low", "medium", "high"
+    current_apy: float
+    tvl: float
+    adapter_address: Optional[str] = None
+    is_active: bool = True
+
+class YieldOpportunity(BaseModel):
+    """Yield opportunity model"""
+    protocol: str
+    chain: str
+    apy: float
+    tvl: float
+    riskScore: int  # 0-100
+    category: str
+    minDeposit: Optional[int] = None
+
+class SmartWalletPortfolio(BaseModel):
+    """Smart wallet portfolio model"""
+    address: str
+    owner: str
+    chain: str
+    total_value: int
+    usdc_balance: int
+    total_allocated: int
+    active_protocols: List[str]
+    protocol_balances: Dict[str, int]
+    is_active: bool
+
+class CrossChainAllocation(BaseModel):
+    """Cross-chain allocation model"""
+    user_address: str
+    source_chain: str
+    destination_chain: str
+    amount: int
+    protocol_name: str
+    expected_apy: float
+    status: str  # "pending", "bridging", "allocated", "completed", "failed"
+    created_at: datetime
+    updated_at: datetime
+

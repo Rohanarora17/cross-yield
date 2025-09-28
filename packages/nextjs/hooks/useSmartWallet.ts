@@ -1,12 +1,16 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { smartWalletFactoryABI } from "../contracts/abis";
 import { getContractAddresses, getUSDCAddress } from "../contracts/contractAddresses";
 import { formatUnits, parseUnits } from "viem";
 import { useAccount, usePublicClient, useWalletClient } from "wagmi";
+import { useScaffoldReadContract, useScaffoldWriteContract } from "./scaffold-eth";
 
-// User Smart Wallet ABI (simplified for the hook)
+// This hook uses the latest deployed contract addresses from contractAddresses.ts
+// and the correct UserSmartWallet ABI with deposit(uint256 amount, string strategy) signature
+
+// User Smart Wallet ABI (extracted from deployedContracts.ts)
 const USER_SMART_WALLET_ABI = [
   {
     inputs: [
@@ -28,7 +32,7 @@ const USER_SMART_WALLET_ABI = [
   {
     inputs: [],
     name: "owner",
-    outputs: [{ name: "owner", type: "address" }],
+    outputs: [{ name: "", type: "address" }],
     stateMutability: "view",
     type: "function",
   },
@@ -41,6 +45,34 @@ const USER_SMART_WALLET_ABI = [
       { name: "protocolCount", type: "uint256" },
       { name: "active", type: "bool" },
     ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "isActive",
+    outputs: [{ name: "", type: "bool" }],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "totalDeposited",
+    outputs: [{ name: "", type: "uint256" }],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "totalWithdrawn",
+    outputs: [{ name: "", type: "uint256" }],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "USDC",
+    outputs: [{ name: "", type: "address" }],
     stateMutability: "view",
     type: "function",
   },
@@ -100,6 +132,19 @@ export function useSmartWallet() {
   // Get USDC address for current chain
   const usdcAddress = chainId ? getUSDCAddress(chainId) : null;
 
+  // Use Scaffold-ETH hooks for contract interactions
+  const { writeContractAsync: writeSmartWalletFactory } = useScaffoldWriteContract({
+    contractName: "SmartWalletFactory",
+  });
+
+
+  // Read wallet address using Scaffold-ETH
+  const { data: walletAddress } = useScaffoldReadContract({
+    contractName: "SmartWalletFactory",
+    functionName: "getWallet",
+    args: address ? [address] : undefined,
+  });
+
   const checkExistingWallet = async () => {
     if (!address || !publicClient || !smartWalletFactoryAddress) return;
 
@@ -125,7 +170,7 @@ export function useSmartWallet() {
 
     try {
       const summary = await publicClient.readContract({
-        address: walletAddress,
+        address: walletAddress as `0x${string}`,
         abi: USER_SMART_WALLET_ABI,
         functionName: "getWalletSummary",
       });
@@ -150,21 +195,28 @@ export function useSmartWallet() {
   };
 
   const createSmartWallet = async () => {
-    if (!address || !walletClient || !smartWalletFactoryAddress) return;
+    if (!address || !writeSmartWalletFactory) return false;
 
     setIsCreating(true);
     try {
-      const hash = await walletClient.writeContract({
-        address: smartWalletFactoryAddress,
-        abi: smartWalletFactoryABI,
+      console.log("Creating smart wallet for:", address);
+      const hash = await writeSmartWalletFactory({
         functionName: "createWallet",
         args: [address],
       });
 
-      // Wait for transaction confirmation
-      await publicClient?.waitForTransactionReceipt({ hash });
+      console.log("Smart wallet creation transaction sent:", hash);
 
-      // Get the newly created wallet address
+      // Wait for transaction confirmation
+      if (publicClient && hash) {
+        await publicClient.waitForTransactionReceipt({ hash });
+        console.log("Smart wallet creation confirmed");
+      }
+
+      // Wait a moment for contract state to update
+      await new Promise(resolve => setTimeout(resolve, 1000));
+
+      // Check if the wallet was actually created
       await checkExistingWallet();
 
       return true;
@@ -176,7 +228,7 @@ export function useSmartWallet() {
     }
   };
 
-  const getUSDCBalance = async () => {
+  const getUSDCBalance = useCallback(async () => {
     if (!address || !publicClient || !usdcAddress) return;
 
     try {
@@ -197,26 +249,36 @@ export function useSmartWallet() {
     } catch (error) {
       console.error("Error getting USDC balance:", error);
     }
-  };
+  }, [address, publicClient, usdcAddress]);
 
   const approveUSDC = async (amount: string, spender: string) => {
-    if (!walletClient || !usdcAddress) return false;
+    if (!walletClient || !usdcAddress) {
+      console.error("Missing walletClient or usdcAddress:", { walletClient: !!walletClient, usdcAddress });
+      return false;
+    }
 
     try {
+      console.log("Getting USDC decimals...");
       const decimals = await publicClient?.readContract({
         address: usdcAddress,
         abi: USDC_ABI,
         functionName: "decimals",
       });
 
+      console.log("USDC decimals:", decimals);
+      const approvalAmount = parseUnits(amount, decimals as number);
+      console.log("Approving amount:", approvalAmount.toString());
+
       const hash = await walletClient.writeContract({
         address: usdcAddress,
         abi: USDC_ABI,
         functionName: "approve",
-        args: [spender as `0x${string}`, parseUnits(amount, decimals as number)],
+        args: [spender as `0x${string}`, approvalAmount],
       });
 
+      console.log("Approval transaction sent:", hash);
       await publicClient?.waitForTransactionReceipt({ hash });
+      console.log("Approval confirmed");
       return true;
     } catch (error) {
       console.error("Error approving USDC:", error);
@@ -225,25 +287,44 @@ export function useSmartWallet() {
   };
 
   const depositToSmartWallet = async (amount: string, strategy: string) => {
-    if (!walletClient || !smartWalletAddress || !amount) return false;
+    if (!walletClient || !smartWalletAddress || !amount) {
+      console.error("Missing requirements:", { walletClient: !!walletClient, smartWalletAddress, amount });
+      return false;
+    }
 
     setIsDepositing(true);
     try {
-      // First approve USDC
-      const approved = await approveUSDC(amount, smartWalletAddress);
-      if (!approved) {
-        return false;
+      console.log("Starting deposit:", { amount, strategy, smartWalletAddress });
+
+      // Check USDC balance first
+      const userBalance = parseFloat(usdcBalance);
+      const depositAmount = parseFloat(amount);
+
+      if (depositAmount > userBalance) {
+        console.error("Insufficient USDC balance:", { userBalance, depositAmount });
+        throw new Error(`Insufficient USDC balance. You have ${userBalance} USDC but trying to deposit ${depositAmount} USDC`);
       }
 
-      // Then deposit to smart wallet
+      // First approve USDC
+      console.log("Approving USDC...");
+      const approved = await approveUSDC(amount, smartWalletAddress);
+      if (!approved) {
+        console.error("USDC approval failed");
+        throw new Error("Failed to approve USDC transfer");
+      }
+
+      console.log("USDC approved, depositing to smart wallet...");
+      // Then deposit to smart wallet with correct ABI
       const hash = await walletClient.writeContract({
-        address: smartWalletAddress,
+        address: smartWalletAddress as `0x${string}`,
         abi: USER_SMART_WALLET_ABI,
         functionName: "deposit",
-        args: [parseUnits(amount, 6), strategy], // USDC has 6 decimals
+        args: [parseUnits(amount, 6), strategy], // USDC has 6 decimals, pass strategy directly
       });
 
+      console.log("Deposit transaction sent:", hash);
       await publicClient?.waitForTransactionReceipt({ hash });
+      console.log("Deposit transaction confirmed");
 
       // Refresh data
       await fetchSmartWalletData(smartWalletAddress);
@@ -258,10 +339,20 @@ export function useSmartWallet() {
     }
   };
 
+  // Update smart wallet address when walletAddress changes
   useEffect(() => {
-    checkExistingWallet();
+    if (walletAddress && walletAddress !== "0x0000000000000000000000000000000000000000") {
+      setSmartWalletAddress(walletAddress as string);
+      fetchSmartWalletData(walletAddress as string);
+    } else {
+      setSmartWalletAddress(null);
+      setSmartWalletData(null);
+    }
+  }, [walletAddress]);
+
+  useEffect(() => {
     getUSDCBalance();
-  }, [address, publicClient, chainId, checkExistingWallet, getUSDCBalance]);
+  }, [getUSDCBalance]);
 
   return {
     smartWalletAddress,

@@ -5,32 +5,28 @@ export const DEPLOYED_CONTRACTS = {
   // Ethereum Sepolia (Chain ID: 11155111)
   11155111: {
     chainRegistry: "0xa9714b3C50DfAabF4c828ed62e02D6eDcf9F6CA3" as Address,
-    smartWalletFactory: "0x9c18A0863F62b141D766Ec2AC0E712FA35857D6f" as Address,
-    yieldRouter: "0x83e877c9580E51F837489D7A3c79284A366D2404" as Address,
-    yieldRouterProxy: "0x67580b8d789aAE646cC34d30794cE89b1B2963B1" as Address,
+    smartWalletFactory: "0xCE2C6Cb2cc38c82920D1a860978890085aB3F1b8" as Address,
+    yieldRouter: "0x26Ee4397414A5670772c96d1a2fF52BC39bf9A11" as Address,
+    yieldRouterProxy: "0x26Ee4397414A5670772c96d1a2fF52BC39bf9A11" as Address,
   },
+
   // Base Sepolia (Chain ID: 84532)
   84532: {
-    chainRegistry: "0x16eB87D9695D5502d38956703Cd3C8c861db2fd3" as Address,
-    smartWalletFactory: "0x078572F22e95021d2b0172B989553522184D89e5" as Address,
-    yieldRouter: "0x105bfdA57Ece4c01e116B60978CC669E6608FbAb" as Address,
-    yieldRouterProxy: "0x940CAAA3E0268EFDA3cAF3754Ea6123CbF3c92e4" as Address,
+    chainRegistry: "0x01f6A4b9E0fA914C59950F89E701E3eF032cF966" as Address,
+    smartWalletFactory: "0x3fCb812C6CAe20C254662A619096EB698ebd6ef3" as Address,
+    yieldRouter: "0x0FAE5e7b22ca43Ba521021627Fe32796882c1f2d" as Address,
+    yieldRouterProxy: "0x0FAE5e7b22ca43Ba521021627Fe32796882c1f2d" as Address,
   },
   // Arbitrum Sepolia (Chain ID: 421614)
   421614: {
-    chainRegistry: "0xc1690B23fF7212489560D4e37DC568a5ae7877ac" as Address,
-    smartWalletFactory: "0x23F68aA80985C3765d5857be625802bf7E5F8211" as Address,
-    yieldRouter: "0xB45A628d961F93AFc78f0D99d017c9e65bf46135" as Address,
-    yieldRouterProxy: "0x26Ee4397414A5670772c96d1a2fF52BC39bf9A11" as Address,
-  },
-  // Hardhat Local (Chain ID: 31337)
-  31337: {
-    chainRegistry: "0x0000000000000000000000000000000000000000" as Address,
-    smartWalletFactory: "0x0000000000000000000000000000000000000000" as Address,
-    yieldRouter: "0x0000000000000000000000000000000000000000" as Address,
-    yieldRouterProxy: "0x0000000000000000000000000000000000000000" as Address,
+    chainRegistry: "0xa767A250819a4813061DF666c1AaCF60e5b5a2D4" as Address,
+    smartWalletFactory: "0x97Ce69a3b569903B64bc49e6D91077e1ce59959b" as Address,
+    yieldRouter: "0x780BE3b0aDf2189b4fa72086A48F2a8BD19B14b8" as Address,
+    yieldRouterProxy: "0x780BE3b0aDf2189b4fa72086A48F2a8BD19B14b8" as Address,
   },
 } as const;
+  // Hardhat Local (Chain ID: 31337)
+ 
 
 // USDC addresses for different networks
 export const USDC_ADDRESSES = {
@@ -41,7 +37,6 @@ export const USDC_ADDRESSES = {
   // Arbitrum Sepolia
   421614: "0x75faf114eafb1BDbe2F0316DF893fd58CE46AA4d" as Address,
   // Hardhat Local
-  31337: "0x5FbDB2315678afecb367f032d93F642f64180aa3" as Address,
 } as const;
 
 // Token addresses for 1inch integration
@@ -89,5 +84,4 @@ export const NETWORK_NAMES = {
   11155111: "Ethereum Sepolia",
   84532: "Base Sepolia",
   421614: "Arbitrum Sepolia",
-  31337: "Hardhat Local",
 } as const;
