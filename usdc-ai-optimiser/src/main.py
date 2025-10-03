@@ -19,8 +19,9 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from src.contract_integration import contract_manager
 from src.execution.cctp_engine import cctp_engine
 from src.data.aggregator import YieldDataAggregator
+from src.data.aptos_aggregator import EnhancedDataAggregator
 from src.utils.logger import (
-    log_ai_start, log_ai_end, log_ai_error, log_data_fetch, 
+    log_ai_start, log_ai_end, log_ai_error, log_data_fetch,
     log_performance_metrics, log_system_status
 )
 
@@ -42,6 +43,8 @@ app.add_middleware(
 
 # Initialize components
 yield_aggregator = YieldDataAggregator()
+# Enhanced aggregator with Aptos support
+enhanced_aggregator = EnhancedDataAggregator(nodit_api_key=os.getenv('NODIT_API_KEY'))
 
 # Request models
 class OptimizationRequest(BaseModel):
@@ -537,35 +540,46 @@ async def get_portfolio(address: str):
 
 @app.get("/api/strategies")
 async def get_strategies():
-    """Get available strategies with AI reasoning and execution steps"""
+    """Get available strategies with AI reasoning and execution steps (including Aptos)"""
     start_time = time.time()
-    log_ai_start("Enhanced Strategy Analysis", {"endpoint": "/api/strategies"})
-    
+    log_ai_start("Enhanced Strategy Analysis with Aptos", {"endpoint": "/api/strategies"})
+
     try:
         strategies = []
 
-        # Get opportunities for each strategy
+        # Get opportunities for each strategy (EVM + Aptos)
         for strategy_name in ["conservative", "balanced", "aggressive"]:
             log_ai_start(f"Enhanced Strategy Analysis - {strategy_name}", {"strategy": strategy_name})
             strategy_start = time.time()
-            
-            opportunities = await yield_aggregator.get_yield_opportunities(strategy_name)
-            
-            strategy_duration = time.time() - strategy_start
-            log_data_fetch(f"Strategy {strategy_name}", len(opportunities), strategy_duration)
 
-            # Calculate expected APY for $10k example
+            # Get EVM opportunities
+            evm_opportunities = await yield_aggregator.get_yield_opportunities(strategy_name)
+
+            # Get all opportunities including Aptos
+            all_opportunities_dict = await enhanced_aggregator.fetch_all_opportunities(include_aptos=True)
+            aptos_opportunities = all_opportunities_dict['aptos']
+            all_opportunities = all_opportunities_dict['all']
+
+            # Sort all opportunities by risk-adjusted APY
+            opportunities = sorted(all_opportunities, key=lambda x: x.apy / (1 + x.riskScore/100), reverse=True)
+
+            strategy_duration = time.time() - strategy_start
+            log_data_fetch(f"Strategy {strategy_name} (EVM+Aptos)", len(opportunities), strategy_duration)
+
+            # Calculate expected APY for $10k example (including Aptos opportunities)
             if opportunities:
                 if strategy_name == "conservative":
+                    # Conservative: Top 1 safest opportunity (EVM or Aptos)
                     expected_apy = opportunities[0].apy
                     protocols = [opportunities[0].protocol]
                     chains = [opportunities[0].chain]
                 elif strategy_name == "balanced" and len(opportunities) >= 2:
+                    # Balanced: 60/40 split (often includes Aptos for higher yield)
                     expected_apy = (opportunities[0].apy * 0.6) + (opportunities[1].apy * 0.4)
                     protocols = [opportunities[0].protocol, opportunities[1].protocol]
                     chains = list(set([opportunities[0].chain, opportunities[1].chain]))
                 elif strategy_name == "aggressive":
-                    # 50/30/20 split across top 3
+                    # Aggressive: 50/30/20 split across top 3 (prioritizes Aptos if yields are higher)
                     percentages = [0.5, 0.3, 0.2]
                     expected_apy = sum(
                         opp.apy * percentages[i]
@@ -577,10 +591,20 @@ async def get_strategies():
                     expected_apy = opportunities[0].apy
                     protocols = [opportunities[0].protocol]
                     chains = [opportunities[0].chain]
+
+                # Calculate Aptos boost (if Aptos is included)
+                has_aptos = any(chain == 'aptos' for chain in chains)
+                if has_aptos:
+                    best_evm_apy = max([o.apy for o in evm_opportunities]) if evm_opportunities else 0
+                    aptos_boost = expected_apy - best_evm_apy if expected_apy > best_evm_apy else 0
+                else:
+                    aptos_boost = 0
             else:
                 expected_apy = 0
                 protocols = []
                 chains = []
+                has_aptos = False
+                aptos_boost = 0
 
             # Calculate yields for $10k example
             daily_yield = (10000 * expected_apy / 100) / 365
@@ -598,7 +622,7 @@ async def get_strategies():
             # Generate backtest data
             backtest_data = await generate_backtest_data(strategy_name)
 
-            # Enhanced strategy object with AI reasoning and execution steps
+            # Enhanced strategy object with AI reasoning and Aptos support
             strategy = {
                 "name": strategy_name,
                 "title": strategy_name.title(),
@@ -614,10 +638,10 @@ async def get_strategies():
                 }[strategy_name],
                 "description": {
                     "conservative": "Lowest risk, stable returns in proven protocols",
-                    "balanced": "Moderate risk with optimized cross-chain allocation",
-                    "aggressive": "Higher risk for maximum yield across all chains"
+                    "balanced": "Moderate risk with optimized cross-chain allocation (EVM + Aptos)",
+                    "aggressive": "Higher risk for maximum yield across all chains including Aptos"
                 }[strategy_name],
-                "detailedDescription": f"This AI-optimized {strategy_name} strategy leverages advanced algorithms to maximize yield while maintaining {strategy_name} risk exposure across {', '.join(chains)} chains. The strategy uses dynamic rebalancing and intelligent protocol selection for optimal returns.",
+                "detailedDescription": f"This AI-optimized {strategy_name} strategy leverages advanced algorithms to maximize yield while maintaining {strategy_name} risk exposure across {', '.join(chains)} chains. {'🟣 Includes Aptos ecosystem for enhanced yields. ' if has_aptos else ''}The strategy uses dynamic rebalancing and intelligent protocol selection for optimal returns.",
                 "aiReasoning": ai_reasoning,
                 "strategySteps": execution_steps,
                 "marketConditions": market_conditions,
@@ -632,7 +656,15 @@ async def get_strategies():
                 "lastUpdated": datetime.now().isoformat(),
                 "aiOptimized": True,
                 "status": "Active",
-                "icon": get_strategy_icon(strategy_name)
+                "icon": get_strategy_icon(strategy_name),
+                # Aptos-specific metadata
+                "includesAptos": has_aptos,
+                "aptosBoost": round(aptos_boost, 2) if has_aptos else 0,
+                "requiresBridge": has_aptos,
+                "aptosProtocols": [p for i, p in enumerate(protocols) if i < len(chains) and chains[i] == 'aptos'] if has_aptos else [],
+                "evmProtocols": [p for i, p in enumerate(protocols) if i < len(chains) and chains[i] != 'aptos'],
+                "crossChain": len(set(chains)) > 1,
+                "aptosOpportunityCount": len(aptos_opportunities)
             }
 
             strategies.append(strategy)
@@ -644,16 +676,24 @@ async def get_strategies():
             "lastUpdated": datetime.now().isoformat()
         }
         
+        # Calculate Aptos integration statistics
+        strategies_with_aptos = sum(1 for s in strategies if s.get('includesAptos', False))
+        avg_aptos_boost = sum(s.get('aptosBoost', 0) for s in strategies) / len(strategies) if strategies else 0
+
         log_performance_metrics({
             "total_strategies": len(strategies),
+            "strategies_with_aptos": strategies_with_aptos,
+            "avg_aptos_boost": avg_aptos_boost,
             "total_duration": total_duration,
             "avg_strategy_duration": total_duration / len(strategies) if strategies else 0,
-            "enhanced_features": ["ai_reasoning", "execution_steps", "market_conditions", "backtest_data"]
+            "enhanced_features": ["ai_reasoning", "execution_steps", "market_conditions", "backtest_data", "aptos_integration"]
         })
-        
-        log_ai_end("Enhanced Strategy Analysis", {
+
+        log_ai_end("Enhanced Strategy Analysis with Aptos", {
             "strategies_count": len(strategies),
-            "features_included": ["ai_reasoning", "execution_steps", "market_conditions", "backtest_data"]
+            "strategies_with_aptos": strategies_with_aptos,
+            "avg_aptos_boost": avg_aptos_boost,
+            "features_included": ["ai_reasoning", "execution_steps", "market_conditions", "backtest_data", "aptos_integration"]
         }, total_duration)
         return result
 
