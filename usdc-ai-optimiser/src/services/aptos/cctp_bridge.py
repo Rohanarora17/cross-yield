@@ -9,9 +9,8 @@ import time
 import requests
 from typing import Dict, Optional, List
 from web3 import Web3
-from aptos import AptosClient, Account, Ed25519PrivateKey
-from aptos.transaction import TransactionBuilder
-from aptos.transaction.payload import EntryFunction
+from aptos_sdk.async_client import RestClient, Account
+from aptos_sdk.transactions import EntryFunction
 
 
 class CCTPBridgeService:
@@ -19,7 +18,7 @@ class CCTPBridgeService:
     
     def __init__(self):
         # Initialize Aptos client for testnet
-        self.aptos_client = AptosClient("https://fullnode.testnet.aptoslabs.com/v1")
+        self.aptos_client = RestClient("https://fullnode.testnet.aptoslabs.com/v1")
         
         # Initialize admin account for Aptos operations
         self.aptos_admin = None

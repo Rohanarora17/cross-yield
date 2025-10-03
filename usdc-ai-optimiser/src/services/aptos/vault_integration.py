@@ -6,11 +6,9 @@ Handles interactions with the Aptos native USDC vault contract
 import os
 import asyncio
 from typing import Dict, Optional, Tuple
-from aptos import AptosClient, Account, Ed25519PrivateKey
-from aptos.transaction import TransactionBuilder
-from aptos.transaction.payload import EntryFunction
-from aptos.transaction.transaction import Transaction
-from aptos.transaction.serializer import TransactionSerializer
+from aptos_sdk.async_client import RestClient
+from aptos_sdk.account import Account
+from aptos_sdk.transactions import EntryFunction
 
 
 class VaultIntegrationService:
@@ -18,7 +16,7 @@ class VaultIntegrationService:
     
     def __init__(self):
         # Initialize Aptos client for testnet
-        self.client = AptosClient("https://fullnode.testnet.aptoslabs.com/v1")
+        self.client = RestClient("https://fullnode.testnet.aptoslabs.com/v1")
         
         # Contract address for the native USDC vault
         self.contract_address = "0x7e8e802870fe28b31e6dc7c72a96806d2a62a03efdd488d4f2a2cf866cbe072b"

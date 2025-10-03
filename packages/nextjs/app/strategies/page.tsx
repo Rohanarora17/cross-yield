@@ -41,6 +41,8 @@ import {
 } from "lucide-react";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { useAccount } from "wagmi";
+import { useWallet as useAptosWallet } from "@aptos-labs/wallet-adapter-react";
+import { MultiChainWalletConnect } from "~~/components/MultiChainWalletConnect";
 import { PieChart as RechartsPieChart, Pie, Cell, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, LineChart, Line } from 'recharts';
 import { useAgentLinkage } from "~~/hooks/useAgentLinkage";
 import { useSmartWallet } from "~~/hooks/useSmartWallet";
@@ -186,7 +188,7 @@ interface Strategy {
 
 // No mock data - using live backend data only
 
-const chains = ["All Chains", "Ethereum", "Base", "Arbitrum", "Multi-Chain"];
+const chains = ["All Chains", "Ethereum", "Base", "Arbitrum", "Aptos", "Multi-Chain"];
 const riskLevels = ["All Risk", "Low", "Medium", "High"];
 const categories = ["All Categories", "Lending", "Yield Farming", "Liquidity Pool", "Arbitrage"];
 
@@ -215,6 +217,9 @@ export default function StrategiesPage() {
   const { address: connectedAddress, chainId } = useAccount();
   const { getAgentAddress, hasLinkage } = useAgentLinkage();
   const { smartWalletAddress, smartWalletData, usdcBalance } = useSmartWallet();
+  
+  // Aptos wallet connection
+  const { account: aptosAccount, connected: aptosConnected, wallet: aptosWallet } = useAptosWallet();
 
   // Get agent address from linkage system
   const linkedAgentAddress = connectedAddress ? getAgentAddress(connectedAddress) : null;
@@ -384,7 +389,11 @@ export default function StrategiesPage() {
       const chainDisplayName = strategy.chains.length > 1 ? 'Multi-Chain' : 
         strategy.chains[0]?.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase()) || 'Ethereum';
       
-      const matchesChain = selectedChain === "All Chains" || chainDisplayName === selectedChain;
+      // Handle Aptos chain specifically
+      const isAptosStrategy = strategy.chains.includes('aptos');
+      const matchesChain = selectedChain === "All Chains" || 
+        chainDisplayName === selectedChain || 
+        (selectedChain === "Aptos" && isAptosStrategy);
       const matchesRisk = selectedRisk === "All Risk" || strategy.riskLevel === selectedRisk;
       
       // Determine category from protocols
@@ -426,6 +435,19 @@ export default function StrategiesPage() {
       
       return sortOrder === "asc" ? aValue - bValue : bValue - aValue;
     });
+
+  // Separate strategies by type for better organization
+  const aptosSingleProtocolStrategies = filteredStrategies.filter(strategy => 
+    strategy.chains.length === 1 && strategy.chains.includes('aptos') && strategy.protocols.length === 1
+  );
+  
+  const aptosMultiProtocolStrategies = filteredStrategies.filter(strategy => 
+    strategy.chains.length === 1 && strategy.chains.includes('aptos') && strategy.protocols.length > 1
+  );
+  
+  const crossChainStrategies = filteredStrategies.filter(strategy => 
+    strategy.chains.length > 1 || (strategy.chains.length === 1 && !strategy.chains.includes('aptos'))
+  );
 
   const getRiskColor = (risk: string) => {
     switch (risk) {
@@ -647,7 +669,7 @@ export default function StrategiesPage() {
     }
   };
 
-  // Show connection prompt if not connected
+  // Show connection prompt if not connected to EVM (Aptos is optional for viewing strategies)
   if (!connectedAddress) {
     return (
       <div className="min-h-screen bg-background">
@@ -678,15 +700,31 @@ export default function StrategiesPage() {
                 Connect your wallet to explore AI-optimized yield strategies
               </p>
             </div>
-            <Card className="max-w-md mx-auto">
+            <Card className="max-w-lg mx-auto">
               <CardContent className="pt-6">
-                <div className="text-center space-y-4">
+                <div className="text-center space-y-6">
                   <Wallet className="h-12 w-12 mx-auto text-muted-foreground" />
                   <h3 className="text-lg font-semibold">Connect Your Wallet</h3>
                   <p className="text-sm text-muted-foreground">
-                    You need to connect your wallet to explore strategies
+                    Connect your wallet to explore AI-optimized yield strategies across EVM and Aptos chains
                   </p>
-                  <ConnectButton />
+                  
+                  <div className="space-y-4">
+                    <MultiChainWalletConnect />
+                    
+                    <div className="text-left space-y-2 p-4 bg-muted/50 rounded-lg">
+                      <h4 className="text-sm font-medium">Supported Networks:</h4>
+                      <ul className="text-xs text-muted-foreground space-y-1">
+                        <li>• Ethereum Sepolia (Testnet)</li>
+                        <li>• Base Sepolia (Testnet)</li>
+                        <li>• Arbitrum Sepolia (Testnet)</li>
+                        <li>• Aptos Testnet</li>
+                      </ul>
+                      <p className="text-xs text-muted-foreground mt-2">
+                        💡 Connect EVM wallet to explore strategies, Aptos wallet for cross-chain features
+                      </p>
+                    </div>
+                  </div>
                 </div>
               </CardContent>
             </Card>
@@ -719,6 +757,26 @@ export default function StrategiesPage() {
               </div>
             </div>
             <div className="flex items-center space-x-4">
+              {/* Wallet Status */}
+              <div className="flex items-center space-x-2">
+                <div className={`flex items-center gap-2 px-3 py-1 rounded-full text-sm ${
+                  connectedAddress
+                    ? 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400'
+                    : 'bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400'
+                }`}>
+                  <div className={`h-2 w-2 rounded-full ${connectedAddress ? 'bg-green-500' : 'bg-red-500'}`}></div>
+                  EVM: {connectedAddress ? 'Connected' : 'Disconnected'}
+                </div>
+                <div className={`flex items-center gap-2 px-3 py-1 rounded-full text-sm ${
+                  aptosConnected
+                    ? 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400'
+                    : 'bg-orange-100 text-orange-800 dark:bg-orange-900/20 dark:text-orange-400'
+                }`}>
+                  <div className={`h-2 w-2 rounded-full ${aptosConnected ? 'bg-green-500' : 'bg-orange-500'}`}></div>
+                  Aptos: {aptosConnected ? 'Connected' : 'Optional'}
+                </div>
+              </div>
+              
               {/* Backend Connection Status */}
               <div className={`flex items-center gap-2 px-3 py-1 rounded-full text-sm ${
                 isConnectedToBackend
@@ -728,6 +786,7 @@ export default function StrategiesPage() {
                 <div className={`h-2 w-2 rounded-full ${isConnectedToBackend ? 'bg-green-500' : 'bg-red-500'}`}></div>
                 {isConnectedToBackend ? 'Backend Connected' : 'Backend Offline'}
               </div>
+              
               <Button variant="ghost" size="sm" className="relative">
                 <Bell className="h-5 w-5 text-muted-foreground" />
                 <span className="absolute -top-1 -right-1 h-3 w-3 bg-red-500 rounded-full"></span>
@@ -1291,15 +1350,81 @@ export default function StrategiesPage() {
             ))}
           </div>
         ) : (
-          <div className={`grid gap-6 ${viewMode === "grid" ? "grid-cols-1 md:grid-cols-2 lg:grid-cols-3" : "grid-cols-1"}`}>
-            {filteredStrategies.map((strategy) => (
-              <AIStrategyCard
-                key={strategy.id}
-                strategy={strategy}
-                onDeploy={handleStrategySelect}
-                className="hover:shadow-lg hover:shadow-primary/5"
-              />
-            ))}
+          <div className="space-y-8">
+            {/* Aptos Single Protocol Strategies */}
+            {aptosSingleProtocolStrategies.length > 0 && (
+              <div>
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="h-8 w-8 bg-orange-500/20 rounded-full flex items-center justify-center">
+                    <Target className="h-4 w-4 text-orange-500" />
+                  </div>
+                  <h2 className="text-2xl font-bold text-foreground">Aptos Single Protocol</h2>
+                  <Badge variant="outline" className="text-orange-500 border-orange-500/20 bg-orange-500/10">
+                    {aptosSingleProtocolStrategies.length} strategies
+                  </Badge>
+                </div>
+                <div className={`grid gap-6 ${viewMode === "grid" ? "grid-cols-1 md:grid-cols-2 lg:grid-cols-3" : "grid-cols-1"}`}>
+                  {aptosSingleProtocolStrategies.map((strategy) => (
+                    <AIStrategyCard
+                      key={strategy.id}
+                      strategy={strategy}
+                      onDeploy={handleStrategySelect}
+                      className="hover:shadow-lg hover:shadow-orange-500/5 border-orange-500/20"
+                    />
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Aptos Multi Protocol Strategies */}
+            {aptosMultiProtocolStrategies.length > 0 && (
+              <div>
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="h-8 w-8 bg-yellow-500/20 rounded-full flex items-center justify-center">
+                    <Network className="h-4 w-4 text-yellow-500" />
+                  </div>
+                  <h2 className="text-2xl font-bold text-foreground">Aptos Multi Protocol</h2>
+                  <Badge variant="outline" className="text-yellow-500 border-yellow-500/20 bg-yellow-500/10">
+                    {aptosMultiProtocolStrategies.length} strategies
+                  </Badge>
+                </div>
+                <div className={`grid gap-6 ${viewMode === "grid" ? "grid-cols-1 md:grid-cols-2 lg:grid-cols-3" : "grid-cols-1"}`}>
+                  {aptosMultiProtocolStrategies.map((strategy) => (
+                    <AIStrategyCard
+                      key={strategy.id}
+                      strategy={strategy}
+                      onDeploy={handleStrategySelect}
+                      className="hover:shadow-lg hover:shadow-yellow-500/5 border-yellow-500/20"
+                    />
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Cross-Chain Strategies */}
+            {crossChainStrategies.length > 0 && (
+              <div>
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="h-8 w-8 bg-blue-500/20 rounded-full flex items-center justify-center">
+                    <ArrowRightLeft className="h-4 w-4 text-blue-500" />
+                  </div>
+                  <h2 className="text-2xl font-bold text-foreground">Cross-Chain Strategies</h2>
+                  <Badge variant="outline" className="text-blue-500 border-blue-500/20 bg-blue-500/10">
+                    {crossChainStrategies.length} strategies
+                  </Badge>
+                </div>
+                <div className={`grid gap-6 ${viewMode === "grid" ? "grid-cols-1 md:grid-cols-2 lg:grid-cols-3" : "grid-cols-1"}`}>
+                  {crossChainStrategies.map((strategy) => (
+                    <AIStrategyCard
+                      key={strategy.id}
+                      strategy={strategy}
+                      onDeploy={handleStrategySelect}
+                      className="hover:shadow-lg hover:shadow-blue-500/5 border-blue-500/20"
+                    />
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         )}
 

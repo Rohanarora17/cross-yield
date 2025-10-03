@@ -61,23 +61,27 @@ const portfolioData = [
 ];
 
 const holdingsData = [
-  { name: "Aave V3", value: 35, color: "#8B5CF6", apy: 14.2, chain: "Ethereum" },
-  { name: "Compound", value: 25, color: "#06B6D4", apy: 11.5, chain: "Ethereum" },
-  { name: "Moonwell", value: 20, color: "#10B981", apy: 18.7, chain: "Base" },
-  { name: "Curve", value: 15, color: "#F59E0B", apy: 12.8, chain: "Arbitrum" },
-  { name: "Others", value: 5, color: "#6B7280", apy: 8.5, chain: "Multi" },
+  { name: "Aave V3", value: 25, color: "#8B5CF6", apy: 14.2, chain: "Ethereum" },
+  { name: "Thala Finance", value: 20, color: "#FF6B6B", apy: 11.2, chain: "Aptos" },
+  { name: "Moonwell", value: 15, color: "#10B981", apy: 18.7, chain: "Base" },
+  { name: "Liquidswap", value: 15, color: "#4ECDC4", apy: 9.5, chain: "Aptos" },
+  { name: "Compound", value: 10, color: "#06B6D4", apy: 11.5, chain: "Ethereum" },
+  { name: "Aries Markets", value: 10, color: "#45B7D1", apy: 8.7, chain: "Aptos" },
+  { name: "Curve", value: 5, color: "#F59E0B", apy: 12.8, chain: "Arbitrum" },
 ];
 
 const strategiesData = [
-  { name: "Ethereum", apy: 12.8, allocation: 45, risk: "Low", status: "Active", protocols: 2, tvl: 2400000 },
-  { name: "Base", apy: 14.2, allocation: 30, risk: "Medium", status: "Active", protocols: 1, tvl: 1200000 },
-  { name: "Arbitrum", apy: 11.5, allocation: 25, risk: "Low", status: "Active", protocols: 1, tvl: 3100000 },
+  { name: "Ethereum", apy: 12.8, allocation: 35, risk: "Low", status: "Active", protocols: 2, tvl: 2400000 },
+  { name: "Base", apy: 14.2, allocation: 25, risk: "Medium", status: "Active", protocols: 1, tvl: 1200000 },
+  { name: "Arbitrum", apy: 11.5, allocation: 20, risk: "Low", status: "Active", protocols: 1, tvl: 3100000 },
+  { name: "Aptos", apy: 15.3, allocation: 20, risk: "Medium", status: "Active", protocols: 3, tvl: 1800000 },
 ];
 
 const recentTransactions = [
   { type: "Deposit", amount: 5000, protocol: "Aave V3", chain: "Ethereum", time: "2 hours ago", status: "Completed", txHash: "0x1234..." },
-  { type: "CCTP Transfer", amount: 12000, protocol: "Cross-Chain", chain: "Ethereum → Base", time: "6 hours ago", status: "Completed", txHash: "0x5678..." },
-  { type: "Yield Claim", amount: 245, protocol: "Moonwell", chain: "Base", time: "1 day ago", status: "Completed", txHash: "0x9abc..." },
+  { type: "CCTP Transfer", amount: 12000, protocol: "Cross-Chain", chain: "Base → Aptos", time: "6 hours ago", status: "Completed", txHash: "0x5678..." },
+  { type: "Yield Claim", amount: 245, protocol: "Thala Finance", chain: "Aptos", time: "1 day ago", status: "Completed", txHash: "0x9abc..." },
+  { type: "Deposit", amount: 3500, protocol: "Liquidswap", chain: "Aptos", time: "1 day ago", status: "Completed", txHash: "0xabcd..." },
   { type: "Rebalance", amount: 2500, protocol: "Compound", chain: "Ethereum", time: "2 days ago", status: "Completed", txHash: "0xdef0..." },
 ];
 
@@ -107,11 +111,13 @@ const Dashboard = () => {
         totalValue: 61200,
         currentAPY: 12.8,
         allocations: [
-          { protocol: "Aave V3", chain: "Ethereum", amount: 21420, apy: 14.2, percentage: 35 },
-          { protocol: "Compound", chain: "Ethereum", amount: 15300, apy: 11.5, percentage: 25 },
-          { protocol: "Moonwell", chain: "Base", amount: 12240, apy: 18.7, percentage: 20 },
-          { protocol: "Curve", chain: "Arbitrum", amount: 9180, apy: 12.8, percentage: 15 },
-          { protocol: "Others", chain: "Multi", amount: 3060, apy: 8.5, percentage: 5 },
+          { protocol: "Aave V3", chain: "Ethereum", amount: 15300, apy: 14.2, percentage: 25 },
+          { protocol: "Thala Finance", chain: "Aptos", amount: 12240, apy: 11.2, percentage: 20 },
+          { protocol: "Moonwell", chain: "Base", amount: 9180, apy: 18.7, percentage: 15 },
+          { protocol: "Liquidswap", chain: "Aptos", amount: 9180, apy: 9.5, percentage: 15 },
+          { protocol: "Compound", chain: "Ethereum", amount: 6120, apy: 11.5, percentage: 10 },
+          { protocol: "Aries Markets", chain: "Aptos", amount: 6120, apy: 8.7, percentage: 10 },
+          { protocol: "Curve", chain: "Arbitrum", amount: 3060, apy: 12.8, percentage: 5 },
         ],
         recentActivity: recentTransactions,
       });
@@ -237,7 +243,7 @@ const Dashboard = () => {
                 Portfolio Dashboard
               </h1>
               <p className="text-muted-foreground text-lg">
-                Track your USDC yield optimization performance across multiple chains
+                Track your USDC yield optimization performance across EVM and Aptos chains
               </p>
               <div className="flex items-center gap-4 mt-2">
                 <Address address={connectedAddress} />
@@ -382,10 +388,10 @@ const Dashboard = () => {
 
         {/* Active Strategies */}
         <Card className="border-border/50 bg-gradient-to-br from-background to-muted/20 mb-8">
-          <CardHeader>
-            <CardTitle className="text-foreground">Active Strategies</CardTitle>
-            <CardDescription>Your current yield optimization strategies across chains</CardDescription>
-          </CardHeader>
+            <CardHeader>
+              <CardTitle className="text-foreground">Active Strategies</CardTitle>
+              <CardDescription>Your current yield optimization strategies across EVM and Aptos chains</CardDescription>
+            </CardHeader>
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               {strategiesData.map((strategy, index) => (

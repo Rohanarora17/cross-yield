@@ -5,9 +5,8 @@ Real integration with Thala Finance lending protocol on Aptos
 
 import asyncio
 from typing import Dict, Optional, Tuple
-from aptos import AptosClient, Account
-from aptos.transaction import TransactionBuilder
-from aptos.transaction.payload import EntryFunction
+from aptos_sdk.async_client import RestClient, Account
+from aptos_sdk.transactions import EntryFunction
 
 
 class ThalaProtocolAdapter:
@@ -15,7 +14,7 @@ class ThalaProtocolAdapter:
     
     def __init__(self):
         # Initialize Aptos client for testnet
-        self.client = AptosClient("https://fullnode.testnet.aptoslabs.com/v1")
+        self.client = RestClient("https://fullnode.testnet.aptoslabs.com/v1")
         
         # Thala Finance contract addresses (testnet)
         self.thala_contracts = {

@@ -87,6 +87,7 @@ class YieldDataAggregator:
 
     def __init__(self):
         self.defillama = DeFiLlamaAPI()
+        self.usdc_aggregator = USDCDataAggregator()
 
         # Supported protocols configuration
         self.supported_protocols = {
@@ -135,29 +136,40 @@ class YieldDataAggregator:
         log_ai_start("Yield Opportunity Generation", {"strategy": strategy})
 
         try:
-            opportunities = []
+            # Try to get real opportunities from DefiLlama, fallback to hardcoded if needed
+            try:
+                usdc_opportunities = await self.usdc_aggregator.fetch_all_opportunities()
+            except Exception as e:
+                print(f"⚠️ DefiLlama fetch failed, using hardcoded data: {e}")
+                usdc_opportunities = []
+            
+            # If no real data, use hardcoded protocols (expanded list)
+            if not usdc_opportunities:
+                opportunities = self._get_expanded_hardcoded_opportunities()
+            else:
+                # Convert USDCOpportunity to YieldOpportunity
+                opportunities = []
+                for opp in usdc_opportunities:
+                    risk_score = self._calculate_risk_score_from_opportunity(opp)
+                    
+                    opportunity = YieldOpportunity(
+                        protocol=opp.protocol,
+                        chain=opp.chain,
+                        apy=opp.apy,
+                        tvl=opp.tvl,
+                        riskScore=risk_score,
+                        category=opp.category,
+                        minDeposit=1000000  # 1 USDC in wei
+                    )
+                    
+                    opportunities.append(opportunity)
 
-            # Convert protocol info to yield opportunities
-            for chain, protocols in self.supported_protocols.items():
-                for protocol in protocols:
-                    if protocol.is_active:
-                        risk_score = self._calculate_risk_score(protocol)
-
-                        opportunity = YieldOpportunity(
-                            protocol=protocol.name,
-                            chain=chain,
-                            apy=protocol.current_apy,
-                            tvl=protocol.tvl,
-                            riskScore=risk_score,
-                            category=protocol.category,
-                            minDeposit=1000000  # 1 USDC in wei
-                        )
-
-                        opportunities.append(opportunity)
-
+            # Count unique chains from actual data
+            unique_chains = len(set(opp.chain for opp in opportunities))
+            
             log_performance_metrics({
                 "total_protocols": len(opportunities),
-                "chains_covered": len(self.supported_protocols)
+                "chains_covered": unique_chains
             })
 
             # Filter by strategy
@@ -201,6 +213,92 @@ class YieldDataAggregator:
             base_score += 10
 
         return max(0, min(100, base_score))
+
+    def _calculate_risk_score_from_opportunity(self, opportunity: USDCOpportunity) -> int:
+        """Calculate risk score from USDCOpportunity"""
+        
+        # Base risk score from category
+        category_risk = {
+            "lending": 25,
+            "dex": 35,
+            "yield_farming": 45,
+            "staking": 20,
+            "liquidity_pool": 30
+        }.get(opportunity.category, 40)
+        
+        # Adjust based on TVL
+        if opportunity.tvl > 50_000_000:  # > $50M
+            category_risk -= 10
+        elif opportunity.tvl > 20_000_000:  # > $20M
+            category_risk -= 5
+        elif opportunity.tvl < 10_000_000:  # < $10M
+            category_risk += 10
+            
+        return max(0, min(100, category_risk))
+
+    def _get_expanded_hardcoded_opportunities(self) -> List[YieldOpportunity]:
+        """Get expanded list of hardcoded opportunities (30+ protocols)"""
+        
+        # Expanded protocol list with 30+ protocols across multiple chains
+        protocols_data = [
+            # Ethereum protocols
+            {"name": "Aave V3", "chain": "ethereum_sepolia", "apy": 8.5, "tvl": 1800000000, "category": "lending", "risk": 25},
+            {"name": "Compound V3", "chain": "ethereum_sepolia", "apy": 7.2, "tvl": 1200000000, "category": "lending", "risk": 20},
+            {"name": "Yearn Finance", "chain": "ethereum_sepolia", "apy": 9.8, "tvl": 450000000, "category": "yield_farming", "risk": 35},
+            {"name": "Curve Finance", "chain": "ethereum_sepolia", "apy": 6.5, "tvl": 3200000000, "category": "dex", "risk": 30},
+            {"name": "Uniswap V3", "chain": "ethereum_sepolia", "apy": 12.3, "tvl": 2800000000, "category": "dex", "risk": 40},
+            {"name": "Balancer", "chain": "ethereum_sepolia", "apy": 8.1, "tvl": 180000000, "category": "dex", "risk": 35},
+            {"name": "Convex Finance", "chain": "ethereum_sepolia", "apy": 15.2, "tvl": 320000000, "category": "yield_farming", "risk": 45},
+            {"name": "Frax Finance", "chain": "ethereum_sepolia", "apy": 11.7, "tvl": 280000000, "category": "lending", "risk": 30},
+            {"name": "Lido", "chain": "ethereum_sepolia", "apy": 4.8, "tvl": 15000000000, "category": "staking", "risk": 15},
+            {"name": "MakerDAO", "chain": "ethereum_sepolia", "apy": 3.2, "tvl": 8000000000, "category": "lending", "risk": 20},
+            
+            # Base protocols
+            {"name": "Moonwell", "chain": "base_sepolia", "apy": 12.3, "tvl": 42000000, "category": "lending", "risk": 30},
+            {"name": "Aerodrome", "chain": "base_sepolia", "apy": 18.5, "tvl": 180000000, "category": "dex", "risk": 45},
+            {"name": "Uniswap V3", "chain": "base_sepolia", "apy": 14.2, "tvl": 120000000, "category": "dex", "risk": 40},
+            {"name": "SushiSwap", "chain": "base_sepolia", "apy": 16.8, "tvl": 85000000, "category": "dex", "risk": 40},
+            {"name": "Compound V3", "chain": "base_sepolia", "apy": 9.1, "tvl": 65000000, "category": "lending", "risk": 25},
+            {"name": "Beefy Finance", "chain": "base_sepolia", "apy": 22.3, "tvl": 45000000, "category": "yield_farming", "risk": 50},
+            {"name": "Yearn Finance", "chain": "base_sepolia", "apy": 11.5, "tvl": 38000000, "category": "yield_farming", "risk": 35},
+            {"name": "Balancer", "chain": "base_sepolia", "apy": 13.7, "tvl": 32000000, "category": "dex", "risk": 35},
+            {"name": "Curve Finance", "chain": "base_sepolia", "apy": 8.9, "tvl": 28000000, "category": "dex", "risk": 30},
+            {"name": "Aave V3", "chain": "base_sepolia", "apy": 7.8, "tvl": 150000000, "category": "lending", "risk": 25},
+            
+            # Arbitrum protocols
+            {"name": "Radiant Capital", "chain": "arbitrum_sepolia", "apy": 16.8, "tvl": 280000000, "category": "lending", "risk": 35},
+            {"name": "GMX", "chain": "arbitrum_sepolia", "apy": 24.5, "tvl": 180000000, "category": "dex", "risk": 50},
+            {"name": "Uniswap V3", "chain": "arbitrum_sepolia", "apy": 15.2, "tvl": 320000000, "category": "dex", "risk": 40},
+            {"name": "Camelot", "chain": "arbitrum_sepolia", "apy": 19.8, "tvl": 120000000, "category": "dex", "risk": 45},
+            {"name": "SushiSwap", "chain": "arbitrum_sepolia", "apy": 17.3, "tvl": 95000000, "category": "dex", "risk": 40},
+            {"name": "Balancer", "chain": "arbitrum_sepolia", "apy": 14.6, "tvl": 78000000, "category": "dex", "risk": 35},
+            {"name": "Beefy Finance", "chain": "arbitrum_sepolia", "apy": 25.7, "tvl": 65000000, "category": "yield_farming", "risk": 50},
+            {"name": "Yearn Finance", "chain": "arbitrum_sepolia", "apy": 13.2, "tvl": 52000000, "category": "yield_farming", "risk": 35},
+            {"name": "Aave V3", "chain": "arbitrum_sepolia", "apy": 8.7, "tvl": 180000000, "category": "lending", "risk": 25},
+            {"name": "Compound V3", "chain": "arbitrum_sepolia", "apy": 7.9, "tvl": 95000000, "category": "lending", "risk": 25},
+            
+            # Polygon protocols
+            {"name": "Aave V3", "chain": "polygon", "apy": 9.2, "tvl": 320000000, "category": "lending", "risk": 25},
+            {"name": "QuickSwap", "chain": "polygon", "apy": 16.5, "tvl": 180000000, "category": "dex", "risk": 40},
+            {"name": "SushiSwap", "chain": "polygon", "apy": 14.8, "tvl": 120000000, "category": "dex", "risk": 40},
+            {"name": "Beefy Finance", "chain": "polygon", "apy": 21.3, "tvl": 85000000, "category": "yield_farming", "risk": 50},
+            {"name": "Yearn Finance", "chain": "polygon", "apy": 12.7, "tvl": 65000000, "category": "yield_farming", "risk": 35},
+        ]
+        
+        opportunities = []
+        for protocol_data in protocols_data:
+            opportunity = YieldOpportunity(
+                protocol=protocol_data["name"],
+                chain=protocol_data["chain"],
+                apy=protocol_data["apy"],
+                tvl=protocol_data["tvl"],
+                riskScore=protocol_data["risk"],
+                category=protocol_data["category"],
+                minDeposit=1000000  # 1 USDC in wei
+            )
+            opportunities.append(opportunity)
+        
+        return opportunities
 
     def _filter_by_strategy(self, opportunities: List[YieldOpportunity], strategy: str) -> List[YieldOpportunity]:
         """Filter opportunities based on strategy"""

@@ -169,20 +169,43 @@ export function MultiChainWalletConnect() {
                       ))}
                     </div>
                   ) : (
-                    <Alert>
-                      <AlertCircle className="h-4 w-4" />
-                      <AlertDescription>
-                        No Aptos wallet detected. Please install{" "}
+                    <div className="space-y-3">
+                      <Alert>
+                        <AlertCircle className="h-4 w-4" />
+                        <AlertDescription>
+                          No Aptos wallet detected. Please install one of these wallets:
+                        </AlertDescription>
+                      </Alert>
+                      <div className="grid grid-cols-1 gap-2">
                         <a
                           href="https://petra.app"
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="font-semibold underline"
+                          className="flex items-center gap-2 p-2 rounded border hover:bg-muted/50 transition-colors"
                         >
-                          Petra Wallet
+                          <div className="w-6 h-6 bg-blue-500 rounded"></div>
+                          <span className="text-sm font-medium">Petra Wallet</span>
                         </a>
-                      </AlertDescription>
-                    </Alert>
+                        <a
+                          href="https://pontem.network/"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center gap-2 p-2 rounded border hover:bg-muted/50 transition-colors"
+                        >
+                          <div className="w-6 h-6 bg-purple-500 rounded"></div>
+                          <span className="text-sm font-medium">Pontem Wallet</span>
+                        </a>
+                        <a
+                          href="https://martianwallet.xyz/"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center gap-2 p-2 rounded border hover:bg-muted/50 transition-colors"
+                        >
+                          <div className="w-6 h-6 bg-orange-500 rounded"></div>
+                          <span className="text-sm font-medium">Martian Wallet</span>
+                        </a>
+                      </div>
+                    </div>
                   )}
                 </div>
               </div>

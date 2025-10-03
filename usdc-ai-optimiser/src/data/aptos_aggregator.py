@@ -7,8 +7,9 @@ from typing import List, Dict, Optional
 from datetime import datetime
 from src.data.models import YieldOpportunity, ProtocolInfo
 from src.utils.logger import log_ai_start, log_ai_end, log_ai_error, log_data_fetch
-from src.services.aptos.thala_protocol_adapter import ThalaProtocolAdapter
-from src.services.aptos.mock_protocol_adapters import AptosProtocolManager
+from src.services.aptos.real_thala_adapter import RealThalaAdapter
+from src.services.aptos.real_liquidswap_adapter import RealLiquidswapAdapter
+from src.services.aptos.real_aries_adapter import RealAriesAdapter
 
 class AptosYieldAggregator:
     """Fetches yield data from Aptos protocols using Nodit infrastructure"""
@@ -31,8 +32,17 @@ class AptosYieldAggregator:
             self.rpc_endpoint = "https://fullnode.testnet.aptoslabs.com/v1"
             self.indexer_endpoint = "https://indexer-testnet.staging.gcp.aptosdev.com/v1/graphql"
 
-        # Initialize protocol adapters (real + mock)
-        self.protocol_manager = AptosProtocolManager()
+        # Initialize real protocol adapters
+        self.thala_adapter = RealThalaAdapter()
+        self.liquidswap_adapter = RealLiquidswapAdapter()
+        self.aries_adapter = RealAriesAdapter()
+        
+        # Protocol adapters mapping
+        self.protocol_adapters = {
+            "thala": self.thala_adapter,
+            "liquidswap": self.liquidswap_adapter,
+            "aries": self.aries_adapter
+        }
         
         # Legacy protocol registry (kept for compatibility)
         self.protocols = {
@@ -98,56 +108,77 @@ class AptosYieldAggregator:
         opportunities = []
 
         try:
-            async with aiohttp.ClientSession() as session:
-                for protocol_id, protocol_data in self.protocols.items():
-                    try:
-                        # Fetch real-time data from Nodit/RPC
-                        apy = await self._fetch_protocol_apy(
-                            session,
-                            protocol_data["contract"],
-                            protocol_data["base_apy"]
-                        )
-
-                        tvl = await self._fetch_protocol_tvl(
-                            session,
-                            protocol_data["contract"],
-                            protocol_data["tvl"]
-                        )
-
+            # Use real protocol adapters for Thala, Liquidswap, and Aries
+            for protocol_id, adapter in self.protocol_adapters.items():
+                try:
+                    # Get real protocol information
+                    protocol_info = await adapter.get_protocol_info()
+                    
+                    if protocol_info.get("integration_status") == "real":
                         # Calculate risk score
                         risk_score = self._calculate_risk_score(
-                            protocol_data["risk_level"],
-                            tvl
+                            protocol_info["risk_level"],
+                            protocol_info["tvl"]
                         )
 
                         opportunity = YieldOpportunity(
-                            protocol=protocol_data["name"],
-                            chain="aptos",  # New chain!
-                            apy=apy,
-                            tvl=tvl,
+                            protocol=protocol_info["name"],
+                            chain="aptos",
+                            apy=protocol_info["apy"],
+                            tvl=protocol_info["tvl"],
                             riskScore=risk_score,
-                            category=protocol_data["type"],
+                            category=protocol_info["type"],
                             minDeposit=1000000,  # 1 USDC (6 decimals)
                         )
 
                         opportunities.append(opportunity)
 
                         log_data_fetch(
-                            f"Aptos/{protocol_data['name']}",
+                            f"Aptos/{protocol_info['name']}",
                             1,
                             0.1
                         )
 
-                    except Exception as e:
-                        log_ai_error(
-                            f"Aptos/{protocol_id}",
-                            e,
-                            {"protocol": protocol_data["name"]}
-                        )
-                        continue
+                except Exception as e:
+                    log_ai_error(
+                        f"Aptos/{protocol_id}",
+                        e,
+                        {"protocol": protocol_id}
+                    )
+                    continue
+
+            # Add remaining protocols with fallback data
+            remaining_protocols = ["tortuga", "pancakeswap"]
+            for protocol_id in remaining_protocols:
+                if protocol_id in self.protocols:
+                    protocol_data = self.protocols[protocol_id]
+                    
+                    # Use fallback data for protocols not yet integrated
+                    opportunity = YieldOpportunity(
+                        protocol=protocol_data["name"],
+                        chain="aptos",
+                        apy=protocol_data["base_apy"],
+                        tvl=protocol_data["tvl"],
+                        riskScore=self._calculate_risk_score(
+                            protocol_data["risk_level"],
+                            protocol_data["tvl"]
+                        ),
+                        category=protocol_data["type"],
+                        minDeposit=1000000,  # 1 USDC (6 decimals)
+                    )
+
+                    opportunities.append(opportunity)
+
+                    log_data_fetch(
+                        f"Aptos/{protocol_data['name']}",
+                        1,
+                        0.1
+                    )
 
             log_ai_end("Aptos Opportunity Fetch", {
                 "opportunities_found": len(opportunities),
+                "real_integrations": len(self.protocol_adapters),
+                "fallback_integrations": len(remaining_protocols),
                 "avg_apy": sum(o.apy for o in opportunities) / len(opportunities) if opportunities else 0
             }, 0.5)
 

@@ -9,10 +9,11 @@ const Protocols = () => {
   const [sortBy, setSortBy] = useState("apy");
 
   const chains = [
-    { id: "all", name: "All Chains", count: 7 },
+    { id: "all", name: "All Chains", count: 10 },
     { id: "ethereum", name: "Ethereum", count: 3 },
     { id: "base", name: "Base", count: 2 },
     { id: "arbitrum", name: "Arbitrum", count: 4 },
+    { id: "aptos", name: "Aptos", count: 3 },
     { id: "polygon", name: "Polygon", count: 1 },
     { id: "avalanche", name: "Avalanche", count: 1 },
   ];
@@ -30,6 +31,17 @@ const Protocols = () => {
       features: ["Liquidation Protection", "Variable Rates", "Collateral Swapping"],
     },
     {
+      name: "Thala Finance",
+      description: "Leading lending protocol on Aptos with real USDC markets",
+      chains: ["Aptos"],
+      apy: 11.2,
+      tvl: 32000000,
+      riskScore: 20,
+      category: "Lending",
+      logo: "🏛️",
+      features: ["Real USDC Integration", "High APY", "Native Aptos"],
+    },
+    {
       name: "Moonwell",
       description: "Community-driven lending protocol on Base and Arbitrum",
       chains: ["Base", "Arbitrum"],
@@ -41,6 +53,17 @@ const Protocols = () => {
       features: ["High APY", "Community Governance", "Cross-Chain"],
     },
     {
+      name: "Liquidswap",
+      description: "Leading DEX on Aptos with AMM and farming",
+      chains: ["Aptos"],
+      apy: 9.5,
+      tvl: 45000000,
+      riskScore: 25,
+      category: "DEX",
+      logo: "💧",
+      features: ["AMM Trading", "Farming Rewards", "USDC-APT Pools"],
+    },
+    {
       name: "Radiant Capital",
       description: "Omnichain money market protocol",
       chains: ["Arbitrum"],
@@ -50,6 +73,17 @@ const Protocols = () => {
       category: "Lending",
       logo: "⚡",
       features: ["Omnichain", "High Yield", "Native Assets"],
+    },
+    {
+      name: "Aries Markets",
+      description: "Decentralized lending protocol on Aptos with competitive rates",
+      chains: ["Aptos"],
+      apy: 8.7,
+      tvl: 28000000,
+      riskScore: 18,
+      category: "Lending",
+      logo: "♈",
+      features: ["Competitive Rates", "Borrowing", "Collateral Management"],
     },
     {
       name: "Curve Finance",
@@ -140,7 +174,7 @@ const Protocols = () => {
       <div className="mb-8">
         <h1 className="text-3xl font-bold mb-2">DeFi Protocol Explorer</h1>
         <p className="text-base-content/70 mb-4">
-          Discover and compare yield opportunities across multiple chains and protocols
+          Discover and compare yield opportunities across EVM and Aptos chains and protocols
         </p>
       </div>
 

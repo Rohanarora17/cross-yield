@@ -1,3 +1,36 @@
 {
-  "executions": []
+  "executions": [
+    {
+      "executionId": "0xc7c91b48b6b5ebc17bb02d286b17b6905e147e690cf353cf6e491246973cbd6c",
+      "strategyId": "balanced",
+      "amount": 1,
+      "status": "in_progress",
+      "estimatedTime": "3-8 minutes",
+      "cctpTransfers": [
+        {
+          "id": "cctp_1",
+          "sourceChain": "Ethereum Sepolia",
+          "destinationChain": "Base Sepolia",
+          "amount": 0.65,
+          "status": "burned",
+          "txHash": "0xc7c91b48b6b5ebc17bb02d286b17b6905e147e690cf353cf6e491246973cbd6c",
+          "progress": 30
+        }
+      ],
+      "portfolioUpdate": {
+        "totalValue": 1,
+        "currentAPY": 8.7,
+        "allocations": [
+          {
+            "protocol": "Aave V3",
+            "chain": "Base Sepolia",
+            "amount": 0.65,
+            "percentage": 65,
+            "apy": 7.2
+          }
+        ]
+      },
+      "createdAt": "2025-10-03T17:20:01.142Z"
+    }
+  ]
 }
