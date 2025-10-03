@@ -7,6 +7,8 @@ from typing import List, Dict, Optional
 from datetime import datetime
 from src.data.models import YieldOpportunity, ProtocolInfo
 from src.utils.logger import log_ai_start, log_ai_end, log_ai_error, log_data_fetch
+from src.services.aptos.thala_protocol_adapter import ThalaProtocolAdapter
+from src.services.aptos.mock_protocol_adapters import AptosProtocolManager
 
 class AptosYieldAggregator:
     """Fetches yield data from Aptos protocols using Nodit infrastructure"""
@@ -29,15 +31,19 @@ class AptosYieldAggregator:
             self.rpc_endpoint = "https://fullnode.testnet.aptoslabs.com/v1"
             self.indexer_endpoint = "https://indexer-testnet.staging.gcp.aptosdev.com/v1/graphql"
 
-        # Aptos Protocol Registry with real contract addresses
+        # Initialize protocol adapters (real + mock)
+        self.protocol_manager = AptosProtocolManager()
+        
+        # Legacy protocol registry (kept for compatibility)
         self.protocols = {
             "liquidswap": {
                 "name": "Liquidswap",
                 "contract": "0x190d44266241744264b964a37b8f09863167a12d3e70cda39376cfb4e3561e12",
                 "type": "dex",
                 "risk_level": "medium",
-                "base_apy": 9.5,  # Mock data for demo
-                "tvl": 45000000
+                "base_apy": 9.5,
+                "tvl": 45000000,
+                "integration_status": "mock"
             },
             "thala": {
                 "name": "Thala Finance",
@@ -45,7 +51,8 @@ class AptosYieldAggregator:
                 "type": "lending",
                 "risk_level": "medium",
                 "base_apy": 11.2,
-                "tvl": 32000000
+                "tvl": 32000000,
+                "integration_status": "real"
             },
             "aries": {
                 "name": "Aries Markets",
@@ -53,7 +60,8 @@ class AptosYieldAggregator:
                 "type": "lending",
                 "risk_level": "low",
                 "base_apy": 8.7,
-                "tvl": 28000000
+                "tvl": 28000000,
+                "integration_status": "mock"
             },
             "tortuga": {
                 "name": "Tortuga Finance",
@@ -61,7 +69,8 @@ class AptosYieldAggregator:
                 "type": "staking",
                 "risk_level": "low",
                 "base_apy": 7.3,
-                "tvl": 52000000
+                "tvl": 52000000,
+                "integration_status": "mock"
             },
             "pancakeswap": {
                 "name": "PancakeSwap Aptos",
@@ -69,7 +78,8 @@ class AptosYieldAggregator:
                 "type": "dex",
                 "risk_level": "low",
                 "base_apy": 8.1,
-                "tvl": 38000000
+                "tvl": 38000000,
+                "integration_status": "mock"
             },
         }
 

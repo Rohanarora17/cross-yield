@@ -291,7 +291,8 @@ export default function StrategiesPage() {
              "Ethereum": data.strategies.filter((s: any) => s.chains.includes('ethereum_sepolia')).length,
              "Base": data.strategies.filter((s: any) => s.chains.includes('base_sepolia')).length,
              "Arbitrum": data.strategies.filter((s: any) => s.chains.includes('arbitrum_sepolia')).length,
-             "Multi-Chain": data.strategies.filter((s: any) => s.chains.length > 1).length,
+             "Aptos": data.strategies.filter((s: any) => s.includesAptos || s.chains.includes('aptos')).length,
+             "Multi-Chain": data.strategies.filter((s: any) => s.chains.length > 1 || s.includesAptos).length,
            },
            riskBreakdown: {
              "Low": data.strategies.filter((s: any) => s.riskLevel === "Low").length,
@@ -886,8 +887,8 @@ export default function StrategiesPage() {
                 <div className="space-y-3">
                   {summaryData?.chainBreakdown ? 
                     Object.entries(summaryData.chainBreakdown).map(([chain, count], index) => {
-                      const colors = ["text-blue-400", "text-purple-400", "text-cyan-400", "text-primary"];
-                      const bgColors = ["bg-blue-400/10", "bg-purple-400/10", "bg-cyan-400/10", "bg-primary/10"];
+                      const colors = ["text-blue-400", "text-purple-400", "text-cyan-400", "text-orange-400", "text-primary"];
+                      const bgColors = ["bg-blue-400/10", "bg-purple-400/10", "bg-cyan-400/10", "bg-orange-400/10", "bg-primary/10"];
                       const total = Object.values(summaryData.chainBreakdown).reduce((sum: number, val) => sum + (val as number), 0);
                       const percentage = total > 0 ? ((count as number) / total * 100).toFixed(1) : "0";
                       

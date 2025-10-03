@@ -20,6 +20,8 @@ from src.contract_integration import contract_manager
 from src.execution.cctp_engine import cctp_engine
 from src.data.aggregator import YieldDataAggregator
 from src.data.aptos_aggregator import EnhancedDataAggregator
+from src.services.aptos.vault_integration import VaultIntegrationService
+from src.services.aptos.cctp_bridge import CCTPBridgeService
 from src.utils.logger import (
     log_ai_start, log_ai_end, log_ai_error, log_data_fetch,
     log_performance_metrics, log_system_status
@@ -45,6 +47,10 @@ app.add_middleware(
 yield_aggregator = YieldDataAggregator()
 # Enhanced aggregator with Aptos support
 enhanced_aggregator = EnhancedDataAggregator(nodit_api_key=os.getenv('NODIT_API_KEY'))
+
+# Initialize Aptos services
+vault_service = VaultIntegrationService()
+cctp_bridge_service = CCTPBridgeService()
 
 # Request models
 class OptimizationRequest(BaseModel):
@@ -816,10 +822,18 @@ async def execute_strategy(request: dict):
             "execution_id": execution_id
         })
 
-        # Get strategy opportunities for real allocation
+        # Get strategy opportunities for real allocation (including Aptos)
         log_ai_start("Opportunity Fetching", {"strategy": "balanced"})
         opp_start = time.time()
-        opportunities = await yield_aggregator.get_yield_opportunities("balanced")
+        
+        # Get EVM opportunities
+        evm_opportunities = await yield_aggregator.get_yield_opportunities("balanced")
+        
+        # Get Aptos opportunities
+        aptos_opportunities = await enhanced_aggregator.get_aptos_yield_opportunities()
+        
+        # Combine opportunities
+        opportunities = evm_opportunities + aptos_opportunities
         opp_duration = time.time() - opp_start
         
         log_data_fetch("Yield Opportunities", len(opportunities), opp_duration)
@@ -831,41 +845,97 @@ async def execute_strategy(request: dict):
             })
             raise HTTPException(status_code=404, detail="No yield opportunities available")
 
-        # Create realistic allocations
+        # Create realistic allocations (including Aptos)
         allocations = []
-        if len(opportunities) >= 2:
+        evm_opps = [opp for opp in opportunities if hasattr(opp, 'chain') and opp.chain != 'aptos']
+        aptos_opps = [opp for opp in opportunities if hasattr(opp, 'chain') and opp.chain == 'aptos']
+        
+        if len(evm_opps) >= 1 and len(aptos_opps) >= 1:
+            # Cross-chain allocation: EVM + Aptos
             allocations = [
                 {
-                    "protocol": opportunities[0].protocol,
-                    "chain": opportunities[0].chain,
+                    "protocol": evm_opps[0].protocol,
+                    "chain": evm_opps[0].chain,
                     "amount": amount_usdc * 0.6,
                     "percentage": 60,
-                    "apy": opportunities[0].apy,
-                    "chainId": 84532 if "base" in opportunities[0].chain.lower() else 11155111
+                    "apy": evm_opps[0].apy,
+                    "chainId": 84532 if "base" in evm_opps[0].chain.lower() else 11155111,
+                    "type": "evm"
                 },
                 {
-                    "protocol": opportunities[1].protocol,
-                    "chain": opportunities[1].chain,
+                    "protocol": aptos_opps[0].protocol,
+                    "chain": "aptos",
                     "amount": amount_usdc * 0.4,
                     "percentage": 40,
-                    "apy": opportunities[1].apy,
-                    "chainId": 421614 if "arbitrum" in opportunities[1].chain.lower() else 11155111
+                    "apy": aptos_opps[0].apy,
+                    "chainId": "aptos",
+                    "type": "aptos"
                 }
             ]
+        elif len(evm_opps) >= 2:
+            # EVM-only allocation
+            allocations = [
+                {
+                    "protocol": evm_opps[0].protocol,
+                    "chain": evm_opps[0].chain,
+                    "amount": amount_usdc * 0.6,
+                    "percentage": 60,
+                    "apy": evm_opps[0].apy,
+                    "chainId": 84532 if "base" in evm_opps[0].chain.lower() else 11155111,
+                    "type": "evm"
+                },
+                {
+                    "protocol": evm_opps[1].protocol,
+                    "chain": evm_opps[1].chain,
+                    "amount": amount_usdc * 0.4,
+                    "percentage": 40,
+                    "apy": evm_opps[1].apy,
+                    "chainId": 421614 if "arbitrum" in evm_opps[1].chain.lower() else 11155111,
+                    "type": "evm"
+                }
+            ]
+        elif len(aptos_opps) >= 1:
+            # Aptos-only allocation
+            allocations = [{
+                "protocol": aptos_opps[0].protocol,
+                "chain": "aptos",
+                "amount": amount_usdc,
+                "percentage": 100,
+                "apy": aptos_opps[0].apy,
+                "chainId": "aptos",
+                "type": "aptos"
+            }]
         else:
+            # Fallback to first opportunity
             allocations = [{
                 "protocol": opportunities[0].protocol,
                 "chain": opportunities[0].chain,
                 "amount": amount_usdc,
                 "percentage": 100,
                 "apy": opportunities[0].apy,
-                "chainId": 84532
+                "chainId": 84532,
+                "type": "evm"
             }]
 
-        # Generate CCTP transfers for cross-chain allocations
+        # Generate CCTP transfers for cross-chain allocations (including Aptos)
         cctp_transfers = []
         for i, alloc in enumerate(allocations):
-            if alloc["chainId"] != 11155111:  # Not Ethereum Sepolia
+            if alloc["type"] == "aptos":
+                # Aptos allocation requires CCTP bridge
+                cctp_transfers.append({
+                    "id": f"cctp_{execution_id}_{i}",
+                    "sourceChain": "Base Sepolia",
+                    "sourceChainId": 84532,
+                    "destinationChain": "Aptos",
+                    "destinationChainId": "aptos",
+                    "amount": alloc["amount"],
+                    "status": "pending",
+                    "progress": 0,
+                    "protocol": alloc["protocol"],
+                    "expectedAPY": alloc["apy"],
+                    "type": "aptos_bridge"
+                })
+            elif alloc["chainId"] != 11155111:  # Other EVM chains
                 cctp_transfers.append({
                     "id": f"cctp_{execution_id}_{i}",
                     "sourceChain": "Ethereum Sepolia",
@@ -876,7 +946,8 @@ async def execute_strategy(request: dict):
                     "status": "pending",
                     "progress": 0,
                     "protocol": alloc["protocol"],
-                    "expectedAPY": alloc["apy"]
+                    "expectedAPY": alloc["apy"],
+                    "type": "evm_bridge"
                 })
 
         expected_apy = sum(alloc["apy"] * alloc["percentage"] / 100 for alloc in allocations)
@@ -954,6 +1025,129 @@ async def execute_strategy(request: dict):
             "strategy_id": strategy_id,
             "amount_usdc": amount_usdc
         })
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/api/aptos-execute")
+async def execute_aptos_allocation(request: dict):
+    """Execute Aptos allocation with CCTP bridge and vault integration"""
+    start_time = time.time()
+    log_ai_start("Aptos Execution", {"endpoint": "/api/aptos-execute"})
+    
+    try:
+        user_address = request.get("userAddress")
+        amount = request.get("amount")  # Amount in USDC
+        protocol = request.get("protocol", "Thala Finance")
+        execution_id = request.get("executionId")
+        
+        if not all([user_address, amount, execution_id]):
+            raise HTTPException(status_code=400, detail="Missing required parameters")
+        
+        log_ai_start("Aptos Execution Details", {
+            "user_address": user_address,
+            "amount": amount,
+            "protocol": protocol,
+            "execution_id": execution_id
+        })
+        
+        # Step 1: Generate CCTP bridge instructions for user
+        log_ai_start("CCTP Bridge Instructions", {"amount": amount})
+        
+        # Generate CCTP bridge instructions for user to execute
+        bridge_instructions = {
+            "step": "user_cctp_execution",
+            "description": "User must execute CCTP bridge directly from their wallet",
+            "instructions": [
+                "1. Connect your EVM wallet (Base Sepolia)",
+                "2. Ensure you have USDC balance for the transfer",
+                "3. Execute CCTP bridge using the frontend component",
+                "4. Wait for attestation and completion",
+                "5. Connect Aptos wallet to receive USDC"
+            ],
+            "amount": amount,
+            "from_chain": "baseSepolia",
+            "to_chain": "aptos",
+            "recipient_address": user_address,
+            "note": "CCTP bridge requires user signature - cannot be executed by agent wallet"
+        }
+        
+        log_ai_start("CCTP Instructions Generated", {"user_action_required": True})
+        
+        # Step 2: Deposit to Aptos vault
+        log_ai_start("Aptos Vault Deposit", {"amount": amount})
+        
+        # Generate deposit transaction for user to sign
+        deposit_tx = vault_service.generate_deposit_transaction(
+            user_address=user_address,
+            amount=amount,
+            admin_address=vault_service.vault_admin.address() if vault_service.vault_admin else "0x7e8e802870fe28b31e6dc7c72a96806d2a62a03efdd488d4f2a2cf866cbe072b"
+        )
+        
+        if not deposit_tx["success"]:
+            raise HTTPException(status_code=500, detail=f"Vault deposit failed: {deposit_tx['error']}")
+        
+        log_ai_start("Vault Deposit Transaction Generated", {"protocol": protocol})
+        
+        # Step 3: Add yield to user position (simulate protocol yield)
+        log_ai_start("Yield Generation", {"protocol": protocol})
+        
+        # Calculate yield based on protocol and time (simplified)
+        base_yield_rate = 0.05  # 5% APY base
+        protocol_multiplier = {
+            "Thala Finance": 1.2,
+            "Liquidswap": 1.1,
+            "Aries Markets": 1.3,
+            "Tortuga Finance": 1.15,
+            "PancakeSwap Aptos": 1.0
+        }.get(protocol, 1.0)
+        
+        daily_yield = (amount * base_yield_rate * protocol_multiplier) / 365
+        yield_result = await vault_service.add_yield_to_user(user_address, daily_yield)
+        
+        if not yield_result["success"]:
+            print(f"⚠️ Yield addition failed: {yield_result['error']}")
+        
+        log_ai_start("Yield Added", {"daily_yield": daily_yield})
+        
+        execution_duration = time.time() - start_time
+        
+        response = {
+            "status": "success",
+            "message": "Aptos allocation prepared - user action required",
+            "executionId": execution_id,
+            "userAddress": user_address,
+            "amount": amount,
+            "protocol": protocol,
+            "bridgeInstructions": bridge_instructions,
+            "depositTransaction": deposit_tx,
+            "yieldResult": yield_result,
+            "dailyYield": daily_yield,
+            "executionTime": execution_duration,
+            "nextSteps": [
+                {
+                    "step": "execute_cctp_bridge",
+                    "description": "Execute CCTP bridge from your EVM wallet to Aptos",
+                    "instructions": bridge_instructions["instructions"],
+                    "note": "This requires your direct signature - cannot be automated"
+                },
+                {
+                    "step": "deposit_to_vault",
+                    "description": "After CCTP completion, deposit USDC to Aptos vault",
+                    "transaction": deposit_tx.get("payload")
+                },
+                {
+                    "step": "monitor_yield",
+                    "description": "Monitor your yield accumulation in the Aptos vault",
+                    "vaultAddress": vault_service.contract_address
+                }
+            ]
+        }
+        
+        log_ai_end("Aptos Execution", execution_duration, {"status": "success"})
+        return response
+        
+    except Exception as e:
+        execution_duration = time.time() - start_time
+        log_ai_error("Aptos Execution", e, {"execution_duration": execution_duration})
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.post("/api/smart-wallet-cctp")

@@ -21,6 +21,8 @@ import { getContractAddresses, NETWORK_NAMES, getUSDCAddress } from "~~/contract
 import { useScaffoldReadContract } from "~~/hooks/scaffold-eth/useScaffoldReadContract";
 import { useScaffoldWriteContract } from "~~/hooks/scaffold-eth/useScaffoldWriteContract";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
+import { CCTPBridge } from "~~/components/CCTPBridge";
+import { useMultiChainWallet } from "~~/hooks/useMultiChainWallet";
 
 export default function FundPage() {
   const router = useRouter();
@@ -32,11 +34,15 @@ export default function FundPage() {
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [showDebug, setShowDebug] = useState(false);
   const [userTokensWithBalances, setUserTokensWithBalances] = useState<{token: string, balance: string}[]>([]);
+  const [showCCTPBridge, setShowCCTPBridge] = useState(false);
 
   // Get connected wallet address and chain info
   const { address: connectedAddress, chainId } = useAccount();
   const publicClient = usePublicClient();
   const { data: walletClient } = useWalletClient();
+
+  // Multi-chain wallet support
+  const multiChainWallet = useMultiChainWallet();
 
   // Check if current chain is supported
   const supportedChainIds = [11155111, 84532, 421614]; // Sepolia, Base Sepolia, Arbitrum Sepolia
@@ -1123,7 +1129,7 @@ export default function FundPage() {
 
           {/* Deposit Options */}
           {agentAddress && (
-            <div className="grid md:grid-cols-2 gap-6">
+            <div className="grid md:grid-cols-3 gap-6">
               {/* Direct Wallet Deposit */}
               <Card>
                 <CardHeader>
@@ -1368,6 +1374,61 @@ export default function FundPage() {
                         </p>
                       </div>
                     )}
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* CCTP Bridge to Aptos */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center space-x-2">
+                    <ArrowRightLeft className="h-5 w-5" />
+                    <span>Bridge to Aptos</span>
+                  </CardTitle>
+                  <CardDescription>Bridge USDC to Aptos for cross-chain yield optimization</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="space-y-2">
+                    <p className="text-sm text-muted-foreground">
+                      Transfer USDC from your EVM wallet to Aptos for enhanced yield opportunities
+                    </p>
+                    <div className="flex items-center space-x-2 text-xs text-muted-foreground">
+                      <div className="h-2 w-2 bg-blue-400 rounded-full"></div>
+                      <span>Base Sepolia → Aptos Testnet</span>
+                    </div>
+                    <div className="p-2 bg-blue-50 border border-blue-200 rounded text-xs text-blue-700">
+                      <strong>Note:</strong> CCTP bridge requires your direct signature - cannot be automated through agent wallet
+                    </div>
+                  </div>
+                  
+                  <Button
+                    className="w-full"
+                    variant="outline"
+                    onClick={() => setShowCCTPBridge(!showCCTPBridge)}
+                  >
+                    {showCCTPBridge ? "Hide Bridge" : "Show CCTP Bridge"}
+                  </Button>
+
+                  {showCCTPBridge && (
+                    <div className="mt-4">
+                      <CCTPBridge />
+                    </div>
+                  )}
+
+                  <div className="space-y-2">
+                    <p className="text-xs text-muted-foreground">
+                      Powered by Circle's CCTP v1 for secure cross-chain transfers
+                    </p>
+                    <div className="flex items-center space-x-4 text-xs">
+                      <div className="flex items-center space-x-1">
+                        <div className="h-2 w-2 bg-green-400 rounded-full"></div>
+                        <span>Native USDC</span>
+                      </div>
+                      <div className="flex items-center space-x-1">
+                        <div className="h-2 w-2 bg-purple-400 rounded-full"></div>
+                        <span>Aptos Protocols</span>
+                      </div>
+                    </div>
                   </div>
                 </CardContent>
               </Card>
