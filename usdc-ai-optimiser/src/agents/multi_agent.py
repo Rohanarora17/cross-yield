@@ -4,6 +4,7 @@
 import asyncio
 import sys
 import os
+import time
 from typing import Dict, List, Any, Optional
 from datetime import datetime
 
@@ -15,12 +16,17 @@ from src.agents.risk_agent import RiskAssessmentAgent
 from src.agents.coordinator_agent import LLMCoordinatorAgent
 from src.data.models import USDCOpportunity, UserProfile
 from src.config import config
+from src.utils.logger import (
+    log_ai_start, log_ai_end, log_ai_error, log_agent_analysis, 
+    log_agent_result, log_coordination_phase, log_performance_metrics,
+    log_allocation_decision
+)
 
 class MultiAgentOrchestrator:
     """Orchestrates multiple AI agents for yield optimization"""
 
     def __init__(self, claude_api_key: Optional[str] = None):
-        print("🚀 Initializing Multi-Agent AI System...")
+        log_ai_start("Multi-Agent System Initialization", {"claude_api_provided": claude_api_key is not None})
 
         # Load API key from config if not provided
         if claude_api_key is None:
@@ -38,29 +44,45 @@ class MultiAgentOrchestrator:
         self.agents_active = True
         self.consensus_threshold = 0.8
         
-        print("✅ Multi-Agent system initialized successfully")
-        print(f"   🎯 Yield Maximizer Agent: Ready")
-        print(f"   ⚠️ Risk Assessment Agent: Ready") 
-        print(f"   🧠 LLM Coordinator Agent: {'Claude AI' if self.coordinator_agent.llm_available else 'Fallback Logic'}")
+        log_ai_end("Multi-Agent System Initialization", {
+            "yield_agent_ready": True,
+            "risk_agent_ready": True,
+            "coordinator_agent_ready": True,
+            "llm_available": self.coordinator_agent.llm_available,
+            "consensus_threshold": self.consensus_threshold
+        })
     
     async def coordinate_optimization(self, opportunities: List[USDCOpportunity], 
                                     user_profile: UserProfile) -> Dict[str, Any]:
         """Main coordination method - runs all agents and synthesizes results"""
         
-        print("\n🤖 MULTI-AGENT COORDINATION STARTING...")
-        print("=" * 50)
+        start_time = time.time()
+        log_ai_start("Multi-Agent Coordination", {
+            "opportunities_count": len(opportunities),
+            "user_amount": user_profile.amount,
+            "risk_tolerance": user_profile.risk_tolerance,
+            "preferred_chains": user_profile.preferred_chains
+        })
         
         try:
             # Phase 1: Run agents in parallel
-            print("📊 Phase 1: Running AI agents in parallel...")
+            log_coordination_phase("Phase 1: Parallel Agent Execution", {
+                "agents": ["YieldMaximizer", "RiskAssessment"],
+                "execution_mode": "parallel"
+            })
             agent_results = await self._run_agents_parallel(opportunities, user_profile)
             
             # Phase 2: Agent coordination and debate
-            print("🤝 Phase 2: Agent coordination and synthesis...")
+            log_coordination_phase("Phase 2: Agent Coordination", {
+                "agent_results_count": len(agent_results),
+                "coordination_method": "llm_synthesis"
+            })
             final_strategy = await self._coordinate_agents(agent_results, opportunities, user_profile)
             
             # Phase 3: Consensus validation
-            print("✅ Phase 3: Validating consensus...")
+            log_coordination_phase("Phase 3: Consensus Validation", {
+                "consensus_threshold": self.consensus_threshold
+            })
             consensus_score = await self._calculate_consensus(agent_results, final_strategy)
             
             # Phase 4: Final results
@@ -73,18 +95,38 @@ class MultiAgentOrchestrator:
                 "execution_ready": True
             }
             
-            print("🏆 MULTI-AGENT COORDINATION COMPLETE")
-            self._print_coordination_summary(complete_result)
+            total_duration = time.time() - start_time
+            log_performance_metrics({
+                "total_agents": len(agent_results),
+                "consensus_score": consensus_score,
+                "system_confidence": complete_result["system_confidence"],
+                "expected_apy": final_strategy.get("expected_apy", 0),
+                "coordination_duration": total_duration
+            })
+            
+            log_ai_end("Multi-Agent Coordination", complete_result, total_duration)
             
             return complete_result
             
         except Exception as e:
-            print(f"❌ Multi-agent coordination failed: {e}")
+            log_ai_error("Multi-Agent Coordination", e, {
+                "opportunities_count": len(opportunities),
+                "user_profile": {
+                    "amount": user_profile.amount,
+                    "risk_tolerance": user_profile.risk_tolerance
+                }
+            })
             return await self._emergency_fallback(opportunities, user_profile)
     
     async def _run_agents_parallel(self, opportunities: List[USDCOpportunity], 
                                  user_profile: UserProfile) -> Dict[str, Any]:
         """Run all agents in parallel for efficiency"""
+        
+        start_time = time.time()
+        log_ai_start("Parallel Agent Execution", {
+            "agents": ["YieldMaximizer", "RiskAssessment"],
+            "opportunities_count": len(opportunities)
+        })
         
         # Create agent tasks
         tasks = [
@@ -100,15 +142,27 @@ class MultiAgentOrchestrator:
         
         if isinstance(results[0], dict):
             agent_results["yield_maximizer"] = results[0]
-            print(f"   ✅ Yield Agent: {results[0]['expected_apy']:.2f}% APY")
+            log_agent_result("YieldMaximizer", results[0])
         else:
-            print(f"   ❌ Yield Agent failed: {results[0]}")
+            log_ai_error("YieldMaximizer Agent", results[0], {"agent": "YieldMaximizer"})
             
         if isinstance(results[1], dict):
             agent_results["risk_assessor"] = results[1]
-            print(f"   ✅ Risk Agent: {results[1]['expected_apy']:.2f}% APY")
+            log_agent_result("RiskAssessment", results[1])
         else:
-            print(f"   ❌ Risk Agent failed: {results[1]}")
+            log_ai_error("RiskAssessment Agent", results[1], {"agent": "RiskAssessment"})
+        
+        duration = time.time() - start_time
+        log_performance_metrics({
+            "successful_agents": len(agent_results),
+            "failed_agents": len(tasks) - len(agent_results),
+            "parallel_execution_duration": duration
+        })
+        
+        log_ai_end("Parallel Agent Execution", {
+            "successful_agents": list(agent_results.keys()),
+            "total_agents": len(tasks)
+        }, duration)
         
         return agent_results
     

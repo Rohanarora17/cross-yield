@@ -30,7 +30,7 @@ import {
   WifiIcon,
 } from "lucide-react";
 import { Address, Balance } from "~~/components/scaffold-eth";
-import { RainbowKitCustomConnectButton } from "~~/components/scaffold-eth";
+import { ConnectButton } from "@rainbow-me/rainbowkit";
 
 interface PortfolioData {
   totalValue: number;
@@ -154,7 +154,7 @@ const Dashboard = () => {
               </Link>
             </div>
             <div className="ml-auto flex items-center space-x-4">
-              <RainbowKitCustomConnectButton />
+              <ConnectButton />
             </div>
           </div>
         </header>
@@ -177,7 +177,7 @@ const Dashboard = () => {
                   <p className="text-sm text-muted-foreground">
                     You need to connect your wallet to view your portfolio dashboard
                   </p>
-                  <RainbowKitCustomConnectButton />
+                  <ConnectButton />
                 </div>
               </CardContent>
             </Card>
@@ -222,7 +222,7 @@ const Dashboard = () => {
                 <Settings className="h-4 w-4 mr-2" />
                 Settings
               </Button>
-              <RainbowKitCustomConnectButton />
+              <ConnectButton />
             </div>
           </div>
         </div>

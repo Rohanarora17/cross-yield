@@ -17,9 +17,13 @@ export async function GET(request: NextRequest) {
     }
 
     const data = await response.json();
+    console.log('✅ Successfully connected to backend and fetched strategies');
+    console.log('Strategies count:', data.strategies?.length || 0);
     return NextResponse.json(data);
   } catch (error) {
     console.error('Strategies request error:', error);
+    console.error('Backend URL attempted:', process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8000');
+    console.error('Full error details:', error);
 
     // Return mock data if backend is not available
     const mockData = {

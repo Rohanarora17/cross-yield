@@ -5,957 +5,9 @@
 import { GenericContractsDeclaration } from "~~/utils/scaffold-eth/contract";
 
 const deployedContracts = {
-  84532: {
-    ChainRegistry: {
-      address: "0x01f6A4b9E0fA914C59950F89E701E3eF032cF966",
-      abi: [
-        {
-          inputs: [],
-          name: "AccessControlBadConfirmation",
-          type: "error",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "account",
-              type: "address",
-            },
-            {
-              internalType: "bytes32",
-              name: "neededRole",
-              type: "bytes32",
-            },
-          ],
-          name: "AccessControlUnauthorizedAccount",
-          type: "error",
-        },
-        {
-          inputs: [],
-          name: "InvalidInitialization",
-          type: "error",
-        },
-        {
-          inputs: [],
-          name: "NotInitializing",
-          type: "error",
-        },
-        {
-          anonymous: false,
-          inputs: [
-            {
-              indexed: true,
-              internalType: "uint256",
-              name: "chainId",
-              type: "uint256",
-            },
-            {
-              indexed: false,
-              internalType: "string",
-              name: "name",
-              type: "string",
-            },
-            {
-              indexed: false,
-              internalType: "address",
-              name: "nativeToken",
-              type: "address",
-            },
-          ],
-          name: "ChainAdded",
-          type: "event",
-        },
-        {
-          anonymous: false,
-          inputs: [
-            {
-              indexed: false,
-              internalType: "uint64",
-              name: "version",
-              type: "uint64",
-            },
-          ],
-          name: "Initialized",
-          type: "event",
-        },
-        {
-          anonymous: false,
-          inputs: [
-            {
-              indexed: true,
-              internalType: "string",
-              name: "protocol",
-              type: "string",
-            },
-            {
-              indexed: false,
-              internalType: "address",
-              name: "adapter",
-              type: "address",
-            },
-            {
-              indexed: false,
-              internalType: "uint256",
-              name: "chainId",
-              type: "uint256",
-            },
-            {
-              indexed: false,
-              internalType: "uint256",
-              name: "riskScore",
-              type: "uint256",
-            },
-          ],
-          name: "ProtocolAdded",
-          type: "event",
-        },
-        {
-          anonymous: false,
-          inputs: [
-            {
-              indexed: true,
-              internalType: "string",
-              name: "protocol",
-              type: "string",
-            },
-          ],
-          name: "ProtocolDeactivated",
-          type: "event",
-        },
-        {
-          anonymous: false,
-          inputs: [
-            {
-              indexed: true,
-              internalType: "string",
-              name: "protocol",
-              type: "string",
-            },
-            {
-              indexed: false,
-              internalType: "uint256",
-              name: "riskScore",
-              type: "uint256",
-            },
-            {
-              indexed: false,
-              internalType: "uint256",
-              name: "minAPY",
-              type: "uint256",
-            },
-            {
-              indexed: false,
-              internalType: "uint256",
-              name: "maxAPY",
-              type: "uint256",
-            },
-          ],
-          name: "ProtocolUpdated",
-          type: "event",
-        },
-        {
-          anonymous: false,
-          inputs: [
-            {
-              indexed: true,
-              internalType: "bytes32",
-              name: "role",
-              type: "bytes32",
-            },
-            {
-              indexed: true,
-              internalType: "bytes32",
-              name: "previousAdminRole",
-              type: "bytes32",
-            },
-            {
-              indexed: true,
-              internalType: "bytes32",
-              name: "newAdminRole",
-              type: "bytes32",
-            },
-          ],
-          name: "RoleAdminChanged",
-          type: "event",
-        },
-        {
-          anonymous: false,
-          inputs: [
-            {
-              indexed: true,
-              internalType: "bytes32",
-              name: "role",
-              type: "bytes32",
-            },
-            {
-              indexed: true,
-              internalType: "address",
-              name: "account",
-              type: "address",
-            },
-            {
-              indexed: true,
-              internalType: "address",
-              name: "sender",
-              type: "address",
-            },
-          ],
-          name: "RoleGranted",
-          type: "event",
-        },
-        {
-          anonymous: false,
-          inputs: [
-            {
-              indexed: true,
-              internalType: "bytes32",
-              name: "role",
-              type: "bytes32",
-            },
-            {
-              indexed: true,
-              internalType: "address",
-              name: "account",
-              type: "address",
-            },
-            {
-              indexed: true,
-              internalType: "address",
-              name: "sender",
-              type: "address",
-            },
-          ],
-          name: "RoleRevoked",
-          type: "event",
-        },
-        {
-          inputs: [],
-          name: "ADMIN_ROLE",
-          outputs: [
-            {
-              internalType: "bytes32",
-              name: "",
-              type: "bytes32",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "DEFAULT_ADMIN_ROLE",
-          outputs: [
-            {
-              internalType: "bytes32",
-              name: "",
-              type: "bytes32",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "PROTOCOL_MANAGER_ROLE",
-          outputs: [
-            {
-              internalType: "bytes32",
-              name: "",
-              type: "bytes32",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "uint256",
-              name: "chainId",
-              type: "uint256",
-            },
-            {
-              internalType: "string",
-              name: "name",
-              type: "string",
-            },
-            {
-              internalType: "address",
-              name: "nativeToken",
-              type: "address",
-            },
-            {
-              internalType: "uint256",
-              name: "gasPrice",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "bridgeCost",
-              type: "uint256",
-            },
-          ],
-          name: "addChain",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "string",
-              name: "name",
-              type: "string",
-            },
-            {
-              internalType: "address",
-              name: "adapter",
-              type: "address",
-            },
-            {
-              internalType: "uint256",
-              name: "chainId",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "riskScore",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "minAPY",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "maxAPY",
-              type: "uint256",
-            },
-          ],
-          name: "addProtocol",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "uint256",
-              name: "",
-              type: "uint256",
-            },
-          ],
-          name: "chainInfo",
-          outputs: [
-            {
-              internalType: "string",
-              name: "name",
-              type: "string",
-            },
-            {
-              internalType: "address",
-              name: "nativeToken",
-              type: "address",
-            },
-            {
-              internalType: "uint256",
-              name: "gasPrice",
-              type: "uint256",
-            },
-            {
-              internalType: "bool",
-              name: "isActive",
-              type: "bool",
-            },
-            {
-              internalType: "uint256",
-              name: "bridgeCost",
-              type: "uint256",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "uint256",
-              name: "",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "",
-              type: "uint256",
-            },
-          ],
-          name: "chainProtocols",
-          outputs: [
-            {
-              internalType: "string",
-              name: "",
-              type: "string",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "string",
-              name: "name",
-              type: "string",
-            },
-          ],
-          name: "deactivateProtocol",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "string",
-              name: "name",
-              type: "string",
-            },
-          ],
-          name: "getAdapter",
-          outputs: [
-            {
-              internalType: "address",
-              name: "",
-              type: "address",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "getAllProtocols",
-          outputs: [
-            {
-              internalType: "string[]",
-              name: "",
-              type: "string[]",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "uint256",
-              name: "chainId",
-              type: "uint256",
-            },
-          ],
-          name: "getChainInfo",
-          outputs: [
-            {
-              components: [
-                {
-                  internalType: "string",
-                  name: "name",
-                  type: "string",
-                },
-                {
-                  internalType: "address",
-                  name: "nativeToken",
-                  type: "address",
-                },
-                {
-                  internalType: "uint256",
-                  name: "gasPrice",
-                  type: "uint256",
-                },
-                {
-                  internalType: "bool",
-                  name: "isActive",
-                  type: "bool",
-                },
-                {
-                  internalType: "uint256",
-                  name: "bridgeCost",
-                  type: "uint256",
-                },
-              ],
-              internalType: "struct ChainRegistry.ChainInfo",
-              name: "",
-              type: "tuple",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "uint256",
-              name: "chainId",
-              type: "uint256",
-            },
-          ],
-          name: "getChainProtocols",
-          outputs: [
-            {
-              internalType: "string[]",
-              name: "",
-              type: "string[]",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "uint256",
-              name: "sourceChainId",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "targetChainId",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "minAPYImprovement",
-              type: "uint256",
-            },
-          ],
-          name: "getCrossChainOpportunities",
-          outputs: [
-            {
-              internalType: "string[]",
-              name: "opportunities",
-              type: "string[]",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "uint256",
-              name: "minAPY",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "maxRiskScore",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "chainId",
-              type: "uint256",
-            },
-          ],
-          name: "getOptimalProtocols",
-          outputs: [
-            {
-              internalType: "string[]",
-              name: "optimalProtocols",
-              type: "string[]",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "string",
-              name: "name",
-              type: "string",
-            },
-          ],
-          name: "getProtocolInfo",
-          outputs: [
-            {
-              components: [
-                {
-                  internalType: "address",
-                  name: "adapter",
-                  type: "address",
-                },
-                {
-                  internalType: "uint256",
-                  name: "chainId",
-                  type: "uint256",
-                },
-                {
-                  internalType: "uint256",
-                  name: "riskScore",
-                  type: "uint256",
-                },
-                {
-                  internalType: "uint256",
-                  name: "minAPY",
-                  type: "uint256",
-                },
-                {
-                  internalType: "uint256",
-                  name: "maxAPY",
-                  type: "uint256",
-                },
-                {
-                  internalType: "bool",
-                  name: "isActive",
-                  type: "bool",
-                },
-                {
-                  internalType: "uint256",
-                  name: "tvl",
-                  type: "uint256",
-                },
-                {
-                  internalType: "uint256",
-                  name: "lastUpdate",
-                  type: "uint256",
-                },
-              ],
-              internalType: "struct ChainRegistry.ProtocolInfo",
-              name: "",
-              type: "tuple",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "uint256",
-              name: "maxRiskScore",
-              type: "uint256",
-            },
-          ],
-          name: "getProtocolsByRiskScore",
-          outputs: [
-            {
-              internalType: "string[]",
-              name: "",
-              type: "string[]",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "bytes32",
-              name: "role",
-              type: "bytes32",
-            },
-          ],
-          name: "getRoleAdmin",
-          outputs: [
-            {
-              internalType: "bytes32",
-              name: "",
-              type: "bytes32",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "getSupportedChains",
-          outputs: [
-            {
-              internalType: "uint256[]",
-              name: "",
-              type: "uint256[]",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "bytes32",
-              name: "role",
-              type: "bytes32",
-            },
-            {
-              internalType: "address",
-              name: "account",
-              type: "address",
-            },
-          ],
-          name: "grantRole",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "bytes32",
-              name: "role",
-              type: "bytes32",
-            },
-            {
-              internalType: "address",
-              name: "account",
-              type: "address",
-            },
-          ],
-          name: "hasRole",
-          outputs: [
-            {
-              internalType: "bool",
-              name: "",
-              type: "bool",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "admin",
-              type: "address",
-            },
-          ],
-          name: "initialize",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "string",
-              name: "",
-              type: "string",
-            },
-          ],
-          name: "protocolAdapters",
-          outputs: [
-            {
-              internalType: "address",
-              name: "",
-              type: "address",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "string",
-              name: "",
-              type: "string",
-            },
-          ],
-          name: "protocolInfo",
-          outputs: [
-            {
-              internalType: "address",
-              name: "adapter",
-              type: "address",
-            },
-            {
-              internalType: "uint256",
-              name: "chainId",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "riskScore",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "minAPY",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "maxAPY",
-              type: "uint256",
-            },
-            {
-              internalType: "bool",
-              name: "isActive",
-              type: "bool",
-            },
-            {
-              internalType: "uint256",
-              name: "tvl",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "lastUpdate",
-              type: "uint256",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "uint256",
-              name: "",
-              type: "uint256",
-            },
-          ],
-          name: "protocols",
-          outputs: [
-            {
-              internalType: "string",
-              name: "",
-              type: "string",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "bytes32",
-              name: "role",
-              type: "bytes32",
-            },
-            {
-              internalType: "address",
-              name: "callerConfirmation",
-              type: "address",
-            },
-          ],
-          name: "renounceRole",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "bytes32",
-              name: "role",
-              type: "bytes32",
-            },
-            {
-              internalType: "address",
-              name: "account",
-              type: "address",
-            },
-          ],
-          name: "revokeRole",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "uint256",
-              name: "",
-              type: "uint256",
-            },
-          ],
-          name: "supportedChains",
-          outputs: [
-            {
-              internalType: "uint256",
-              name: "",
-              type: "uint256",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "bytes4",
-              name: "interfaceId",
-              type: "bytes4",
-            },
-          ],
-          name: "supportsInterface",
-          outputs: [
-            {
-              internalType: "bool",
-              name: "",
-              type: "bool",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "string",
-              name: "name",
-              type: "string",
-            },
-            {
-              internalType: "uint256",
-              name: "riskScore",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "minAPY",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "maxAPY",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "tvl",
-              type: "uint256",
-            },
-          ],
-          name: "updateProtocolInfo",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-      ],
-      inheritedFunctions: {
-        DEFAULT_ADMIN_ROLE:
-          "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol",
-        getRoleAdmin:
-          "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol",
-        grantRole:
-          "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol",
-        hasRole:
-          "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol",
-        renounceRole:
-          "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol",
-        revokeRole:
-          "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol",
-        supportsInterface:
-          "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol",
-      },
-      deployedOnBlock: 31624875,
-    },
+  31337: {
     SmartWalletFactory: {
-      address: "0x3fCb812C6CAe20C254662A619096EB698ebd6ef3",
+      address: "0x5FbDB2315678afecb367f032d93F642f64180aa3",
       abi: [
         {
           inputs: [
@@ -1404,10 +456,10 @@ const deployedContracts = {
         renounceOwnership: "@openzeppelin/contracts/access/Ownable.sol",
         transferOwnership: "@openzeppelin/contracts/access/Ownable.sol",
       },
-      deployedOnBlock: 31624879,
+      deployedOnBlock: 1,
     },
     YieldRouter: {
-      address: "0x0FAE5e7b22ca43Ba521021627Fe32796882c1f2d",
+      address: "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",
       abi: [
         {
           inputs: [],
@@ -2812,16 +1864,28 @@ const deployedContracts = {
         upgradeToAndCall:
           "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol",
       },
-      deployedOnBlock: 31624882,
+      deployedOnBlock: 3,
     },
-    YieldRouter_Proxy: {
-      address: "0x0FAE5e7b22ca43Ba521021627Fe32796882c1f2d",
+  },
+  84532: {
+    SmartWalletFactory: {
+      address: "0x4bcB0b682d2e500F03A42715B36080655316A15c",
       abi: [
         {
           inputs: [
             {
               internalType: "address",
-              name: "_implementation",
+              name: "_backendCoordinator",
+              type: "address",
+            },
+            {
+              internalType: "address",
+              name: "_usdcAddress",
+              type: "address",
+            },
+            {
+              internalType: "address",
+              name: "_owner",
               type: "address",
             },
           ],
@@ -2829,12 +1893,114 @@ const deployedContracts = {
           type: "constructor",
         },
         {
-          stateMutability: "payable",
-          type: "fallback",
+          inputs: [],
+          name: "InvalidUser",
+          type: "error",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "owner",
+              type: "address",
+            },
+          ],
+          name: "OwnableInvalidOwner",
+          type: "error",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "account",
+              type: "address",
+            },
+          ],
+          name: "OwnableUnauthorizedAccount",
+          type: "error",
         },
         {
           inputs: [],
-          name: "implementation",
+          name: "WalletAlreadyExists",
+          type: "error",
+        },
+        {
+          inputs: [],
+          name: "WalletCreationFailed",
+          type: "error",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: true,
+              internalType: "address",
+              name: "oldCoordinator",
+              type: "address",
+            },
+            {
+              indexed: true,
+              internalType: "address",
+              name: "newCoordinator",
+              type: "address",
+            },
+          ],
+          name: "BackendCoordinatorUpdated",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: true,
+              internalType: "address",
+              name: "previousOwner",
+              type: "address",
+            },
+            {
+              indexed: true,
+              internalType: "address",
+              name: "newOwner",
+              type: "address",
+            },
+          ],
+          name: "OwnershipTransferred",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: true,
+              internalType: "address",
+              name: "user",
+              type: "address",
+            },
+            {
+              indexed: true,
+              internalType: "address",
+              name: "wallet",
+              type: "address",
+            },
+            {
+              indexed: false,
+              internalType: "bytes32",
+              name: "salt",
+              type: "bytes32",
+            },
+          ],
+          name: "WalletCreated",
+          type: "event",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "",
+              type: "address",
+            },
+          ],
+          name: "agentToUser",
           outputs: [
             {
               internalType: "address",
@@ -2846,15 +2012,316 @@ const deployedContracts = {
           type: "function",
         },
         {
-          stateMutability: "payable",
-          type: "receive",
+          inputs: [],
+          name: "backendCoordinator",
+          outputs: [
+            {
+              internalType: "address",
+              name: "",
+              type: "address",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "user",
+              type: "address",
+            },
+          ],
+          name: "createWallet",
+          outputs: [
+            {
+              internalType: "address",
+              name: "wallet",
+              type: "address",
+            },
+          ],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address[]",
+              name: "users",
+              type: "address[]",
+            },
+          ],
+          name: "createWalletsBatch",
+          outputs: [
+            {
+              internalType: "address[]",
+              name: "wallets",
+              type: "address[]",
+            },
+          ],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "wallet",
+              type: "address",
+            },
+          ],
+          name: "disableWallet",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "getTotalWallets",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "count",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "agentWallet",
+              type: "address",
+            },
+          ],
+          name: "getUserForAgent",
+          outputs: [
+            {
+              internalType: "address",
+              name: "user",
+              type: "address",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "user",
+              type: "address",
+            },
+          ],
+          name: "getWallet",
+          outputs: [
+            {
+              internalType: "address",
+              name: "wallet",
+              type: "address",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "getWalletBytecodeHash",
+          outputs: [
+            {
+              internalType: "bytes32",
+              name: "hash",
+              type: "bytes32",
+            },
+          ],
+          stateMutability: "pure",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "wallet",
+              type: "address",
+            },
+          ],
+          name: "getWalletOwner",
+          outputs: [
+            {
+              internalType: "address",
+              name: "owner",
+              type: "address",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "user",
+              type: "address",
+            },
+          ],
+          name: "hasWallet",
+          outputs: [
+            {
+              internalType: "bool",
+              name: "exists",
+              type: "bool",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "",
+              type: "address",
+            },
+          ],
+          name: "isValidWallet",
+          outputs: [
+            {
+              internalType: "bool",
+              name: "",
+              type: "bool",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "wallet",
+              type: "address",
+            },
+          ],
+          name: "isWalletValid",
+          outputs: [
+            {
+              internalType: "bool",
+              name: "valid",
+              type: "bool",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "owner",
+          outputs: [
+            {
+              internalType: "address",
+              name: "",
+              type: "address",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "user",
+              type: "address",
+            },
+          ],
+          name: "predictWalletAddress",
+          outputs: [
+            {
+              internalType: "address",
+              name: "predictedAddress",
+              type: "address",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "renounceOwnership",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "newOwner",
+              type: "address",
+            },
+          ],
+          name: "transferOwnership",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "usdcAddress",
+          outputs: [
+            {
+              internalType: "address",
+              name: "",
+              type: "address",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "",
+              type: "address",
+            },
+          ],
+          name: "userWallets",
+          outputs: [
+            {
+              internalType: "address",
+              name: "",
+              type: "address",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "version",
+          outputs: [
+            {
+              internalType: "string",
+              name: "",
+              type: "string",
+            },
+          ],
+          stateMutability: "pure",
+          type: "function",
         },
       ],
-      inheritedFunctions: {},
-      deployedOnBlock: 31624884,
+      inheritedFunctions: {
+        owner: "@openzeppelin/contracts/access/Ownable.sol",
+        renounceOwnership: "@openzeppelin/contracts/access/Ownable.sol",
+        transferOwnership: "@openzeppelin/contracts/access/Ownable.sol",
+      },
+      deployedOnBlock: 31838115,
     },
-    UserSmartWallet: {
-      address: "0x0000000000000000000000000000000000000000", // Will be set when wallet is created
+    YieldRouter: {
+      address: "0xF815e848F06A8bE8f6b97fE987557080d7bC0b38",
       abi: [
         {
           inputs: [],
@@ -2878,315 +2345,1189 @@ const deployedContracts = {
           type: "error",
         },
         {
-          inputs: [],
-          name: "InsufficientBalance",
-          type: "error",
-        },
-        {
-          inputs: [],
-          name: "InvalidAmount",
-          type: "error",
-        },
-        {
-          inputs: [],
-          name: "InvalidProtocol",
-          type: "error",
-        },
-        {
-          inputs: [],
-          name: "OnlyBackendOrOwner",
-          type: "error",
-        },
-        {
-          inputs: [],
-          name: "OnlyFactory",
-          type: "error",
-        },
-        {
-          inputs: [],
-          name: "OnlyOwner",
-          type: "error",
-        },
-        {
-          inputs: [],
-          name: "TransferFailed",
-          type: "error",
-        },
-        {
-          inputs: [],
-          name: "WalletNotActive",
-          type: "error",
-        },
-        {
-          inputs: [],
-          name: "ZeroAddress",
-          type: "error",
-        },
-        {
-          anonymous: false,
-          inputs: [
-            {
-              indexed: false,
-              internalType: "string[]",
-              name: "protocolNames",
-              type: "string[]",
-            },
-            {
-              indexed: false,
-              internalType: "address[]",
-              name: "adapters",
-              type: "address[]",
-            },
-            {
-              indexed: false,
-              internalType: "uint256[]",
-              name: "amounts",
-              type: "uint256[]",
-            },
-          ],
-          name: "AllocationExecuted",
-          type: "event",
-        },
-        {
-          anonymous: false,
-          inputs: [
-            {
-              indexed: false,
-              internalType: "uint256",
-              name: "amount",
-              type: "uint256",
-            },
-            {
-              indexed: false,
-              internalType: "uint32",
-              name: "destinationDomain",
-              type: "uint32",
-            },
-            {
-              indexed: false,
-              internalType: "address",
-              name: "recipient",
-              type: "address",
-            },
-            {
-              indexed: false,
-              internalType: "uint256",
-              name: "timestamp",
-              type: "uint256",
-            },
-          ],
-          name: "CCTPTransferInitiated",
-          type: "event",
-        },
-        {
-          anonymous: false,
-          inputs: [
-            {
-              indexed: true,
-              internalType: "address",
-              name: "user",
-              type: "address",
-            },
-            {
-              indexed: false,
-              internalType: "uint256",
-              name: "amount",
-              type: "uint256",
-            },
-            {
-              indexed: false,
-              internalType: "string",
-              name: "strategy",
-              type: "string",
-            },
-            {
-              indexed: false,
-              internalType: "uint256",
-              name: "timestamp",
-              type: "uint256",
-            },
-          ],
-          name: "Deposited",
-          type: "event",
-        },
-        {
-          anonymous: false,
-          inputs: [
-            {
-              indexed: true,
-              internalType: "address",
-              name: "user",
-              type: "address",
-            },
-            {
-              indexed: false,
-              internalType: "uint256",
-              name: "amount",
-              type: "uint256",
-            },
-            {
-              indexed: false,
-              internalType: "uint256",
-              name: "timestamp",
-              type: "uint256",
-            },
-          ],
-          name: "EmergencyWithdrawal",
-          type: "event",
-        },
-        {
-          anonymous: false,
-          inputs: [
-            {
-              indexed: true,
-              internalType: "string",
-              name: "protocol",
-              type: "string",
-            },
-            {
-              indexed: false,
-              internalType: "address",
-              name: "adapter",
-              type: "address",
-            },
-            {
-              indexed: false,
-              internalType: "uint256",
-              name: "amount",
-              type: "uint256",
-            },
-            {
-              indexed: false,
-              internalType: "uint256",
-              name: "timestamp",
-              type: "uint256",
-            },
-          ],
-          name: "ProtocolAllocation",
-          type: "event",
-        },
-        {
-          anonymous: false,
-          inputs: [
-            {
-              indexed: true,
-              internalType: "string",
-              name: "protocol",
-              type: "string",
-            },
-            {
-              indexed: false,
-              internalType: "address",
-              name: "adapter",
-              type: "address",
-            },
-            {
-              indexed: false,
-              internalType: "uint256",
-              name: "amount",
-              type: "uint256",
-            },
-            {
-              indexed: false,
-              internalType: "uint256",
-              name: "timestamp",
-              type: "uint256",
-            },
-          ],
-          name: "ProtocolWithdrawal",
-          type: "event",
-        },
-        {
-          anonymous: false,
-          inputs: [
-            {
-              indexed: false,
-              internalType: "uint256",
-              name: "timestamp",
-              type: "uint256",
-            },
-          ],
-          name: "WalletDeactivated",
-          type: "event",
-        },
-        {
-          anonymous: false,
-          inputs: [
-            {
-              indexed: true,
-              internalType: "address",
-              name: "user",
-              type: "address",
-            },
-            {
-              indexed: false,
-              internalType: "uint256",
-              name: "amount",
-              type: "uint256",
-            },
-            {
-              indexed: false,
-              internalType: "uint256",
-              name: "timestamp",
-              type: "uint256",
-            },
-          ],
-          name: "Withdrawn",
-          type: "event",
-        },
-        {
-          inputs: [
-            {
-              internalType: "string[]",
-              name: "protocolNames",
-              type: "string[]",
-            },
-            {
-              internalType: "address[]",
-              name: "adapters",
-              type: "address[]",
-            },
-            {
-              internalType: "uint256[]",
-              name: "amounts",
-              type: "uint256[]",
-            },
-          ],
-          name: "batchAllocate",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "deactivateWallet",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "uint256",
-              name: "amount",
-              type: "uint256",
-            },
-            {
-              internalType: "string",
-              name: "strategy",
-              type: "string",
-            },
-          ],
-          name: "deposit",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
           inputs: [
             {
               internalType: "address",
               name: "target",
+              type: "address",
+            },
+          ],
+          name: "AddressEmptyCode",
+          type: "error",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "implementation",
+              type: "address",
+            },
+          ],
+          name: "ERC1967InvalidImplementation",
+          type: "error",
+        },
+        {
+          inputs: [],
+          name: "ERC1967NonPayable",
+          type: "error",
+        },
+        {
+          inputs: [],
+          name: "FailedInnerCall",
+          type: "error",
+        },
+        {
+          inputs: [],
+          name: "InvalidInitialization",
+          type: "error",
+        },
+        {
+          inputs: [],
+          name: "NotInitializing",
+          type: "error",
+        },
+        {
+          inputs: [],
+          name: "UUPSUnauthorizedCallContext",
+          type: "error",
+        },
+        {
+          inputs: [
+            {
+              internalType: "bytes32",
+              name: "slot",
+              type: "bytes32",
+            },
+          ],
+          name: "UUPSUnsupportedProxiableUUID",
+          type: "error",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: true,
+              internalType: "address",
+              name: "user",
+              type: "address",
+            },
+            {
+              indexed: false,
+              internalType: "string",
+              name: "protocol",
+              type: "string",
+            },
+            {
+              indexed: false,
+              internalType: "uint256",
+              name: "chainId",
+              type: "uint256",
+            },
+            {
+              indexed: false,
+              internalType: "uint256",
+              name: "amount",
+              type: "uint256",
+            },
+            {
+              indexed: false,
+              internalType: "uint256",
+              name: "timestamp",
+              type: "uint256",
+            },
+          ],
+          name: "AllocationReported",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: false,
+              internalType: "uint64",
+              name: "version",
+              type: "uint64",
+            },
+          ],
+          name: "Initialized",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: true,
+              internalType: "address",
+              name: "user",
+              type: "address",
+            },
+            {
+              indexed: false,
+              internalType: "uint256",
+              name: "strategyId",
+              type: "uint256",
+            },
+            {
+              indexed: false,
+              internalType: "uint256",
+              name: "expectedAPY",
+              type: "uint256",
+            },
+            {
+              indexed: false,
+              internalType: "uint256",
+              name: "actualCost",
+              type: "uint256",
+            },
+          ],
+          name: "OptimizationCompleted",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: true,
+              internalType: "address",
+              name: "user",
+              type: "address",
+            },
+            {
+              indexed: false,
+              internalType: "uint256",
+              name: "amount",
+              type: "uint256",
+            },
+            {
+              indexed: false,
+              internalType: "string",
+              name: "strategy",
+              type: "string",
+            },
+            {
+              indexed: false,
+              internalType: "uint256",
+              name: "timestamp",
+              type: "uint256",
+            },
+          ],
+          name: "OptimizationRequested",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: true,
+              internalType: "address",
+              name: "user",
+              type: "address",
+            },
+            {
+              indexed: false,
+              internalType: "uint256",
+              name: "totalValue",
+              type: "uint256",
+            },
+            {
+              indexed: false,
+              internalType: "uint256",
+              name: "protocolCount",
+              type: "uint256",
+            },
+            {
+              indexed: false,
+              internalType: "uint256",
+              name: "timestamp",
+              type: "uint256",
+            },
+          ],
+          name: "PortfolioUpdated",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: true,
+              internalType: "address",
+              name: "user",
+              type: "address",
+            },
+            {
+              indexed: false,
+              internalType: "uint256",
+              name: "oldValue",
+              type: "uint256",
+            },
+            {
+              indexed: false,
+              internalType: "uint256",
+              name: "newValue",
+              type: "uint256",
+            },
+            {
+              indexed: false,
+              internalType: "uint256",
+              name: "improvement",
+              type: "uint256",
+            },
+          ],
+          name: "RebalanceExecuted",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: true,
+              internalType: "bytes32",
+              name: "role",
+              type: "bytes32",
+            },
+            {
+              indexed: true,
+              internalType: "bytes32",
+              name: "previousAdminRole",
+              type: "bytes32",
+            },
+            {
+              indexed: true,
+              internalType: "bytes32",
+              name: "newAdminRole",
+              type: "bytes32",
+            },
+          ],
+          name: "RoleAdminChanged",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: true,
+              internalType: "bytes32",
+              name: "role",
+              type: "bytes32",
+            },
+            {
+              indexed: true,
+              internalType: "address",
+              name: "account",
+              type: "address",
+            },
+            {
+              indexed: true,
+              internalType: "address",
+              name: "sender",
+              type: "address",
+            },
+          ],
+          name: "RoleGranted",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: true,
+              internalType: "bytes32",
+              name: "role",
+              type: "bytes32",
+            },
+            {
+              indexed: true,
+              internalType: "address",
+              name: "account",
+              type: "address",
+            },
+            {
+              indexed: true,
+              internalType: "address",
+              name: "sender",
+              type: "address",
+            },
+          ],
+          name: "RoleRevoked",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: true,
+              internalType: "address",
+              name: "user",
+              type: "address",
+            },
+            {
+              indexed: true,
+              internalType: "address",
+              name: "smartWallet",
+              type: "address",
+            },
+          ],
+          name: "SmartWalletLinked",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: true,
+              internalType: "address",
+              name: "user",
+              type: "address",
+            },
+            {
+              indexed: false,
+              internalType: "string",
+              name: "newStrategy",
+              type: "string",
+            },
+          ],
+          name: "StrategyPreferenceUpdated",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: true,
+              internalType: "address",
+              name: "implementation",
+              type: "address",
+            },
+          ],
+          name: "Upgraded",
+          type: "event",
+        },
+        {
+          inputs: [],
+          name: "AI_BACKEND_ROLE",
+          outputs: [
+            {
+              internalType: "bytes32",
+              name: "",
+              type: "bytes32",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "ANALYTICS_ROLE",
+          outputs: [
+            {
+              internalType: "bytes32",
+              name: "",
+              type: "bytes32",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "DEFAULT_ADMIN_ROLE",
+          outputs: [
+            {
+              internalType: "bytes32",
+              name: "",
+              type: "bytes32",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "UPGRADE_INTERFACE_VERSION",
+          outputs: [
+            {
+              internalType: "string",
+              name: "",
+              type: "string",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "user",
+              type: "address",
+            },
+          ],
+          name: "getOptimizationHistory",
+          outputs: [
+            {
+              components: [
+                {
+                  internalType: "uint256",
+                  name: "timestamp",
+                  type: "uint256",
+                },
+                {
+                  internalType: "uint256",
+                  name: "expectedAPY",
+                  type: "uint256",
+                },
+                {
+                  internalType: "uint256",
+                  name: "actualAPY",
+                  type: "uint256",
+                },
+                {
+                  internalType: "string[]",
+                  name: "protocols",
+                  type: "string[]",
+                },
+                {
+                  internalType: "uint256[]",
+                  name: "chainIds",
+                  type: "uint256[]",
+                },
+                {
+                  internalType: "uint256[]",
+                  name: "allocations",
+                  type: "uint256[]",
+                },
+                {
+                  internalType: "uint256",
+                  name: "gasCost",
+                  type: "uint256",
+                },
+                {
+                  internalType: "uint256",
+                  name: "transferCost",
+                  type: "uint256",
+                },
+                {
+                  internalType: "bool",
+                  name: "success",
+                  type: "bool",
+                },
+                {
+                  internalType: "string",
+                  name: "strategy",
+                  type: "string",
+                },
+              ],
+              internalType: "struct YieldRouter.OptimizationHistory",
+              name: "history",
+              type: "tuple",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "getPlatformStats",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "totalOptimizations_",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "totalUsers_",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "averagePortfolioSize",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "bytes32",
+              name: "role",
+              type: "bytes32",
+            },
+          ],
+          name: "getRoleAdmin",
+          outputs: [
+            {
+              internalType: "bytes32",
+              name: "",
+              type: "bytes32",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "user",
+              type: "address",
+            },
+            {
+              internalType: "uint256",
+              name: "chainId",
+              type: "uint256",
+            },
+          ],
+          name: "getUserChainBalance",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "balance",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "user",
+              type: "address",
+            },
+          ],
+          name: "getUserPortfolio",
+          outputs: [
+            {
+              components: [
+                {
+                  internalType: "uint256",
+                  name: "totalValue",
+                  type: "uint256",
+                },
+                {
+                  internalType: "uint256",
+                  name: "lastOptimization",
+                  type: "uint256",
+                },
+                {
+                  internalType: "uint256",
+                  name: "optimizationCount",
+                  type: "uint256",
+                },
+                {
+                  internalType: "uint256",
+                  name: "totalDeposited",
+                  type: "uint256",
+                },
+                {
+                  internalType: "uint256",
+                  name: "totalWithdrawn",
+                  type: "uint256",
+                },
+                {
+                  internalType: "string",
+                  name: "currentStrategy",
+                  type: "string",
+                },
+                {
+                  internalType: "address",
+                  name: "smartWallet",
+                  type: "address",
+                },
+              ],
+              internalType: "struct YieldRouter.UserPortfolio",
+              name: "portfolio",
+              type: "tuple",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "user",
+              type: "address",
+            },
+            {
+              internalType: "string",
+              name: "protocol",
+              type: "string",
+            },
+          ],
+          name: "getUserProtocolBalance",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "balance",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "user",
+              type: "address",
+            },
+          ],
+          name: "getUserSmartWallet",
+          outputs: [
+            {
+              internalType: "address",
+              name: "smartWallet",
+              type: "address",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "user",
+              type: "address",
+            },
+          ],
+          name: "getUserStrategyPreferences",
+          outputs: [
+            {
+              components: [
+                {
+                  internalType: "string",
+                  name: "riskTolerance",
+                  type: "string",
+                },
+                {
+                  internalType: "uint256",
+                  name: "preferredChains",
+                  type: "uint256",
+                },
+                {
+                  internalType: "uint256",
+                  name: "maxProtocolAllocation",
+                  type: "uint256",
+                },
+                {
+                  internalType: "uint256",
+                  name: "rebalanceThreshold",
+                  type: "uint256",
+                },
+                {
+                  internalType: "bool",
+                  name: "autoRebalanceEnabled",
+                  type: "bool",
+                },
+              ],
+              internalType: "struct YieldRouter.StrategyPreference",
+              name: "preferences",
+              type: "tuple",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "backend",
+              type: "address",
+            },
+          ],
+          name: "grantBackendRole",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "bytes32",
+              name: "role",
+              type: "bytes32",
+            },
+            {
+              internalType: "address",
+              name: "account",
+              type: "address",
+            },
+          ],
+          name: "grantRole",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "bytes32",
+              name: "role",
+              type: "bytes32",
+            },
+            {
+              internalType: "address",
+              name: "account",
+              type: "address",
+            },
+          ],
+          name: "hasRole",
+          outputs: [
+            {
+              internalType: "bool",
+              name: "",
+              type: "bool",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "user",
+              type: "address",
+            },
+          ],
+          name: "hasSmartWallet",
+          outputs: [
+            {
+              internalType: "bool",
+              name: "hasWallet",
+              type: "bool",
+            },
+            {
+              internalType: "address",
+              name: "walletAddress",
+              type: "address",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "_registry",
+              type: "address",
+            },
+            {
+              internalType: "address",
+              name: "_walletFactory",
+              type: "address",
+            },
+            {
+              internalType: "address",
+              name: "admin",
+              type: "address",
+            },
+          ],
+          name: "initialize",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "user",
+              type: "address",
+            },
+            {
+              internalType: "address",
+              name: "smartWallet",
+              type: "address",
+            },
+          ],
+          name: "linkSmartWallet",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "",
+              type: "address",
+            },
+          ],
+          name: "optimizationHistory",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "timestamp",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "expectedAPY",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "actualAPY",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "gasCost",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "transferCost",
+              type: "uint256",
+            },
+            {
+              internalType: "bool",
+              name: "success",
+              type: "bool",
+            },
+            {
+              internalType: "string",
+              name: "strategy",
+              type: "string",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "proxiableUUID",
+          outputs: [
+            {
+              internalType: "bytes32",
+              name: "",
+              type: "bytes32",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "registry",
+          outputs: [
+            {
+              internalType: "contract ChainRegistry",
+              name: "",
+              type: "address",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "bytes32",
+              name: "role",
+              type: "bytes32",
+            },
+            {
+              internalType: "address",
+              name: "callerConfirmation",
+              type: "address",
+            },
+          ],
+          name: "renounceRole",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "user",
+              type: "address",
+            },
+            {
+              internalType: "string",
+              name: "protocol",
+              type: "string",
+            },
+            {
+              internalType: "uint256",
+              name: "chainId",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "amount",
+              type: "uint256",
+            },
+          ],
+          name: "reportAllocation",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "user",
+              type: "address",
+            },
+            {
+              internalType: "uint256",
+              name: "expectedAPY",
+              type: "uint256",
+            },
+            {
+              internalType: "string[]",
+              name: "protocols",
+              type: "string[]",
+            },
+            {
+              internalType: "uint256[]",
+              name: "chainIds",
+              type: "uint256[]",
+            },
+            {
+              internalType: "uint256[]",
+              name: "allocations",
+              type: "uint256[]",
+            },
+            {
+              internalType: "uint256",
+              name: "totalCost",
+              type: "uint256",
+            },
+          ],
+          name: "reportOptimizationComplete",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "user",
+              type: "address",
+            },
+            {
+              internalType: "uint256",
+              name: "amount",
+              type: "uint256",
+            },
+            {
+              internalType: "string",
+              name: "strategy",
+              type: "string",
+            },
+          ],
+          name: "requestOptimization",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "backend",
+              type: "address",
+            },
+          ],
+          name: "revokeBackendRole",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "bytes32",
+              name: "role",
+              type: "bytes32",
+            },
+            {
+              internalType: "address",
+              name: "account",
+              type: "address",
+            },
+          ],
+          name: "revokeRole",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "user",
+              type: "address",
+            },
+            {
+              internalType: "string",
+              name: "strategy",
+              type: "string",
+            },
+            {
+              components: [
+                {
+                  internalType: "string",
+                  name: "riskTolerance",
+                  type: "string",
+                },
+                {
+                  internalType: "uint256",
+                  name: "preferredChains",
+                  type: "uint256",
+                },
+                {
+                  internalType: "uint256",
+                  name: "maxProtocolAllocation",
+                  type: "uint256",
+                },
+                {
+                  internalType: "uint256",
+                  name: "rebalanceThreshold",
+                  type: "uint256",
+                },
+                {
+                  internalType: "bool",
+                  name: "autoRebalanceEnabled",
+                  type: "bool",
+                },
+              ],
+              internalType: "struct YieldRouter.StrategyPreference",
+              name: "preferences",
+              type: "tuple",
+            },
+          ],
+          name: "setStrategyPreference",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "bytes4",
+              name: "interfaceId",
+              type: "bytes4",
+            },
+          ],
+          name: "supportsInterface",
+          outputs: [
+            {
+              internalType: "bool",
+              name: "",
+              type: "bool",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "totalOptimizations",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "totalUsers",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "user",
+              type: "address",
+            },
+            {
+              internalType: "uint256",
+              name: "actualAPY",
+              type: "uint256",
+            },
+          ],
+          name: "updateActualAPY",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "newRegistry",
+              type: "address",
+            },
+            {
+              internalType: "address",
+              name: "newWalletFactory",
+              type: "address",
+            },
+          ],
+          name: "updateContracts",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "user",
+              type: "address",
+            },
+            {
+              internalType: "uint256",
+              name: "newTotalValue",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "protocolCount",
+              type: "uint256",
+            },
+          ],
+          name: "updatePortfolioValue",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "newImplementation",
               type: "address",
             },
             {
@@ -3195,128 +3536,79 @@ const deployedContracts = {
               type: "bytes",
             },
           ],
-          name: "executeBackendAction",
-          outputs: [
-            {
-              internalType: "bytes",
-              name: "result",
-              type: "bytes",
-            },
-          ],
-          stateMutability: "nonpayable",
+          name: "upgradeToAndCall",
+          outputs: [],
+          stateMutability: "payable",
           type: "function",
         },
         {
           inputs: [
             {
+              internalType: "address",
+              name: "",
+              type: "address",
+            },
+            {
               internalType: "uint256",
-              name: "amount",
+              name: "",
               type: "uint256",
             },
+          ],
+          name: "userChainBalances",
+          outputs: [
             {
-              internalType: "uint32",
-              name: "destinationDomain",
-              type: "uint32",
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
             },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
             {
               internalType: "address",
-              name: "recipient",
+              name: "",
               type: "address",
             },
           ],
-          name: "executeCCTP",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "emergencyWithdraw",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "getActiveProtocols",
-          outputs: [
-            {
-              internalType: "string[]",
-              name: "protocols",
-              type: "string[]",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "getBalance",
-          outputs: [
-            {
-              internalType: "uint256",
-              name: "balance",
-              type: "uint256",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "string",
-              name: "protocolName",
-              type: "string",
-            },
-          ],
-          name: "getProtocolBalance",
-          outputs: [
-            {
-              internalType: "uint256",
-              name: "balance",
-              type: "uint256",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "getTotalValue",
+          name: "userPortfolios",
           outputs: [
             {
               internalType: "uint256",
               name: "totalValue",
               type: "uint256",
             },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "getWalletSummary",
-          outputs: [
             {
               internalType: "uint256",
-              name: "usdcBalance",
+              name: "lastOptimization",
               type: "uint256",
             },
             {
               internalType: "uint256",
-              name: "totalAllocated",
+              name: "optimizationCount",
               type: "uint256",
             },
             {
               internalType: "uint256",
-              name: "protocolCount",
+              name: "totalDeposited",
               type: "uint256",
             },
             {
-              internalType: "bool",
-              name: "active",
-              type: "bool",
+              internalType: "uint256",
+              name: "totalWithdrawn",
+              type: "uint256",
+            },
+            {
+              internalType: "string",
+              name: "currentStrategy",
+              type: "string",
+            },
+            {
+              internalType: "address",
+              name: "smartWallet",
+              type: "address",
             },
           ],
           stateMutability: "view",
@@ -3325,89 +3617,61 @@ const deployedContracts = {
         {
           inputs: [
             {
+              internalType: "address",
+              name: "",
+              type: "address",
+            },
+            {
+              internalType: "string",
+              name: "",
+              type: "string",
+            },
+          ],
+          name: "userProtocolBalances",
+          outputs: [
+            {
               internalType: "uint256",
-              name: "amount",
+              name: "",
               type: "uint256",
             },
           ],
-          name: "hasSufficientBalance",
-          outputs: [
-            {
-              internalType: "bool",
-              name: "sufficient",
-              type: "bool",
-            },
-          ],
           stateMutability: "view",
           type: "function",
         },
         {
-          inputs: [],
-          name: "isActive",
-          outputs: [
-            {
-              internalType: "bool",
-              name: "",
-              type: "bool",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "owner",
-          outputs: [
+          inputs: [
             {
               internalType: "address",
               name: "",
               type: "address",
             },
           ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "reactivateWallet",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "totalDeposited",
+          name: "userStrategies",
           outputs: [
+            {
+              internalType: "string",
+              name: "riskTolerance",
+              type: "string",
+            },
             {
               internalType: "uint256",
-              name: "",
+              name: "preferredChains",
               type: "uint256",
             },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "totalWithdrawn",
-          outputs: [
             {
               internalType: "uint256",
-              name: "",
+              name: "maxProtocolAllocation",
               type: "uint256",
             },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "USDC",
-          outputs: [
             {
-              internalType: "contract IERC20",
-              name: "",
-              type: "address",
+              internalType: "uint256",
+              name: "rebalanceThreshold",
+              type: "uint256",
+            },
+            {
+              internalType: "bool",
+              name: "autoRebalanceEnabled",
+              type: "bool",
             },
           ],
           stateMutability: "view",
@@ -3427,25 +3691,42 @@ const deployedContracts = {
           type: "function",
         },
         {
-          inputs: [
+          inputs: [],
+          name: "walletFactory",
+          outputs: [
             {
-              internalType: "uint256",
-              name: "amount",
-              type: "uint256",
+              internalType: "contract SmartWalletFactory",
+              name: "",
+              type: "address",
             },
           ],
-          name: "withdraw",
-          outputs: [],
-          stateMutability: "nonpayable",
+          stateMutability: "view",
           type: "function",
         },
-        {
-          stateMutability: "payable",
-          type: "receive",
-        },
       ],
-      inheritedFunctions: {},
-      deployedOnBlock: 0,
+      inheritedFunctions: {
+        DEFAULT_ADMIN_ROLE:
+          "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol",
+        getRoleAdmin:
+          "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol",
+        grantRole:
+          "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol",
+        hasRole:
+          "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol",
+        renounceRole:
+          "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol",
+        revokeRole:
+          "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol",
+        supportsInterface:
+          "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol",
+        UPGRADE_INTERFACE_VERSION:
+          "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol",
+        proxiableUUID:
+          "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol",
+        upgradeToAndCall:
+          "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol",
+      },
+      deployedOnBlock: 31838118,
     },
   },
   421614: {
@@ -4850,7 +5131,7 @@ const deployedContracts = {
       deployedOnBlock: 198829736,
     },
     YieldRouter: {
-      address: "0x780BE3b0aDf2189b4fa72086A48F2a8BD19B14b8",
+      address: "0x17f68347966D3372c07b481801E8Dfc57AB90865",
       abi: [
         {
           inputs: [],
@@ -6299,7 +6580,7 @@ const deployedContracts = {
   },
   11155111: {
     ChainRegistry: {
-      address: "0xa9714b3C50DfAabF4c828ed62e02D6eDcf9F6CA3",
+      address: "0x0a6cC6425c004f6F11a9138524e83c8270AA9419",
       abi: [
         {
           inputs: [],
@@ -7247,7 +7528,7 @@ const deployedContracts = {
       deployedOnBlock: 9294556,
     },
     SmartWalletFactory: {
-      address: "0xCE2C6Cb2cc38c82920D1a860978890085aB3F1b8",
+      address: "0xc3196c01cbe5904A67fb539281691003A844159d",
       abi: [
         {
           inputs: [
@@ -7699,7 +7980,7 @@ const deployedContracts = {
       deployedOnBlock: 9294558,
     },
     YieldRouter: {
-      address: "0x26Ee4397414A5670772c96d1a2fF52BC39bf9A11",
+      address: "0xeB6b0Eef0B1a9De992DA6887F52CF218bc04BF26",
       abi: [
         {
           inputs: [],
@@ -9107,7 +9388,7 @@ const deployedContracts = {
       deployedOnBlock: 9294559,
     },
     YieldRouter_Proxy: {
-      address: "0x26Ee4397414A5670772c96d1a2fF52BC39bf9A11",
+      address: "0x276a03D1A1A6D01dc727ea61C4Ec7e2C83834b3c",
       abi: [
         {
           inputs: [
@@ -9145,130 +9426,19 @@ const deployedContracts = {
       inheritedFunctions: {},
       deployedOnBlock: 9294560,
     },
-    UserSmartWallet: {
-      address: "0x0000000000000000000000000000000000000000", // Will be set when wallet is created
+    YourContract: {
+      address: "0x914d0F7bEe4193c684a604055B450EF361D2ba50",
       abi: [
         {
-          inputs: [],
-          name: "AccessControlBadConfirmation",
-          type: "error",
-        },
-        {
           inputs: [
             {
               internalType: "address",
-              name: "account",
+              name: "_owner",
               type: "address",
             },
-            {
-              internalType: "bytes32",
-              name: "neededRole",
-              type: "bytes32",
-            },
           ],
-          name: "AccessControlUnauthorizedAccount",
-          type: "error",
-        },
-        {
-          inputs: [],
-          name: "InsufficientBalance",
-          type: "error",
-        },
-        {
-          inputs: [],
-          name: "InvalidAmount",
-          type: "error",
-        },
-        {
-          inputs: [],
-          name: "InvalidProtocol",
-          type: "error",
-        },
-        {
-          inputs: [],
-          name: "OnlyBackendOrOwner",
-          type: "error",
-        },
-        {
-          inputs: [],
-          name: "OnlyFactory",
-          type: "error",
-        },
-        {
-          inputs: [],
-          name: "OnlyOwner",
-          type: "error",
-        },
-        {
-          inputs: [],
-          name: "TransferFailed",
-          type: "error",
-        },
-        {
-          inputs: [],
-          name: "WalletNotActive",
-          type: "error",
-        },
-        {
-          inputs: [],
-          name: "ZeroAddress",
-          type: "error",
-        },
-        {
-          anonymous: false,
-          inputs: [
-            {
-              indexed: false,
-              internalType: "string[]",
-              name: "protocolNames",
-              type: "string[]",
-            },
-            {
-              indexed: false,
-              internalType: "address[]",
-              name: "adapters",
-              type: "address[]",
-            },
-            {
-              indexed: false,
-              internalType: "uint256[]",
-              name: "amounts",
-              type: "uint256[]",
-            },
-          ],
-          name: "AllocationExecuted",
-          type: "event",
-        },
-        {
-          anonymous: false,
-          inputs: [
-            {
-              indexed: false,
-              internalType: "uint256",
-              name: "amount",
-              type: "uint256",
-            },
-            {
-              indexed: false,
-              internalType: "uint32",
-              name: "destinationDomain",
-              type: "uint32",
-            },
-            {
-              indexed: false,
-              internalType: "address",
-              name: "recipient",
-              type: "address",
-            },
-            {
-              indexed: false,
-              internalType: "uint256",
-              name: "timestamp",
-              type: "uint256",
-            },
-          ],
-          name: "CCTPTransferInitiated",
-          type: "event",
+          stateMutability: "nonpayable",
+          type: "constructor",
         },
         {
           anonymous: false,
@@ -9276,371 +9446,39 @@ const deployedContracts = {
             {
               indexed: true,
               internalType: "address",
-              name: "user",
+              name: "greetingSetter",
               type: "address",
-            },
-            {
-              indexed: false,
-              internalType: "uint256",
-              name: "amount",
-              type: "uint256",
             },
             {
               indexed: false,
               internalType: "string",
-              name: "strategy",
+              name: "newGreeting",
               type: "string",
             },
             {
               indexed: false,
-              internalType: "uint256",
-              name: "timestamp",
-              type: "uint256",
-            },
-          ],
-          name: "Deposited",
-          type: "event",
-        },
-        {
-          anonymous: false,
-          inputs: [
-            {
-              indexed: true,
-              internalType: "address",
-              name: "user",
-              type: "address",
-            },
-            {
-              indexed: false,
-              internalType: "uint256",
-              name: "amount",
-              type: "uint256",
-            },
-            {
-              indexed: false,
-              internalType: "uint256",
-              name: "timestamp",
-              type: "uint256",
-            },
-          ],
-          name: "EmergencyWithdrawal",
-          type: "event",
-        },
-        {
-          anonymous: false,
-          inputs: [
-            {
-              indexed: true,
-              internalType: "string",
-              name: "protocol",
-              type: "string",
-            },
-            {
-              indexed: false,
-              internalType: "address",
-              name: "adapter",
-              type: "address",
-            },
-            {
-              indexed: false,
-              internalType: "uint256",
-              name: "amount",
-              type: "uint256",
-            },
-            {
-              indexed: false,
-              internalType: "uint256",
-              name: "timestamp",
-              type: "uint256",
-            },
-          ],
-          name: "ProtocolAllocation",
-          type: "event",
-        },
-        {
-          anonymous: false,
-          inputs: [
-            {
-              indexed: true,
-              internalType: "string",
-              name: "protocol",
-              type: "string",
-            },
-            {
-              indexed: false,
-              internalType: "address",
-              name: "adapter",
-              type: "address",
-            },
-            {
-              indexed: false,
-              internalType: "uint256",
-              name: "amount",
-              type: "uint256",
-            },
-            {
-              indexed: false,
-              internalType: "uint256",
-              name: "timestamp",
-              type: "uint256",
-            },
-          ],
-          name: "ProtocolWithdrawal",
-          type: "event",
-        },
-        {
-          anonymous: false,
-          inputs: [
-            {
-              indexed: false,
-              internalType: "uint256",
-              name: "timestamp",
-              type: "uint256",
-            },
-          ],
-          name: "WalletDeactivated",
-          type: "event",
-        },
-        {
-          anonymous: false,
-          inputs: [
-            {
-              indexed: true,
-              internalType: "address",
-              name: "user",
-              type: "address",
-            },
-            {
-              indexed: false,
-              internalType: "uint256",
-              name: "amount",
-              type: "uint256",
-            },
-            {
-              indexed: false,
-              internalType: "uint256",
-              name: "timestamp",
-              type: "uint256",
-            },
-          ],
-          name: "Withdrawn",
-          type: "event",
-        },
-        {
-          inputs: [
-            {
-              internalType: "string[]",
-              name: "protocolNames",
-              type: "string[]",
-            },
-            {
-              internalType: "address[]",
-              name: "adapters",
-              type: "address[]",
-            },
-            {
-              internalType: "uint256[]",
-              name: "amounts",
-              type: "uint256[]",
-            },
-          ],
-          name: "batchAllocate",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "deactivateWallet",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "uint256",
-              name: "amount",
-              type: "uint256",
-            },
-            {
-              internalType: "string",
-              name: "strategy",
-              type: "string",
-            },
-          ],
-          name: "deposit",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "target",
-              type: "address",
-            },
-            {
-              internalType: "bytes",
-              name: "data",
-              type: "bytes",
-            },
-          ],
-          name: "executeBackendAction",
-          outputs: [
-            {
-              internalType: "bytes",
-              name: "result",
-              type: "bytes",
-            },
-          ],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "uint256",
-              name: "amount",
-              type: "uint256",
-            },
-            {
-              internalType: "uint32",
-              name: "destinationDomain",
-              type: "uint32",
-            },
-            {
-              internalType: "address",
-              name: "recipient",
-              type: "address",
-            },
-          ],
-          name: "executeCCTP",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "emergencyWithdraw",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "getActiveProtocols",
-          outputs: [
-            {
-              internalType: "string[]",
-              name: "protocols",
-              type: "string[]",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "getBalance",
-          outputs: [
-            {
-              internalType: "uint256",
-              name: "balance",
-              type: "uint256",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "string",
-              name: "protocolName",
-              type: "string",
-            },
-          ],
-          name: "getProtocolBalance",
-          outputs: [
-            {
-              internalType: "uint256",
-              name: "balance",
-              type: "uint256",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "getTotalValue",
-          outputs: [
-            {
-              internalType: "uint256",
-              name: "totalValue",
-              type: "uint256",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "getWalletSummary",
-          outputs: [
-            {
-              internalType: "uint256",
-              name: "usdcBalance",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "totalAllocated",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "protocolCount",
-              type: "uint256",
-            },
-            {
               internalType: "bool",
-              name: "active",
+              name: "premium",
               type: "bool",
             },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [
             {
+              indexed: false,
               internalType: "uint256",
-              name: "amount",
+              name: "value",
               type: "uint256",
             },
           ],
-          name: "hasSufficientBalance",
-          outputs: [
-            {
-              internalType: "bool",
-              name: "sufficient",
-              type: "bool",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
+          name: "GreetingChange",
+          type: "event",
         },
         {
           inputs: [],
-          name: "isActive",
+          name: "greeting",
           outputs: [
             {
-              internalType: "bool",
+              internalType: "string",
               name: "",
-              type: "bool",
+              type: "string",
             },
           ],
           stateMutability: "view",
@@ -9661,71 +9499,64 @@ const deployedContracts = {
         },
         {
           inputs: [],
-          name: "reactivateWallet",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "totalDeposited",
+          name: "premium",
           outputs: [
             {
-              internalType: "uint256",
+              internalType: "bool",
               name: "",
-              type: "uint256",
+              type: "bool",
             },
           ],
           stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "totalWithdrawn",
-          outputs: [
-            {
-              internalType: "uint256",
-              name: "",
-              type: "uint256",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "USDC",
-          outputs: [
-            {
-              internalType: "contract IERC20",
-              name: "",
-              type: "address",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "version",
-          outputs: [
-            {
-              internalType: "string",
-              name: "",
-              type: "string",
-            },
-          ],
-          stateMutability: "pure",
           type: "function",
         },
         {
           inputs: [
             {
+              internalType: "string",
+              name: "_newGreeting",
+              type: "string",
+            },
+          ],
+          name: "setGreeting",
+          outputs: [],
+          stateMutability: "payable",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "totalCounter",
+          outputs: [
+            {
               internalType: "uint256",
-              name: "amount",
+              name: "",
               type: "uint256",
             },
           ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "",
+              type: "address",
+            },
+          ],
+          name: "userGreetingCounter",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [],
           name: "withdraw",
           outputs: [],
           stateMutability: "nonpayable",
@@ -9737,7 +9568,7 @@ const deployedContracts = {
         },
       ],
       inheritedFunctions: {},
-      deployedOnBlock: 0,
+      deployedOnBlock: 9329521,
     },
   },
 } as const;

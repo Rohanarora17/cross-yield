@@ -7,7 +7,8 @@ import { usePathname } from "next/navigation";
 import { DollarSign } from "lucide-react";
 import { hardhat } from "viem/chains";
 import { Bars3Icon, BugAntIcon, ChartBarIcon, CpuChipIcon, GlobeAltIcon } from "@heroicons/react/24/outline";
-import { FaucetButton, RainbowKitCustomConnectButton } from "~~/components/scaffold-eth";
+import { FaucetButton } from "~~/components/scaffold-eth";
+import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { useOutsideClick, useTargetNetwork } from "~~/hooks/scaffold-eth";
 
 type HeaderMenuLink = {
@@ -25,6 +26,11 @@ export const menuLinks: HeaderMenuLink[] = [
     label: "Dashboard",
     href: "/dashboard",
     icon: <ChartBarIcon className="h-4 w-4" />,
+  },
+  {
+    label: "CCTP Transfer",
+    href: "/cctp",
+    icon: <GlobeAltIcon className="h-4 w-4" />,
   },
   {
     label: "Optimizer",
@@ -111,7 +117,7 @@ export const Header = () => {
         </ul>
       </div>
       <div className="navbar-end grow mr-4">
-        <RainbowKitCustomConnectButton />
+        <ConnectButton />
         {isLocalNetwork && <FaucetButton />}
       </div>
     </div>

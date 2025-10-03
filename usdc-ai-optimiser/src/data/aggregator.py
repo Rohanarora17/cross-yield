@@ -2,11 +2,16 @@
 """Main data aggregation orchestrator"""
 
 import asyncio
+import time
 from typing import List
 from datetime import datetime
 # Removed relative imports as they don't work in this context
 from src.apis.defillama.defillama import DeFiLlamaAPI
 from src.data.models import USDCOpportunity, YieldOpportunity, ProtocolInfo
+from src.utils.logger import (
+    log_ai_start, log_ai_end, log_ai_error, log_data_fetch, 
+    log_performance_metrics, log_opportunity_analysis
+)
 
 class USDCDataAggregator:
     """Main USDC data aggregation system"""
@@ -17,17 +22,49 @@ class USDCDataAggregator:
     async def fetch_all_opportunities(self) -> List[USDCOpportunity]:
         """Fetch opportunities from all sources"""
         
-        print("🔍 Starting comprehensive USDC opportunity scan...")
+        start_time = time.time()
+        log_ai_start("USDC Opportunity Data Fetch", {"source": "DeFiLlama"})
         
-        # Primary data source
-        async with self.defillama as api:
-            opportunities = await api.fetch_usdc_opportunities()
-        
-        # Filter and enhance
-        filtered_opportunities = self._filter_opportunities(opportunities)
-        
-        print(f"📋 Final opportunity count: {len(filtered_opportunities)}")
-        return filtered_opportunities
+        try:
+            # Primary data source
+            async with self.defillama as api:
+                opportunities = await api.fetch_usdc_opportunities()
+            
+            fetch_duration = time.time() - start_time
+            log_data_fetch("DeFiLlama API", len(opportunities), fetch_duration)
+            
+            # Filter and enhance
+            filter_start = time.time()
+            filtered_opportunities = self._filter_opportunities(opportunities)
+            filter_duration = time.time() - filter_start
+            
+            log_performance_metrics({
+                "raw_opportunities": len(opportunities),
+                "filtered_opportunities": len(filtered_opportunities),
+                "filter_efficiency": len(filtered_opportunities) / len(opportunities) if opportunities else 0,
+                "fetch_duration": fetch_duration,
+                "filter_duration": filter_duration
+            })
+            
+            log_opportunity_analysis([{
+                "protocol": opp.protocol,
+                "chain": opp.chain,
+                "apy": opp.apy,
+                "risk_score": opp.risk_score,
+                "tvl_usd": opp.tvl_usd
+            } for opp in filtered_opportunities[:5]])
+            
+            total_duration = time.time() - start_time
+            log_ai_end("USDC Opportunity Data Fetch", {
+                "final_count": len(filtered_opportunities),
+                "total_duration": total_duration
+            }, total_duration)
+            
+            return filtered_opportunities
+            
+        except Exception as e:
+            log_ai_error("USDC Opportunity Data Fetch", e, {"source": "DeFiLlama"})
+            raise
     
     def _filter_opportunities(self, opportunities: List[USDCOpportunity]) -> List[USDCOpportunity]:
         """Filter opportunities for quality and relevance"""
@@ -94,31 +131,58 @@ class YieldDataAggregator:
     async def get_yield_opportunities(self, strategy: str = "balanced") -> List[YieldOpportunity]:
         """Get yield opportunities filtered by strategy"""
 
-        opportunities = []
+        start_time = time.time()
+        log_ai_start("Yield Opportunity Generation", {"strategy": strategy})
 
-        # Convert protocol info to yield opportunities
-        for chain, protocols in self.supported_protocols.items():
-            for protocol in protocols:
-                if protocol.is_active:
-                    risk_score = self._calculate_risk_score(protocol)
+        try:
+            opportunities = []
 
-                    opportunity = YieldOpportunity(
-                        protocol=protocol.name,
-                        chain=chain,
-                        apy=protocol.current_apy,
-                        tvl=protocol.tvl,
-                        riskScore=risk_score,
-                        category=protocol.category,
-                        minDeposit=1000000  # 1 USDC in wei
-                    )
+            # Convert protocol info to yield opportunities
+            for chain, protocols in self.supported_protocols.items():
+                for protocol in protocols:
+                    if protocol.is_active:
+                        risk_score = self._calculate_risk_score(protocol)
 
-                    opportunities.append(opportunity)
+                        opportunity = YieldOpportunity(
+                            protocol=protocol.name,
+                            chain=chain,
+                            apy=protocol.current_apy,
+                            tvl=protocol.tvl,
+                            riskScore=risk_score,
+                            category=protocol.category,
+                            minDeposit=1000000  # 1 USDC in wei
+                        )
 
-        # Filter by strategy
-        filtered_opportunities = self._filter_by_strategy(opportunities, strategy)
+                        opportunities.append(opportunity)
 
-        # Sort by APY descending
-        return sorted(filtered_opportunities, key=lambda x: x.apy, reverse=True)
+            log_performance_metrics({
+                "total_protocols": len(opportunities),
+                "chains_covered": len(self.supported_protocols)
+            })
+
+            # Filter by strategy
+            filtered_opportunities = self._filter_by_strategy(opportunities, strategy)
+
+            # Sort by APY descending
+            result = sorted(filtered_opportunities, key=lambda x: x.apy, reverse=True)
+            
+            duration = time.time() - start_time
+            log_performance_metrics({
+                "strategy_filtered": len(filtered_opportunities),
+                "generation_duration": duration
+            })
+            
+            log_ai_end("Yield Opportunity Generation", {
+                "strategy": strategy,
+                "opportunities_count": len(result),
+                "avg_apy": sum(opp.apy for opp in result) / len(result) if result else 0
+            }, duration)
+            
+            return result
+            
+        except Exception as e:
+            log_ai_error("Yield Opportunity Generation", e, {"strategy": strategy})
+            raise
 
     def _calculate_risk_score(self, protocol: ProtocolInfo) -> int:
         """Calculate risk score (0-100) based on protocol info"""
