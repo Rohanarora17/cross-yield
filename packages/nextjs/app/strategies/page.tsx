@@ -37,7 +37,8 @@ import {
   Bookmark,
   Share2,
   ArrowRightLeft,
-  Network
+  Network,
+  X
 } from "lucide-react";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { useAccount } from "wagmi";
@@ -212,6 +213,7 @@ export default function StrategiesPage() {
   const [showExecutionModal, setShowExecutionModal] = useState(false);
   const [selectedStrategy, setSelectedStrategy] = useState<EnhancedStrategy | null>(null);
   const [executionAmount, setExecutionAmount] = useState("");
+  const [showWalletModal, setShowWalletModal] = useState(false);
 
   // Get user data
   const { address: connectedAddress, chainId } = useAccount();
@@ -669,70 +671,7 @@ export default function StrategiesPage() {
     }
   };
 
-  // Show connection prompt if not connected to EVM (Aptos is optional for viewing strategies)
-  if (!connectedAddress) {
-    return (
-      <div className="min-h-screen bg-background">
-        {/* Header */}
-        <header className="border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-          <div className="container flex h-14 items-center">
-            <div className="mr-4 flex">
-              <Link className="mr-6 flex items-center space-x-2" href="/">
-                <div className="h-6 w-6 bg-primary rounded-full flex items-center justify-center">
-                  <span className="text-xs font-bold text-primary-foreground">C</span>
-                </div>
-                <span className="font-bold">CrossYield</span>
-              </Link>
-            </div>
-            <div className="ml-auto flex items-center space-x-4">
-              <ConnectButton />
-            </div>
-          </div>
-        </header>
-
-        <div className="container mx-auto px-4 py-8">
-          <div className="max-w-4xl mx-auto text-center space-y-8">
-            <div className="space-y-4">
-              <h1 className="text-4xl font-bold bg-gradient-to-r from-primary to-purple-400 bg-clip-text text-transparent">
-                Strategy Explorer
-              </h1>
-              <p className="text-muted-foreground text-lg">
-                Connect your wallet to explore AI-optimized yield strategies
-              </p>
-            </div>
-            <Card className="max-w-lg mx-auto">
-              <CardContent className="pt-6">
-                <div className="text-center space-y-6">
-                  <Wallet className="h-12 w-12 mx-auto text-muted-foreground" />
-                  <h3 className="text-lg font-semibold">Connect Your Wallet</h3>
-                  <p className="text-sm text-muted-foreground">
-                    Connect your wallet to explore AI-optimized yield strategies across EVM and Aptos chains
-                  </p>
-                  
-                  <div className="space-y-4">
-                    <MultiChainWalletConnect />
-                    
-                    <div className="text-left space-y-2 p-4 bg-muted/50 rounded-lg">
-                      <h4 className="text-sm font-medium">Supported Networks:</h4>
-                      <ul className="text-xs text-muted-foreground space-y-1">
-                        <li>• Ethereum Sepolia (Testnet)</li>
-                        <li>• Base Sepolia (Testnet)</li>
-                        <li>• Arbitrum Sepolia (Testnet)</li>
-                        <li>• Aptos Testnet</li>
-                      </ul>
-                      <p className="text-xs text-muted-foreground mt-2">
-                        💡 Connect EVM wallet to explore strategies, Aptos wallet for cross-chain features
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
-      </div>
-    );
-  }
+  // Always show the strategies page - wallet connection is handled in the main UI
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20">
@@ -791,11 +730,47 @@ export default function StrategiesPage() {
                 <Bell className="h-5 w-5 text-muted-foreground" />
                 <span className="absolute -top-1 -right-1 h-3 w-3 bg-red-500 rounded-full"></span>
               </Button>
+              <Button variant="outline" size="sm" onClick={() => setShowWalletModal(true)}>
+                <Wallet className="h-4 w-4 mr-2" />
+                Wallets
+              </Button>
               <ConnectButton />
             </div>
           </div>
         </div>
       </nav>
+
+      {/* Wallet Connection Banner */}
+      {!connectedAddress && (
+        <div className="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 border-b border-blue-200/50 dark:border-blue-700/50">
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-6">
+            <div className="max-w-4xl mx-auto">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-4">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-blue-100 dark:bg-blue-800">
+                    <Wallet className="h-6 w-6 text-blue-600 dark:text-blue-400" />
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-semibold text-blue-900 dark:text-blue-100">
+                      Connect Your Wallet to Explore Strategies
+                    </h3>
+                    <p className="text-sm text-blue-700 dark:text-blue-300">
+                      Connect your EVM wallet to view and execute AI-optimized yield strategies
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center space-x-3">
+                  <ConnectButton />
+                  <Button variant="outline" size="sm" onClick={() => setShowWalletModal(true)}>
+                    <Wallet className="h-4 w-4 mr-2" />
+                    Multi-Chain
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Enhanced Header */}
@@ -1754,6 +1729,41 @@ export default function StrategiesPage() {
               }, 2000);
             }}
           />
+        )}
+
+        {/* Wallet Connection Modal */}
+        {showWalletModal && (
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+            <div className="bg-background rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+              <div className="p-6">
+                <div className="flex items-center justify-between mb-6">
+                  <h2 className="text-2xl font-bold">Connect Wallets</h2>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setShowWalletModal(false)}
+                  >
+                    <X className="h-4 w-4" />
+                  </Button>
+                </div>
+                
+                <MultiChainWalletConnect />
+                
+                <div className="mt-6 p-4 bg-muted/50 rounded-lg">
+                  <h4 className="text-sm font-medium mb-2">Supported Networks:</h4>
+                  <ul className="text-xs text-muted-foreground space-y-1">
+                    <li>• Ethereum Sepolia (Testnet)</li>
+                    <li>• Base Sepolia (Testnet)</li>
+                    <li>• Arbitrum Sepolia (Testnet)</li>
+                    <li>• Aptos Testnet</li>
+                  </ul>
+                  <p className="text-xs text-muted-foreground mt-2">
+                    💡 Connect EVM wallet to explore strategies, Aptos wallet for cross-chain features
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
         )}
       </div>
     </div>
