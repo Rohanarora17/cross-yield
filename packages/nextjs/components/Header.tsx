@@ -28,6 +28,11 @@ export const menuLinks: HeaderMenuLink[] = [
     icon: <ChartBarIcon className="h-4 w-4" />,
   },
   {
+    label: "Bridge (Aptos)",
+    href: "/bridge",
+    icon: <GlobeAltIcon className="h-4 w-4" />,
+  },
+  {
     label: "CCTP Transfer",
     href: "/cctp",
     icon: <GlobeAltIcon className="h-4 w-4" />,
