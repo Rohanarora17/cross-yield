@@ -97,6 +97,14 @@ interface EnhancedStrategy {
   aiOptimized: boolean;
   status: "Active" | "Beta" | "Coming Soon";
   icon: string;
+  // Aptos-specific fields
+  includesAptos?: boolean;
+  aptosBoost?: number;
+  requiresBridge?: boolean;
+  aptosProtocols?: string[];
+  evmProtocols?: string[];
+  crossChain?: boolean;
+  aptosOpportunityCount?: number;
 }
 
 interface AIStrategyCardProps {
@@ -194,6 +202,27 @@ export const AIStrategyCard: React.FC<AIStrategyCardProps> = ({
                 <Clock className="h-3 w-3 mr-1" />
                 {new Date(strategy.lastUpdated).toLocaleDateString()}
               </Badge>
+              {/* Aptos-specific badges */}
+              {strategy.includesAptos && (
+                <Badge className="text-xs bg-purple-500/10 text-purple-400 border-purple-400/20">
+                  <svg className="h-3 w-3 mr-1" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 0L2 12h8v12h4V12h8L12 0z"/>
+                  </svg>
+                  Aptos
+                </Badge>
+              )}
+              {strategy.aptosBoost && strategy.aptosBoost > 0 && (
+                <Badge className="text-xs bg-green-500/10 text-green-400 border-green-400/20 animate-pulse">
+                  <TrendingUp className="h-3 w-3 mr-1" />
+                  +{strategy.aptosBoost}% APY Boost
+                </Badge>
+              )}
+              {strategy.requiresBridge && (
+                <Badge className="text-xs bg-orange-500/10 text-orange-400 border-orange-400/20">
+                  <ArrowRightLeft className="h-3 w-3 mr-1" />
+                  Bridge Required
+                </Badge>
+              )}
             </div>
           </div>
 
@@ -220,12 +249,25 @@ export const AIStrategyCard: React.FC<AIStrategyCardProps> = ({
           <div className="text-center p-4 bg-gradient-to-br from-green-500/10 to-emerald-500/10 rounded-xl border border-green-500/20">
             <div className="text-3xl font-bold bg-gradient-to-r from-green-400 to-emerald-500 bg-clip-text text-transparent mb-1">
               {strategy.expectedAPY}%
+              {strategy.aptosBoost && strategy.aptosBoost > 0 && (
+                <span className="text-base text-purple-400 ml-2">
+                  +{strategy.aptosBoost}%
+                </span>
+              )}
             </div>
             <div className="text-sm text-muted-foreground">Expected APY</div>
             <div className="flex items-center justify-center space-x-1 text-xs text-green-400 mt-1">
               <TrendingUp className="h-3 w-3" />
-              <span>AI Optimized</span>
+              <span>{strategy.includesAptos ? 'Cross-Chain Optimized' : 'AI Optimized'}</span>
             </div>
+            {strategy.includesAptos && (
+              <div className="flex items-center justify-center space-x-1 text-xs text-purple-400 mt-1">
+                <svg className="h-3 w-3" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12 0L2 12h8v12h4V12h8L12 0z"/>
+                </svg>
+                <span>Includes Aptos protocols</span>
+              </div>
+            )}
             <div className="text-xs text-muted-foreground mt-1">
               Daily: ${strategy.dailyYield.toFixed(2)} | Monthly: ${strategy.monthlyYield.toFixed(0)}
             </div>

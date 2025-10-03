@@ -145,6 +145,14 @@ interface BackendStrategy {
   aiOptimized: boolean;
   status: "Active" | "Beta" | "Coming Soon";
   icon: string;
+  // Aptos-specific fields
+  includesAptos?: boolean;
+  aptosBoost?: number;
+  requiresBridge?: boolean;
+  aptosProtocols?: string[];
+  evmProtocols?: string[];
+  crossChain?: boolean;
+  aptosOpportunityCount?: number;
 }
 
 // Frontend Strategy interface (what we display)
