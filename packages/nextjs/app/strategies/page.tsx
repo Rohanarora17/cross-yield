@@ -252,8 +252,19 @@ export default function StrategiesPage() {
         // Backend now provides enhanced data directly
         console.log('✅ Using enhanced backend data:', data.strategies.length, 'strategies');
         console.log('📊 Sample enhanced strategy:', data.strategies[0]);
-        
-        setStrategies(data.strategies);
+
+        // Hardcode protocol for conservative Aptos strategy
+        const processedStrategies = data.strategies.map((strategy: any) => {
+          if (strategy.filter === 'aptos' && strategy.riskLevel === 'Low') {
+            return {
+              ...strategy,
+              protocols: ['aave']
+            };
+          }
+          return strategy;
+        });
+
+        setStrategies(processedStrategies);
         
         // Generate summary data from enhanced backend strategies
         console.log('🔍 Debugging strategy data for categories:');
@@ -1361,18 +1372,25 @@ export default function StrategiesPage() {
                     currentAPY: 8.7,
                     allocations: [
                       {
-                        protocol: "Aave V3",
+                        protocol: "Aave V3 (Base Sepolia)",
                         chain: "Base Sepolia",
-                        amount: 65,
-                        percentage: 65,
+                        amount: 40,
+                        percentage: 40,
                         apy: 7.2
                       },
                       {
-                        protocol: "Compound V3",
-                        chain: "Arbitrum Sepolia", 
-                        amount: 35,
-                        percentage: 35,
+                        protocol: "Compound V3 (Arbitrum Sepolia)",
+                        chain: "Arbitrum Sepolia",
+                        amount: 30,
+                        percentage: 30,
                         apy: 6.8
+                      },
+                      {
+                        protocol: "Aave V3 (Aptos)",
+                        chain: "Aptos",
+                        amount: 30,
+                        percentage: 30,
+                        apy: 8.5
                       }
                     ]
                   }
@@ -1435,11 +1453,25 @@ export default function StrategiesPage() {
                     currentAPY: 8.7,
                     allocations: [
                       {
-                        protocol: "Aave V3",
+                        protocol: "Aave V3 (Base Sepolia)",
                         chain: "Base Sepolia",
-                        amount: 0.65,
-                        percentage: 65,
+                        amount: 0.4,
+                        percentage: 40,
                         apy: 7.2
+                      },
+                      {
+                        protocol: "Compound V3 (Arbitrum Sepolia)",
+                        chain: "Arbitrum Sepolia",
+                        amount: 0.3,
+                        percentage: 30,
+                        apy: 6.8
+                      },
+                      {
+                        protocol: "Aave V3 (Aptos)",
+                        chain: "Aptos",
+                        amount: 0.3,
+                        percentage: 30,
+                        apy: 8.5
                       }
                     ]
                   }
@@ -1518,18 +1550,25 @@ export default function StrategiesPage() {
                     currentAPY: 8.7,
                     allocations: [
                       {
-                        protocol: "Aave V3",
+                        protocol: "Aave V3 (Base Sepolia)",
                         chain: "Base Sepolia",
-                        amount: parseFloat(executionAmount || "0") * 0.65,
-                        percentage: 65,
+                        amount: parseFloat(executionAmount || "0") * 0.4,
+                        percentage: 40,
                         apy: 7.2
                       },
                       {
-                        protocol: "Compound V3",
-                        chain: "Arbitrum Sepolia", 
-                        amount: parseFloat(executionAmount || "0") * 0.35,
-                        percentage: 35,
+                        protocol: "Compound V3 (Arbitrum Sepolia)",
+                        chain: "Arbitrum Sepolia",
+                        amount: parseFloat(executionAmount || "0") * 0.3,
+                        percentage: 30,
                         apy: 6.8
+                      },
+                      {
+                        protocol: "Aave V3 (Aptos)",
+                        chain: "Aptos",
+                        amount: parseFloat(executionAmount || "0") * 0.3,
+                        percentage: 30,
+                        apy: 8.5
                       }
                     ]
                   }
