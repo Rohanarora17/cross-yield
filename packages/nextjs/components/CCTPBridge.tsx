@@ -17,13 +17,14 @@ import { Progress } from "./ui/progress";
 import { Badge } from "./ui/badge";
 import { Loader2, Check, X, ArrowRight, ExternalLink, AlertCircle } from "lucide-react";
 import { CCTP_V1_CONFIG, TOKEN_MESSENGER_ABI, USDC_ABI } from "~~/config/cctp-aptos.config";
+import { useAptosVault } from "~~/hooks/useAptosVault";
 
 const config = CCTP_V1_CONFIG;
 
 export function CCTPBridge() {
   // State
   const [amount, setAmount] = useState("0.01");
-  const [step, setStep] = useState(1); // 1: Connect, 2: Approve, 3: Burn, 4: Attestation, 5: Receive
+  const [step, setStep] = useState(1); // 1: Connect, 2: Approve, 3: Burn, 4: Attestation, 5: Receive, 6: Deposit to Vault
   const [messageBytes, setMessageBytes] = useState<string | null>(null);
   const [messageHash, setMessageHash] = useState("");
   const [attestation, setAttestation] = useState("");
@@ -33,6 +34,8 @@ export function CCTPBridge() {
   const [isSubmittingAptos, setIsSubmittingAptos] = useState(false);
   const [bytecode, setBytecode] = useState<Uint8Array | null>(null);
   const [loadingBytecode, setLoadingBytecode] = useState(false);
+  const [vaultTxHash, setVaultTxHash] = useState("");
+  const [isDepositingToVault, setIsDepositingToVault] = useState(false);
 
   // Wagmi hooks (EVM - Base Sepolia)
   const { address, isConnected } = useAccount();
@@ -47,6 +50,9 @@ export function CCTPBridge() {
     wallets: aptosWallets,
     signAndSubmitTransaction,
   } = useAptosWallet();
+
+  // Vault hook
+  const { depositToVault } = useAptosVault();
 
   // Convert amount to smallest units (USDC has 6 decimals)
   const amountInSmallestUnits = parseUnits(amount || "0", 6);
@@ -351,10 +357,36 @@ export function CCTPBridge() {
       console.log("Transaction submitted:", pendingTxn);
       setAptosTxHash(pendingTxn.hash);
       setIsSubmittingAptos(false);
+      setStep(6); // Auto-advance to vault deposit step
     } catch (err: unknown) {
       console.error("Aptos transaction error:", err);
       setError(err instanceof Error ? err.message : "Failed to complete transfer on Aptos");
       setIsSubmittingAptos(false);
+    }
+  };
+
+  // Handle depositing to vault
+  const handleDepositToVault = async () => {
+    if (!aptosAccount) {
+      setError("Please connect your Aptos wallet");
+      return;
+    }
+
+    try {
+      setIsDepositingToVault(true);
+      setError("");
+
+      // Admin address - using user's address for now (in production, this should be the vault admin)
+      const adminAddress = aptosAccount.address.toString();
+
+      const txHash = await depositToVault(parseFloat(amount), adminAddress);
+
+      setVaultTxHash(txHash);
+      setIsDepositingToVault(false);
+    } catch (err: unknown) {
+      console.error("Vault deposit error:", err);
+      setError(err instanceof Error ? err.message : "Failed to deposit to vault");
+      setIsDepositingToVault(false);
     }
   };
 
@@ -363,20 +395,22 @@ export function CCTPBridge() {
       case 1:
         return 0;
       case 2:
-        return 20;
+        return 16;
       case 3:
-        return 40;
+        return 33;
       case 4:
-        return 60;
+        return 50;
       case 5:
-        return aptosTxHash ? 100 : 80;
+        return aptosTxHash ? 66 : 60;
+      case 6:
+        return vaultTxHash ? 100 : 83;
       default:
         return 0;
     }
   };
 
   return (
-    <Card className="w-full max-w-2xl mx-auto">
+    <Card className="w-full">
       <CardHeader>
         <CardTitle className="flex items-center justify-between">
           <span>Bridge USDC to Aptos</span>
@@ -397,11 +431,13 @@ export function CCTPBridge() {
         {/* Step 1: Connect Wallets */}
         <div className={`p-4 border rounded-lg ${step === 1 ? "border-primary bg-primary/5" : "border-border"}`}>
           <h3 className="font-semibold mb-3">Step 1: Connect Wallets</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             {/* Base Wallet */}
             <div>
               <p className="text-sm text-muted-foreground mb-2">Base Sepolia Wallet</p>
-              <ConnectButton />
+              <div className="scale-75 origin-top-left">
+                <ConnectButton />
+              </div>
             </div>
 
             {/* Aptos Wallet */}
@@ -535,7 +571,7 @@ export function CCTPBridge() {
         {/* Step 4: Wait for Attestation */}
         <div className={`p-4 border rounded-lg ${step === 4 ? "border-primary bg-primary/5" : "border-border"} ${step < 4 ? "opacity-50" : ""}`}>
           <h3 className="font-semibold mb-3">Step 4: Wait for Circle Attestation</h3>
-          <p className="text-sm text-muted-foreground mb-4">
+          <p className="text-sm text-muted-foreground mb-3">
             Circle validates and attests the burn transaction. This can take 2-5 minutes.
           </p>
           {messageHash && (
@@ -554,7 +590,7 @@ export function CCTPBridge() {
         {/* Step 5: Receive on Aptos */}
         <div className={`p-4 border rounded-lg ${step === 5 ? "border-primary bg-primary/5" : "border-border"} ${step < 5 ? "opacity-50" : ""}`}>
           <h3 className="font-semibold mb-3">Step 5: Receive USDC on Aptos</h3>
-          <p className="text-sm text-muted-foreground mb-4">
+          <p className="text-sm text-muted-foreground mb-3">
             Complete the transfer by receiving USDC on Aptos using your connected wallet.
           </p>
 
@@ -599,6 +635,55 @@ export function CCTPBridge() {
                 >
                   {aptosTxHash.slice(0, 10)}...{aptosTxHash.slice(-8)}
                   <ExternalLink className="ml-1 h-3 w-3" />
+                </a>
+              </AlertDescription>
+            </Alert>
+          )}
+        </div>
+
+        {/* Step 6: Deposit to Vault */}
+        <div className={`p-4 border rounded-lg ${step === 6 ? "border-primary bg-primary/5" : "border-border"} ${step < 6 ? "opacity-50" : ""}`}>
+          <h3 className="font-semibold mb-3">Step 6: Deposit to Vault</h3>
+          <p className="text-sm text-muted-foreground mb-3">
+            Deposit your USDC into the yield-optimizing vault to start earning DeFi yields.
+          </p>
+
+          <Button
+            onClick={handleDepositToVault}
+            disabled={step < 6 || !aptosTxHash || !isAptosConnected || isDepositingToVault || !!vaultTxHash}
+            className="w-full"
+          >
+            {isDepositingToVault ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Depositing to Vault...
+              </>
+            ) : vaultTxHash ? (
+              <>
+                <Check className="mr-2 h-4 w-4" />
+                Deposited to Vault
+              </>
+            ) : (
+              <>
+                <ArrowRight className="mr-2 h-4 w-4" />
+                Deposit to Vault
+              </>
+            )}
+          </Button>
+
+          {vaultTxHash && (
+            <Alert className="mt-4 border-green-500 bg-green-50 dark:bg-green-950">
+              <Check className="h-4 w-4 text-green-500" />
+              <AlertTitle className="text-green-700 dark:text-green-300">Vault Deposit Complete!</AlertTitle>
+              <AlertDescription className="text-sm">
+                Your USDC is now earning yield in the vault.{" "}
+                <a
+                  href={`${config.APTOS_TESTNET.explorer}/txn/${vaultTxHash}?network=testnet`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-green-700 dark:text-green-300 hover:underline inline-flex items-center"
+                >
+                  View transaction <ExternalLink className="ml-1 h-3 w-3" />
                 </a>
               </AlertDescription>
             </Alert>

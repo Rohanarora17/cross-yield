@@ -49,9 +49,9 @@ export function MultiChainWalletConnect() {
       </Card>
 
       {/* Wallet Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         {/* EVM Wallet Card */}
-        <Card className={wallet.evmConnected ? "border-blue-500/50" : "border-border"}>
+        <Card className={`${wallet.evmConnected ? "border-blue-500/50" : "border-border"} min-h-0 overflow-hidden`}>
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-base">
               <div
@@ -88,7 +88,9 @@ export function MultiChainWalletConnect() {
                   </div>
                 </div>
                 <div className="pt-2 border-t">
-                  <ConnectButton />
+                  <div className="scale-75 origin-center">
+                    <ConnectButton />
+                  </div>
                 </div>
               </>
             ) : (
@@ -98,7 +100,9 @@ export function MultiChainWalletConnect() {
                   <p className="text-sm text-muted-foreground mb-4">
                     Connect your EVM wallet to access Ethereum, Base, Arbitrum, and more
                   </p>
-                  <ConnectButton />
+                  <div className="scale-75 origin-center">
+                    <ConnectButton />
+                  </div>
                 </div>
               </div>
             )}
@@ -106,7 +110,7 @@ export function MultiChainWalletConnect() {
         </Card>
 
         {/* Aptos Wallet Card */}
-        <Card className={wallet.aptosConnected ? "border-purple-500/50" : "border-border"}>
+        <Card className={`${wallet.aptosConnected ? "border-purple-500/50" : "border-border"} min-h-0 overflow-hidden`}>
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-base">
               <div

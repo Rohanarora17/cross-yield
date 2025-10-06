@@ -248,10 +248,10 @@ export const AIStrategyCard: React.FC<AIStrategyCardProps> = ({
         <div className="grid grid-cols-2 gap-4">
           <div className="text-center p-4 bg-gradient-to-br from-green-500/10 to-emerald-500/10 rounded-xl border border-green-500/20">
             <div className="text-3xl font-bold bg-gradient-to-r from-green-400 to-emerald-500 bg-clip-text text-transparent mb-1">
-              {strategy.expectedAPY}%
+              {strategy.expectedAPY.toFixed(2)}%
               {strategy.aptosBoost && strategy.aptosBoost > 0 && (
                 <span className="text-base text-purple-400 ml-2">
-                  +{strategy.aptosBoost}%
+                  +{strategy.aptosBoost.toFixed(2)}%
                 </span>
               )}
             </div>
@@ -269,7 +269,7 @@ export const AIStrategyCard: React.FC<AIStrategyCardProps> = ({
               </div>
             )}
             <div className="text-xs text-muted-foreground mt-1">
-              Daily: ${strategy.dailyYield.toFixed(2)} | Monthly: ${strategy.monthlyYield.toFixed(0)}
+              Daily: ${strategy.dailyYield.toFixed(2)} | Monthly: ${Math.round(strategy.monthlyYield)}
             </div>
           </div>
 

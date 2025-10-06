@@ -16,6 +16,7 @@
     "vercel:yolo": "vercel --build-env YARN_ENABLE_IMMUTABLE_INSTALLS=false --build-env ENABLE_EXPERIMENTAL_COREPACK=1 --build-env NEXT_PUBLIC_IGNORE_BUILD_ERROR=true --build-env VERCEL_TELEMETRY_DISABLED=1"
   },
   "dependencies": {
+    "@aave/aave-v3-aptos-ts-sdk": "^0.0.54",
     "@aptos-labs/ts-sdk": "^5.1.0",
     "@aptos-labs/wallet-adapter-react": "^7.1.0",
     "@aptos-labs/wallet-standard": "^0.5.2",
@@ -24,8 +25,12 @@
     "@pontem/wallet-adapter-plugin": "^0.2.1",
     "@rainbow-me/rainbowkit": "2.2.8",
     "@tanstack/react-query": "~5.59.15",
+    "@telegram-apps/bridge": "^2.11.0",
+    "@thalalabs/surf": "^1.9.6",
     "@uniswap/sdk-core": "~5.8.2",
     "@uniswap/v2-sdk": "~4.6.1",
+    "@wallet-standard/core": "^1.1.1",
+    "aptos": "^1.21.0",
     "blo": "~1.2.0",
     "burner-connector": "0.0.18",
     "clsx": "^2.1.1",

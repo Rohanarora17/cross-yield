@@ -23,17 +23,18 @@ export const APTOS_TESTNET: AptosChainConfig = {
   network: "testnet",
   chainId: 2,
   rpcUrl: process.env.NEXT_PUBLIC_NODIT_APTOS_RPC || "https://fullnode.testnet.aptoslabs.com/v1",
-  indexerUrl: process.env.NEXT_PUBLIC_NODIT_APTOS_INDEXER || "https://indexer-testnet.staging.gcp.aptosdev.com/v1/graphql",
+  indexerUrl: process.env.NEXT_PUBLIC_NODIT_APTOS_INDEXER || "https://api.testnet.aptoslabs.com/v1/graphql",
   explorerUrl: "https://explorer.aptoslabs.com/?network=testnet",
   nativeCurrency: {
     name: "Aptos",
     symbol: "APT",
     decimals: 8,
   },
-  // Circle USDC on Aptos Testnet (update when available)
-  usdcAddress: "0x5e156f1207d0ebfa19a9eeff00d62a282278fb8719f4fab3a586a0a2c0fffbea::coin::T",
-  // Our vault contract (to be deployed)
-  vaultAddress: process.env.NEXT_PUBLIC_APTOS_VAULT_ADDRESS || "0x0",
+  // Circle USDC on Aptos Testnet (official Circle USDC FA)
+  // Note: This might be incorrect - testing with different addresses
+  usdcAddress: "0x69091fbab5f7d635ee7ac5098cf0c1efbe31d68fec0f2cd565e8d168daf52832::coin::USDC",
+  // Our vault contract - YieldFlow module deployed on testnet
+  vaultAddress: "0x7e8e802870fe28b31e6dc7c72a96806d2a62a03efdd488d4f2a2cf866cbe072b",
   // CCTP Message Receiver (update when available)
   messageReceiverAddress: process.env.NEXT_PUBLIC_APTOS_MESSAGE_RECEIVER || "0x0",
 };
@@ -50,8 +51,8 @@ export const APTOS_MAINNET: AptosChainConfig = {
     symbol: "APT",
     decimals: 8,
   },
-  usdcAddress: "0x5e156f1207d0ebfa19a9eeff00d62a282278fb8719f4fab3a586a0a2c0fffbea::coin::T",
-  vaultAddress: process.env.NEXT_PUBLIC_APTOS_VAULT_ADDRESS || "0x0",
+  usdcAddress: "0xbae207659db88bea0cbead6da0ed00aac12edcdda169e591cd41c94180b46f3b::coin::USDC",
+  vaultAddress: "0x7e8e802870fe28b31e6dc7c72a96806d2a62a03efdd488d4f2a2cf866cbe072b",
   messageReceiverAddress: process.env.NEXT_PUBLIC_APTOS_MESSAGE_RECEIVER || "0x0",
 };
 

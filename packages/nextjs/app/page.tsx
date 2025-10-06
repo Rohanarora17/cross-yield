@@ -72,7 +72,7 @@ export default function Home() {
           <div className="mx-auto max-w-4xl text-center">
             <Badge variant="secondary" className="mb-6">
               <Activity className="mr-2 h-3 w-3" />
-              🏆 Aptos Hackathon Project • $3,000 Bounty Track Integration
+              🏆 Aptos Hackathon Project • Bounty Track Integration
             </Badge>
             <h1 className="text-4xl font-bold tracking-tight text-balance sm:text-6xl lg:text-7xl">
               <span className="text-primary">CrossYield</span> - First AI-Driven{" "}
@@ -84,13 +84,12 @@ export default function Home() {
               Liquidswap, and Aries Markets across EVM and Aptos ecosystems.
             </p>
             
-            {/* Bounty Track Highlights */}
-            <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-4 max-w-4xl mx-auto">
+            {/* Technology Highlights */}
+            <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-4 max-w-4xl mx-auto">
               <div className="p-4 bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 rounded-lg border border-green-200 dark:border-green-700">
                 <div className="flex items-center gap-2 mb-2">
                   <div className="h-2 w-2 rounded-full bg-green-500"></div>
-                  <span className="text-sm font-semibold text-green-800 dark:text-green-300">Hyperion Bounty</span>
-                  <Badge variant="outline" className="text-xs">$2,000</Badge>
+                  <span className="text-sm font-semibold text-green-800 dark:text-green-300">Hyperion Integration</span>
                 </div>
                 <p className="text-xs text-green-700 dark:text-green-400">Capital Efficiency Optimization</p>
               </div>
@@ -99,18 +98,8 @@ export default function Home() {
                 <div className="flex items-center gap-2 mb-2">
                   <div className="h-2 w-2 rounded-full bg-blue-500"></div>
                   <span className="text-sm font-semibold text-blue-800 dark:text-blue-300">Nodit Infrastructure</span>
-                  <Badge variant="outline" className="text-xs">$1,000</Badge>
                 </div>
                 <p className="text-xs text-blue-700 dark:text-blue-400">Aptos RPC & Indexer APIs</p>
-              </div>
-              
-              <div className="p-4 bg-gradient-to-r from-purple-50 to-violet-50 dark:from-purple-900/20 dark:to-violet-900/20 rounded-lg border border-purple-200 dark:border-purple-700">
-                <div className="flex items-center gap-2 mb-2">
-                  <div className="h-2 w-2 rounded-full bg-purple-500"></div>
-                  <span className="text-sm font-semibold text-purple-800 dark:text-purple-300">Circle CCTP</span>
-                  <Badge variant="outline" className="text-xs">Bridge</Badge>
-                </div>
-                <p className="text-xs text-purple-700 dark:text-purple-400">Cross-Chain USDC Transfer</p>
               </div>
             </div>
             <div className="mt-10 flex items-center justify-center gap-x-6">
@@ -145,17 +134,17 @@ export default function Home() {
               First AI-driven cross-chain yield optimizer integrating EVM and Aptos ecosystems with real protocol integrations
             </p>
             
-            {/* Bounty Track Technologies */}
+            {/* Technologies Integrated */}
             <div className="mb-12">
-              <h3 className="text-xl font-semibold mb-6">Bounty Track Technologies Integrated</h3>
-              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 max-w-5xl mx-auto">
+              <h3 className="text-xl font-semibold mb-6">Technologies Integrated</h3>
+              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 max-w-5xl mx-auto">
                 <Card className="border-green-200 bg-green-50/50 dark:border-green-700 dark:bg-green-900/20">
                   <CardHeader className="pb-3">
                     <div className="flex items-center justify-center w-12 h-12 rounded-lg bg-green-100 dark:bg-green-800 mx-auto mb-2">
                       <DollarSign className="h-6 w-6 text-green-600 dark:text-green-400" />
                     </div>
                     <CardTitle className="text-lg text-green-800 dark:text-green-300">Hyperion</CardTitle>
-                    <Badge variant="outline" className="text-xs w-fit mx-auto">$2,000 Bounty</Badge>
+                    <Badge variant="outline" className="text-xs w-fit mx-auto">Integrated</Badge>
                   </CardHeader>
                   <CardContent>
                     <p className="text-sm text-green-700 dark:text-green-400">
@@ -170,26 +159,11 @@ export default function Home() {
                       <Network className="h-6 w-6 text-blue-600 dark:text-blue-400" />
                     </div>
                     <CardTitle className="text-lg text-blue-800 dark:text-blue-300">Nodit</CardTitle>
-                    <Badge variant="outline" className="text-xs w-fit mx-auto">$1,000 Bounty</Badge>
+                    <Badge variant="outline" className="text-xs w-fit mx-auto">Integrated</Badge>
                   </CardHeader>
                   <CardContent>
                     <p className="text-sm text-blue-700 dark:text-blue-400">
                       Aptos RPC & Indexer APIs for real-time protocol data and transaction execution
-                    </p>
-                  </CardContent>
-                </Card>
-
-                <Card className="border-purple-200 bg-purple-50/50 dark:border-purple-700 dark:bg-purple-900/20">
-                  <CardHeader className="pb-3">
-                    <div className="flex items-center justify-center w-12 h-12 rounded-lg bg-purple-100 dark:bg-purple-800 mx-auto mb-2">
-                      <ArrowRight className="h-6 w-6 text-purple-600 dark:text-purple-400" />
-                    </div>
-                    <CardTitle className="text-lg text-purple-800 dark:text-purple-300">Circle CCTP</CardTitle>
-                    <Badge variant="outline" className="text-xs w-fit mx-auto">Bridge Protocol</Badge>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-sm text-purple-700 dark:text-purple-400">
-                      Production-ready CCTP v1 bridge for seamless USDC transfers between Base and Aptos
                     </p>
                   </CardContent>
                 </Card>
@@ -296,6 +270,41 @@ export default function Home() {
                       <div className="flex justify-between">
                         <span>Risk Score:</span>
                         <span className="font-semibold">Medium</span>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            </div>
+            
+            {/* Cross-Chain Bridge Technology */}
+            <div className="mb-12">
+              <h3 className="text-xl font-semibold mb-6">Cross-Chain Bridge Technology</h3>
+              <div className="max-w-2xl mx-auto">
+                <Card className="border-purple-200 bg-purple-50/30 dark:border-purple-700 dark:bg-purple-900/10">
+                  <CardHeader className="pb-3">
+                    <div className="flex items-center justify-center w-12 h-12 rounded-lg bg-purple-100 dark:bg-purple-800 mx-auto mb-2">
+                      <ArrowRight className="h-6 w-6 text-purple-600 dark:text-purple-400" />
+                    </div>
+                    <CardTitle className="text-lg text-purple-800 dark:text-purple-300">Circle CCTP Integration</CardTitle>
+                    <Badge variant="outline" className="text-xs w-fit mx-auto">Production Ready</Badge>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-sm text-purple-700 dark:text-purple-400 mb-3">
+                      Seamless USDC transfers between Base Sepolia and Aptos using Circle's Cross-Chain Transfer Protocol (CCTP) v1
+                    </p>
+                    <div className="text-xs text-purple-600 dark:text-purple-500">
+                      <div className="flex justify-between mb-1">
+                        <span>Transfer Time:</span>
+                        <span className="font-semibold">3-15 minutes</span>
+                      </div>
+                      <div className="flex justify-between mb-1">
+                        <span>Security:</span>
+                        <span className="font-semibold">Native USDC</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>Status:</span>
+                        <span className="font-semibold">Live Integration</span>
                       </div>
                     </div>
                   </CardContent>

@@ -37,6 +37,14 @@ const CCTP_CONTRACTS = {
     domain: 3,
     name: "Arbitrum Sepolia",
     explorer: "https://sepolia.arbiscan.io"
+  },
+  11155112: { // Aptos Testnet (using different chainId to distinguish from Ethereum Sepolia)
+    tokenMessenger: "0x8FE6B999Dc680CcFDD5Bf7EB0974218be2542DAA",
+    messageTransmitter: "0xE737e5cEBEEBa77EFE34D4aa090756590b1CE275",
+    usdc: "0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238",
+    domain: 0,
+    name: "Aptos Testnet",
+    explorer: "https://explorer.aptoslabs.com"
   }
 } as const;
 

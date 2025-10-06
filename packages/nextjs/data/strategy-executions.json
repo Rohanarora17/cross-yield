@@ -31,6 +31,54 @@
         ]
       },
       "createdAt": "2025-10-03T17:20:01.142Z"
+    },
+    {
+      "executionId": "0xdea18f06b903cef0b483c640283fe5fd2543253a38ddd663bb559905736948be",
+      "strategyId": "aptos_conservative",
+      "amount": 0,
+      "status": "in_progress",
+      "estimatedTime": "3-8 minutes",
+      "cctpTransfers": [
+        {
+          "id": "cctp_1",
+          "sourceChain": "Ethereum Sepolia",
+          "destinationChain": "Base Sepolia",
+          "amount": 0,
+          "status": "initiated",
+          "txHash": "0xdea18f06b903cef0b483c640283fe5fd2543253a38ddd663bb559905736948be",
+          "progress": 0
+        },
+        {
+          "id": "cctp_2",
+          "sourceChain": "Ethereum Sepolia",
+          "destinationChain": "Arbitrum Sepolia",
+          "amount": 0,
+          "status": "initiated",
+          "txHash": "0xdea18f06b903cef0b483c640283fe5fd2543253a38ddd663bb559905736948be",
+          "progress": 0
+        }
+      ],
+      "portfolioUpdate": {
+        "totalValue": 0,
+        "currentAPY": 8.7,
+        "allocations": [
+          {
+            "protocol": "Aave V3",
+            "chain": "Base Sepolia",
+            "amount": 0,
+            "percentage": 65,
+            "apy": 7.2
+          },
+          {
+            "protocol": "Compound V3",
+            "chain": "Arbitrum Sepolia",
+            "amount": 0,
+            "percentage": 35,
+            "apy": 6.8
+          }
+        ]
+      },
+      "createdAt": "2025-10-06T05:55:33.283Z"
     }
   ]
 }

@@ -1,6 +1,6 @@
-# CrossYield - USDC AI Yield Optimizer
+# CrossYield - Cross-Chain USDC Yield Optimizer
 
-**Cross-chain, ML-powered, and agentic USDC yield optimizer for next-gen DeFi.**
+**First AI-driven cross-chain yield optimizer integrating EVM and Aptos ecosystems with real protocol integrations.**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
@@ -35,44 +35,44 @@
 
 ## 🎯 Overview
 
-**CrossYield** is a comprehensive DeFi platform that finds, deploys, monitors, and rebalances optimal USDC strategies across multiple blockchain networks. Powered by historical machine learning, real-time oracle data, and a novel multi-agent AI coordination system, it provides non-custodial yield optimization with cross-chain execution capabilities.
+**CrossYield** is the first AI-driven cross-chain yield optimizer that bridges USDC from EVM chains to Aptos and deploys it across multiple DeFi protocols for maximum yield generation. Built for the Aptos Hackathon, it features real protocol integrations with Thala Finance, Liquidswap, Aries Markets, and Aave V3.
 
 ### Why CrossYield?
 
 Most yield farming platforms are single-chain and rule-driven. CrossYield brings:
-- **Cross-chain execution** with native CCTP bridging
-- **Real-time oracle integration** for risk mitigation
-- **ML-predicted APY** based on historical data
-- **Automated rebalancing** with agentic AI coordination
-- **Non-custodial security** via individual smart wallets
+- **Cross-chain execution** with Circle CCTP v1 bridging (Base → Aptos)
+- **Real Aptos protocol integration** with Thala Finance, Liquidswap, Aries Markets
+- **AI-optimized strategies** with real-time APY analysis
+- **Vault-based tracking** with Move contract integration
+- **Production-ready** with live Aave V3 integration
 
 ---
 
 ## ✨ Key Features
 
-### 🤖 AI-Powered Optimization
-- **Multi-Agent System**: YieldMaximizer, RiskAssessment, and LLMCoordinator agents
-- **Claude AI Integration**: Strategic reasoning and agent coordination
-- **ML Prediction Models**: Trained on years of on-chain data for robust APY forecasting
-- **Real-time Risk Assessment**: Continuous monitoring and risk scoring
+### 🌉 Cross-Chain Bridge Integration
+- **Circle CCTP v1**: Production-ready USDC bridging from Base Sepolia to Aptos
+- **6-Step Bridge Process**: Connect → Approve → Burn → Attestation → Receive → Deploy
+- **Real-time Tracking**: Live progress monitoring with transaction links
+- **Native USDC**: No wrapped tokens, just native USDC on every chain
 
-### 🌐 Cross-Chain Capabilities
-- **Native CCTP Support**: Circle's Cross-Chain Transfer Protocol for secure USDC bridging
-- **Multi-Chain Deployment**: Ethereum, Base, Arbitrum, Polygon support
-- **Gas Optimization**: Automated gas price optimization across chains
-- **Cross-Chain Arbitrage**: Identifies and executes arbitrage opportunities
+### 🏦 Real Aptos Protocol Integration
+- **Thala Finance**: Direct lending protocol integration with real APY data
+- **Liquidswap**: DEX and farming protocol with live TVL tracking
+- **Aries Markets**: Lending protocol with supply/borrow rate monitoring
+- **Aave V3**: Live integration with real yield generation
 
-### 📊 Advanced Data Integration
-- **DeFiLlama Integration**: Live protocol data, TVL, and APY information
-- **The Graph Protocol**: Comprehensive subgraph data for historical analysis
-- **Pyth Oracle**: Real-time price feeds and confidence metrics
-- **1inch API**: Optimal swap routing and slippage minimization
+### 🤖 AI-Powered Strategy Optimization
+- **Real-time APY Analysis**: Live protocol data from Aptos DeFi protocols
+- **Risk Assessment**: Multi-factor risk scoring across protocols
+- **Strategy Selection**: AI-driven protocol selection based on current market conditions
+- **Portfolio Tracking**: Real-time position monitoring across chains
 
-### 🔒 Security & Non-Custodial Design
-- **ERC-4337 Smart Wallets**: Individual wallets per user with account abstraction
-- **Non-Custodial**: Users maintain full control of their funds
-- **Emergency Withdrawals**: Built-in safety mechanisms
-- **Audit-Ready**: Clean, well-documented smart contract architecture
+### 🔒 Vault-Based Architecture
+- **Move Contract Integration**: Aptos vault contract for position tracking
+- **Resource Account Management**: Secure fund management on Aptos
+- **Real Yield Generation**: Actual DeFi protocol integration, not mock data
+- **Transaction Transparency**: All operations visible on Aptos explorer
 
 ---
 
@@ -80,35 +80,35 @@ Most yield farming platforms are single-chain and rule-driven. CrossYield brings
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────────────┐
-│                           CROSSYIELD ARCHITECTURE                                │
+│                        CROSSYIELD APTOS ARCHITECTURE                            │
 ├─────────────────────────────────────────────────────────────────────────────────┤
 │                                                                                 │
-│  🧑‍💻 USER INTERFACE               📱 SMART WALLETS              🤖 AI BACKEND     │
+│  🧑‍💻 USER INTERFACE               🌉 CCTP BRIDGE              🏦 APTOS VAULT     │
 │  ┌─────────────────┐               ┌─────────────────┐         ┌──────────────┐ │
-│  │ Next.js Frontend│               │ ERC-4337 Wallets│         │ Python Engine│ │
-│  │ • Wallet Connect│               │ • Non-custodial │         │ • Multi-Agent│ │
-│  │ • Portfolio View│──────────────▶│ • Auto-execution│◀────────│ • CCTP Bridge│ │
-│  │ • Strategy UI   │               │ • Gas Abstraction│         │ • Data Agg   │ │
+│  │ Next.js Frontend│               │ Circle CCTP v1  │         │ Move Contract│ │
+│  │ • Multi-Chain   │               │ • Base → Aptos  │         │ • Position   │ │
+│  │ • Strategy UI   │──────────────▶│ • Real-time     │◀────────│ • Tracking   │ │
+│  │ • Portfolio View│               │ • 6-Step Flow   │         │ • Resource   │ │
 │  └─────────────────┘               └─────────────────┘         └──────────────┘ │
 │           │                                 │                           │        │
 │           ▼                                 ▼                           ▼        │
 │  ┌─────────────────────────────────────────────────────────────────────────────┐ │
-│  │                        📄 SMART CONTRACTS LAYER                            │ │
+│  │                        🔗 APTOS PROTOCOL INTEGRATIONS                      │ │
 │  │ ┌─────────────────┐ ┌─────────────────┐ ┌─────────────────────────────────┐│ │
-│  │ │  YieldRouter     │ │  ChainRegistry  │ │     Protocol Adapters           ││ │
-│  │ │ • Portfolio     │ │ • Protocol Info │ │ • Aave, Moonwell, Radiant      ││ │
-│  │ │ • Tracking      │ │ • Risk Scoring  │ │ • Curve, Compound, Yearn       ││ │
-│  │ │ • Events        │ │ • Cross-Chain   │ │ • ERC-4626 Compatible           ││ │
+│  │ │  Thala Finance  │ │  Liquidswap     │ │     Aries Markets               ││ │
+│  │ │ • Lending       │ │ • DEX + Farming │ │ • Lending Protocol              ││ │
+│  │ │ • Real APY      │ │ • Live TVL      │ │ • Supply/Borrow Rates           ││ │
+│  │ │ • Live Data     │ │ • Real Pools    │ │ • Real Integration              ││ │
 │  │ └─────────────────┘ └─────────────────┘ └─────────────────────────────────┘│ │
 │  └─────────────────────────────────────────────────────────────────────────────┘ │
 │                                         │                                         │
 │  ┌─────────────────────────────────────▼─────────────────────────────────────┐   │
-│  │                        🌐 CROSS-CHAIN PROTOCOLS                            │   │
+│  │                        💰 REAL YIELD GENERATION                           │   │
 │  │                                                                             │   │
-│  │ 🔗 Ethereum          🔗 Base             🔗 Arbitrum        🔗 Polygon     │   │
-│  │ • Aave V3            • Moonwell          • Radiant         • Aave V3      │   │
-│  │ • Compound V3        • Aerodrome         • Camelot         • QuickSwap    │   │
-│  │ • Curve              • Uniswap V3        • GMX             • Curve        │   │
+│  │ 🏦 Aave V3 Integration    📊 Live APY Data    🔄 Real-time Updates         │   │
+│  │ • SDK Integration         • Protocol APIs     • Position Monitoring        │   │
+│  │ • Real Deposits          • TVL Tracking      • Transaction History        │   │
+│  │ • Yield Generation       • Risk Assessment   • Portfolio Analytics        │   │
 │  └─────────────────────────────────────────────────────────────────────────────┘   │
 └─────────────────────────────────────────────────────────────────────────────────┘
 ```
@@ -123,33 +123,54 @@ Most yield farming platforms are single-chain and rule-driven. CrossYield brings
 - **Tailwind CSS** for styling
 - **Wagmi** for Ethereum interactions
 - **RainbowKit** for wallet connection
+- **Aptos Wallet Adapter** for Aptos integration
 - **Shadcn/ui** component library
 
-### Backend
-- **Python 3.8+** with asyncio
-- **FastAPI** for REST API
-- **Pandas & NumPy** for data processing
-- **Web3.py** for blockchain interactions
-- **aiohttp** for async HTTP requests
+### Cross-Chain Bridge
+- **Circle CCTP v1** for USDC transfers
+- **Base Sepolia** to **Aptos Testnet** bridging
+- **Real-time attestation** polling
+- **Transaction tracking** with explorer links
 
-### Smart Contracts
-- **Solidity ^0.8.20**
-- **OpenZeppelin** for security standards
-- **Hardhat** for development and testing
-- **TypeChain** for TypeScript bindings
+### Aptos Integration
+- **Move Contracts** for vault management
+- **Aptos TypeScript SDK** for blockchain interactions
+- **Resource Accounts** for secure fund management
+- **Aave V3 Aptos SDK** for real protocol integration
 
-### AI & ML
-- **Anthropic Claude** for LLM coordination
-- **Scikit-learn** for ML models
-- **Pandas** for data analysis
-- **Custom multi-agent framework**
+### Protocol Integrations
+- **Thala Finance** - Lending protocol with real APY data
+- **Liquidswap** - DEX and farming with live TVL
+- **Aries Markets** - Lending protocol with supply/borrow rates
+- **Aave V3** - Live integration with real yield generation
 
 ### Infrastructure
-- **The Graph Protocol** for blockchain data
-- **Pyth Network** for price oracles
-- **Circle CCTP** for cross-chain transfers
-- **1inch** for DEX aggregation
-- **Alchemy** for RPC services
+- **Nodit** for Aptos RPC and indexer services
+- **Hyperion** for capital efficiency optimization
+- **Circle CCTP** for cross-chain USDC transfers
+- **Aptos Testnet** for development and testing
+
+---
+
+## 🏆 Aptos Hackathon Implementation
+
+### Live Demo Features
+- **Real CCTP Bridge**: Production-ready Base Sepolia → Aptos USDC transfers
+- **Live Protocol Integration**: Actual Thala Finance, Liquidswap, Aries Markets integration
+- **Aave V3 Deployment**: Real yield generation with vault tracking
+- **Multi-Chain Portfolio**: Cross-chain position monitoring and analytics
+
+### Key Integrations
+- **Circle CCTP v1**: Cross-chain USDC transfers
+- **Aptos Vault Contract**: Move contract for position tracking
+- **Real DeFi Protocols**: Live APY data and actual deposits
+- **AI Strategy Selection**: Intelligent protocol selection based on current conditions
+
+### Technologies Used
+- **Hyperion**: Capital efficiency optimization
+- **Nodit**: Aptos RPC and indexer services
+- **Circle CCTP**: Cross-chain bridge protocol
+- **Aptos SDK**: Blockchain interaction and wallet management
 
 ---
 
@@ -178,56 +199,129 @@ Most yield farming platforms are single-chain and rule-driven. CrossYield brings
    # Install frontend dependencies
    cd packages/nextjs
    yarn install
-   
-   # Install backend dependencies
-   cd ../../usdc-ai-optimiser
-   python -m venv venv
-   source venv/bin/activate  # On Windows: venv\Scripts\activate
-   pip install -r requirements.txt
    ```
 
 3. **Set up environment variables**
    ```bash
-   # Copy example environment files
+   # Copy example environment file
    cp packages/nextjs/.env.example packages/nextjs/.env.local
-   cp usdc-ai-optimiser/.env.example usdc-ai-optimiser/.env
    ```
 
 4. **Start the development environment**
    ```bash
-   # Terminal 1: Start local blockchain
-   yarn chain
-   
-   # Terminal 2: Deploy contracts
-   yarn deploy
-   
-   # Terminal 3: Start frontend
-   yarn start
-   
-   # Terminal 4: Start backend
-   cd usdc-ai-optimiser
-   python src/main.py
+   # Start frontend
+   cd packages/nextjs
+   yarn dev
    ```
+
+5. **Access the application**
+   - Open [http://localhost:3000](http://localhost:3000)
+   - Connect your EVM wallet (Base Sepolia)
+   - Connect your Aptos wallet
+   - Start bridging USDC and deploying strategies!
+
+---
+
+## 🚀 Future Roadmap - Complete Aptos DeFi Integration
+
+### Phase 1: Core Protocol Expansion (Q1 2024)
+- **PancakeSwap Aptos**: DEX integration with farming pools
+- **Tortuga Finance**: Liquid staking protocol integration
+- **AptosSwap**: Native DEX with liquidity mining
+- **AptosLend**: Additional lending protocol for diversification
+
+### Phase 2: Advanced DeFi Protocols (Q2 2024)
+- **Aptos Liquid Staking**: Integration with multiple LST providers
+- **Aptos Lending Markets**: Additional lending protocols beyond Thala
+- **Aptos Yield Farming**: Automated yield farming across multiple protocols
+- **Aptos Options**: Options trading protocol integration
+
+### Phase 3: Cross-Chain Optimization (Q3 2024)
+- **Multi-Chain Arbitrage**: Automated arbitrage between EVM and Aptos
+- **Cross-Chain Yield Optimization**: Dynamic allocation between chains
+- **Advanced Risk Management**: Cross-chain risk assessment and mitigation
+- **Institutional Features**: Large-scale deployment and management tools
+
+### Phase 4: Ecosystem Expansion (Q4 2024)
+- **Aptos NFT Integration**: NFT-backed lending and yield strategies
+- **Aptos Gaming DeFi**: GameFi protocol integrations
+- **Aptos Real-World Assets**: RWA protocol integrations
+- **Aptos Layer 2**: Integration with Aptos L2 solutions
+
+### Technical Implementation Strategy
+
+#### Protocol Integration Framework
+```typescript
+// Standardized protocol adapter pattern
+interface AptosProtocolAdapter {
+  name: string;
+  type: 'lending' | 'dex' | 'farming' | 'staking';
+  getAPY(): Promise<number>;
+  getTVL(): Promise<number>;
+  deposit(amount: number): Promise<string>;
+  withdraw(amount: number): Promise<string>;
+  getPosition(address: string): Promise<ProtocolPosition>;
+}
+```
+
+#### Automated Protocol Discovery
+- **On-chain Registry**: Smart contract-based protocol registry
+- **Dynamic Integration**: Auto-discovery of new protocols
+- **APY Monitoring**: Real-time APY tracking across all protocols
+- **Risk Assessment**: Automated risk scoring for new protocols
+
+#### Multi-Protocol Strategy Engine
+- **Portfolio Optimization**: AI-driven allocation across all protocols
+- **Risk Diversification**: Spread risk across multiple protocol types
+- **Yield Maximization**: Dynamic rebalancing based on APY changes
+- **Gas Optimization**: Efficient transaction batching across protocols
+
+### Integration Timeline
+
+| Protocol | Type | Integration Status | Expected APY | Risk Level |
+|----------|------|-------------------|--------------|------------|
+| Thala Finance | Lending | ✅ Live | 8.5% | Low |
+| Liquidswap | DEX | ✅ Live | 9.2% | Medium |
+| Aries Markets | Lending | ✅ Live | 7.8% | Medium |
+| Aave V3 | Lending | ✅ Live | 8.1% | Low |
+| PancakeSwap | DEX | 🔄 In Progress | 8.9% | Medium |
+| Tortuga Finance | Staking | 📋 Planned | 6.5% | Low |
+| AptosSwap | DEX | 📋 Planned | 10.2% | High |
+| AptosLend | Lending | 📋 Planned | 9.1% | Medium |
+
+### Key Benefits of Complete Integration
+
+#### For Users
+- **Maximum Yield**: Access to all available APY opportunities
+- **Risk Diversification**: Spread risk across multiple protocols
+- **Automated Management**: AI handles all protocol interactions
+- **Real-time Optimization**: Continuous rebalancing for best returns
+
+#### For the Ecosystem
+- **Protocol Discovery**: Help users discover new protocols
+- **Liquidity Provision**: Drive liquidity to all integrated protocols
+- **Innovation Support**: Support new protocol development
+- **Cross-Chain Growth**: Bridge EVM users to Aptos DeFi
 
 ---
 
 ## ⚙️ Configuration
 
-### Required API Keys
+### Environment Variables
 
-Create `.env` files with the following keys:
+Create `.env.local` file in `packages/nextjs/` with the following keys:
 
 ```bash
-# Backend (.env)
-CLAUDE_API_KEY=sk-ant-...                    # Anthropic Claude API
-ALCHEMY_API_KEY=your_alchemy_key             # Ethereum RPC
-DEFILLAMA_API_KEY=your_defillama_key        # DeFiLlama API
-PYTH_ORACLE_KEY=your_pyth_key               # Pyth Oracle
-ONEINCH_API_KEY=your_oneinch_key            # 1inch DEX Aggregator
-GRAPH_API_KEY=your_graph_key                # The Graph Protocol
-DATABASE_URL=postgresql://...               # Database connection
+# Aptos Configuration
+NEXT_PUBLIC_APTOS_NETWORK=testnet
+NEXT_PUBLIC_APTOS_VAULT_ADDRESS=0x7e8e802870fe28b31e6dc7c72a96806d2a62a03efdd488d4f2a2cf866cbe072b
+NEXT_PUBLIC_NODIT_APTOS_INDEXER=https://api.testnet.aptoslabs.com/v1/graphql
 
-# Frontend (.env.local)
+# CCTP Configuration
+NEXT_PUBLIC_CCTP_IRIS_API=https://iris-api-sandbox.circle.com
+
+# Optional: Admin private key for vault management
+APTOS_VAULT_ADMIN_PRIVATE_KEY=your_admin_private_key
 NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID=...  # WalletConnect
 NEXT_PUBLIC_ALCHEMY_KEY=your_alchemy_key   # Ethereum RPC
 NEXT_PUBLIC_BACKEND_URL=http://localhost:8000

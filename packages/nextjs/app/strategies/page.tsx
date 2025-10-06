@@ -77,13 +77,16 @@ interface StrategyStep {
 interface EnhancedStrategy {
   id: string;
   name: string;
+  title: string;
+  filter: string;
   description: string;
   detailedDescription: string;
-  apy: number;
-  risk: "Low" | "Medium" | "High";
-  chain: string;
-  protocol: string;
-  category: string;
+  expectedAPY: number;
+  dailyYield: number;
+  monthlyYield: number;
+  riskLevel: "Low" | "Medium" | "High";
+  protocols: string[];
+  chains: string[];
   aiReasoning: AIReasoning;
   strategySteps: StrategyStep[];
   features: string[];
@@ -109,6 +112,9 @@ interface EnhancedStrategy {
     maxDrawdown: number;
     winRate: number;
   };
+  includesAptos?: boolean;
+  aptosBoost?: number;
+  crossChain?: boolean;
 }
 
 // Backend Strategy interface (enhanced data structure from backend)
@@ -189,16 +195,17 @@ interface Strategy {
 
 // No mock data - using live backend data only
 
-const chains = ["All Chains", "Ethereum", "Base", "Arbitrum", "Aptos", "Multi-Chain"];
-const riskLevels = ["All Risk", "Low", "Medium", "High"];
-const categories = ["All Categories", "Lending", "Yield Farming", "Liquidity Pool", "Arbitrage"];
+const filters = [
+  { value: "overall", label: "Best Overall" },
+  { value: "ethereum", label: "Ethereum" },
+  { value: "base", label: "Base" },
+  { value: "arbitrum", label: "Arbitrum" },
+  { value: "aptos", label: "Aptos" }
+];
 
 export default function StrategiesPage() {
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedChain, setSelectedChain] = useState("All Chains");
-  const [selectedRisk, setSelectedRisk] = useState("All Risk");
-  const [selectedCategory, setSelectedCategory] = useState("All Categories");
-  const [showAIOnly, setShowAIOnly] = useState(false);
+  const [selectedFilter, setSelectedFilter] = useState("overall");
   const [strategies, setStrategies] = useState<EnhancedStrategy[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isConnectedToBackend, setIsConnectedToBackend] = useState(false);
@@ -379,77 +386,22 @@ export default function StrategiesPage() {
     return () => clearInterval(interval);
   }, []);
 
-  // Filter and sort strategies
+  // Filter strategies by selected filter
   const filteredStrategies = strategies
     .filter((strategy) => {
-      const matchesSearch =
+      const matchesFilter = strategy.filter === selectedFilter;
+      const matchesSearch = searchQuery === "" ||
         strategy.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
         strategy.protocols.some(protocol => protocol.toLowerCase().includes(searchQuery.toLowerCase())) ||
         strategy.tags.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()));
-      
-      // Convert backend chain names to display names
-      const chainDisplayName = strategy.chains.length > 1 ? 'Multi-Chain' : 
-        strategy.chains[0]?.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase()) || 'Ethereum';
-      
-      // Handle Aptos chain specifically
-      const isAptosStrategy = strategy.chains.includes('aptos');
-      const matchesChain = selectedChain === "All Chains" || 
-        chainDisplayName === selectedChain || 
-        (selectedChain === "Aptos" && isAptosStrategy);
-      const matchesRisk = selectedRisk === "All Risk" || strategy.riskLevel === selectedRisk;
-      
-      // Determine category from protocols
-      const category = strategy.protocols.some(p => ['Aave', 'Compound', 'Radiant'].includes(p)) ? 'Lending' :
-                      strategy.protocols.some(p => ['Moonwell'].includes(p)) ? 'Yield Farming' :
-                      strategy.protocols.some(p => ['Curve', 'Uniswap'].includes(p)) ? 'Liquidity Pool' :
-                      strategy.protocols.some(p => ['1inch'].includes(p)) ? 'Arbitrage' : 'Lending';
-      
-      const matchesCategory = selectedCategory === "All Categories" || category === selectedCategory;
-      const matchesAI = !showAIOnly || strategy.aiOptimized;
 
-      return matchesSearch && matchesChain && matchesRisk && matchesCategory && matchesAI;
+      return matchesFilter && matchesSearch;
     })
     .sort((a, b) => {
-      let aValue: number, bValue: number;
-      
-      switch (sortBy) {
-        case "apy":
-          aValue = a.expectedAPY;
-          bValue = b.expectedAPY;
-          break;
-        case "tvl":
-          aValue = a.tvl;
-          bValue = b.tvl;
-          break;
-        case "risk":
-          const riskOrder = { "Low": 1, "Medium": 2, "High": 3 };
-          aValue = riskOrder[a.riskLevel];
-          bValue = riskOrder[b.riskLevel];
-          break;
-        case "performance":
-          aValue = a.performanceScore;
-          bValue = b.performanceScore;
-          break;
-        default:
-          aValue = a.expectedAPY;
-          bValue = b.expectedAPY;
-      }
-      
-      return sortOrder === "asc" ? aValue - bValue : bValue - aValue;
+      // Sort by risk level to ensure Conservative, Balanced, Aggressive order
+      const riskOrder = { "Low": 1, "Medium": 2, "High": 3 };
+      return riskOrder[a.riskLevel] - riskOrder[b.riskLevel];
     });
-
-  // Separate strategies by type for better organization
-  const aptosSingleProtocolStrategies = filteredStrategies.filter(strategy => 
-    strategy.chains.length === 1 && strategy.chains.includes('aptos') && strategy.protocols.length === 1
-  );
-  
-  const aptosMultiProtocolStrategies = filteredStrategies.filter(strategy => 
-    strategy.chains.length === 1 && strategy.chains.includes('aptos') && strategy.protocols.length > 1
-  );
-  
-  const crossChainStrategies = filteredStrategies.filter(strategy => 
-    strategy.chains.length > 1 || (strategy.chains.length === 1 && !strategy.chains.includes('aptos'))
-  );
 
   const getRiskColor = (risk: string) => {
     switch (risk) {
@@ -1214,7 +1166,7 @@ export default function StrategiesPage() {
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-6">
-            {/* Search and AI Filter */}
+            {/* Search and Filter */}
             <div className="flex flex-wrap gap-4 items-center">
               <div className="relative flex-1 min-w-[300px]">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -1225,83 +1177,37 @@ export default function StrategiesPage() {
                   className="pl-10 bg-muted/50 border-border/50 focus:ring-2 focus:ring-primary/20"
                 />
               </div>
-              <div className="flex items-center space-x-2">
-                <Button
-                  variant={showAIOnly ? "default" : "outline"}
-                  size="sm"
-                  onClick={() => setShowAIOnly(!showAIOnly)}
-                  className={showAIOnly ? "bg-gradient-to-r from-primary to-purple-500" : "bg-transparent"}
-                >
-                  <Zap className="h-4 w-4 mr-2" />
-                  AI-Powered Only
-                </Button>
-                <Button variant="outline" size="sm" className="bg-transparent">
-                  <SortAsc className="h-4 w-4 mr-2" />
-                  Sort by {sortBy}
-                </Button>
-              </div>
             </div>
 
-            {/* Filter Categories */}
-            <div className="space-y-4">
-              <div>
-                <h4 className="text-sm font-medium text-muted-foreground mb-2">Chains</h4>
-                <div className="flex flex-wrap gap-2">
-                  {chains.map((chain) => (
-                    <Button
-                      key={chain}
-                      variant={selectedChain === chain ? "default" : "outline"}
-                      size="sm"
-                      onClick={() => setSelectedChain(chain)}
-                      className={selectedChain === chain ? "bg-gradient-to-r from-primary to-purple-500" : "bg-transparent hover:bg-muted/50"}
-                    >
-                      {chain}
-                    </Button>
-                  ))}
-                </div>
+            {/* Chain Filter */}
+            <div>
+              <h4 className="text-sm font-medium text-muted-foreground mb-3">Select Chain</h4>
+              <div className="flex flex-wrap gap-2">
+                {filters.map((filter) => (
+                  <Button
+                    key={filter.value}
+                    variant={selectedFilter === filter.value ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => setSelectedFilter(filter.value)}
+                    className={selectedFilter === filter.value ? "bg-gradient-to-r from-primary to-purple-500" : "bg-transparent hover:bg-muted/50"}
+                  >
+                    {filter.label}
+                  </Button>
+                ))}
               </div>
-
-              <div>
-                <h4 className="text-sm font-medium text-muted-foreground mb-2">Risk Level</h4>
-                <div className="flex flex-wrap gap-2">
-                  {riskLevels.map((risk) => (
-                    <Button
-                      key={risk}
-                      variant={selectedRisk === risk ? "default" : "outline"}
-                      size="sm"
-                      onClick={() => setSelectedRisk(risk)}
-                      className={selectedRisk === risk ? "bg-gradient-to-r from-primary to-purple-500" : "bg-transparent hover:bg-muted/50"}
-                    >
-                      {risk}
-                    </Button>
-                  ))}
-                </div>
-              </div>
-
-              <div>
-                <h4 className="text-sm font-medium text-muted-foreground mb-2">Categories</h4>
-                <div className="flex flex-wrap gap-2">
-                  {categories.map((category) => (
-                    <Button
-                      key={category}
-                      variant={selectedCategory === category ? "default" : "outline"}
-                      size="sm"
-                      onClick={() => setSelectedCategory(category)}
-                      className={selectedCategory === category ? "bg-gradient-to-r from-primary to-purple-500" : "bg-transparent hover:bg-muted/50"}
-                    >
-                      {category}
-                    </Button>
-                  ))}
-                </div>
-              </div>
+              <p className="text-xs text-muted-foreground mt-2">
+                {selectedFilter === "overall"
+                  ? "Showing the best strategies across all chains"
+                  : `Showing strategies optimized for ${filters.find(f => f.value === selectedFilter)?.label}`}
+              </p>
             </div>
           </CardContent>
         </Card>
 
-        {/* Enhanced Strategy Grid */}
+        {/* Strategy Grid */}
         {isLoading ? (
           <div className="grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-            {[...Array(6)].map((_, index) => (
+            {[...Array(3)].map((_, index) => (
               <Card key={index} className="border-border/50 bg-gradient-to-br from-background to-muted/10">
                 <CardHeader className="pb-4">
                   <div className="flex items-start justify-between">
@@ -1324,97 +1230,44 @@ export default function StrategiesPage() {
               </Card>
             ))}
           </div>
-        ) : (
-          <div className="space-y-8">
-            {/* Aptos Single Protocol Strategies */}
-            {aptosSingleProtocolStrategies.length > 0 && (
-              <div>
-                <div className="flex items-center gap-3 mb-6">
-                  <div className="h-8 w-8 bg-orange-500/20 rounded-full flex items-center justify-center">
-                    <Target className="h-4 w-4 text-orange-500" />
-                  </div>
-                  <h2 className="text-2xl font-bold text-foreground">Aptos Single Protocol</h2>
-                  <Badge variant="outline" className="text-orange-500 border-orange-500/20 bg-orange-500/10">
-                    {aptosSingleProtocolStrategies.length} strategies
-                  </Badge>
-                </div>
-                <div className={`grid gap-6 ${viewMode === "grid" ? "grid-cols-1 md:grid-cols-2 lg:grid-cols-3" : "grid-cols-1"}`}>
-                  {aptosSingleProtocolStrategies.map((strategy) => (
-                    <AIStrategyCard
-                      key={strategy.id}
-                      strategy={strategy}
-                      onDeploy={handleStrategySelect}
-                      className="hover:shadow-lg hover:shadow-orange-500/5 border-orange-500/20"
-                    />
-                  ))}
-                </div>
+        ) : filteredStrategies.length > 0 ? (
+          <div>
+            <div className="flex items-center gap-3 mb-6">
+              <div className="h-8 w-8 bg-primary/20 rounded-full flex items-center justify-center">
+                <Target className="h-4 w-4 text-primary" />
               </div>
-            )}
-
-            {/* Aptos Multi Protocol Strategies */}
-            {aptosMultiProtocolStrategies.length > 0 && (
-              <div>
-                <div className="flex items-center gap-3 mb-6">
-                  <div className="h-8 w-8 bg-yellow-500/20 rounded-full flex items-center justify-center">
-                    <Network className="h-4 w-4 text-yellow-500" />
-                  </div>
-                  <h2 className="text-2xl font-bold text-foreground">Aptos Multi Protocol</h2>
-                  <Badge variant="outline" className="text-yellow-500 border-yellow-500/20 bg-yellow-500/10">
-                    {aptosMultiProtocolStrategies.length} strategies
-                  </Badge>
-                </div>
-                <div className={`grid gap-6 ${viewMode === "grid" ? "grid-cols-1 md:grid-cols-2 lg:grid-cols-3" : "grid-cols-1"}`}>
-                  {aptosMultiProtocolStrategies.map((strategy) => (
-                    <AIStrategyCard
-                      key={strategy.id}
-                      strategy={strategy}
-                      onDeploy={handleStrategySelect}
-                      className="hover:shadow-lg hover:shadow-yellow-500/5 border-yellow-500/20"
-                    />
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Cross-Chain Strategies */}
-            {crossChainStrategies.length > 0 && (
-              <div>
-                <div className="flex items-center gap-3 mb-6">
-                  <div className="h-8 w-8 bg-blue-500/20 rounded-full flex items-center justify-center">
-                    <ArrowRightLeft className="h-4 w-4 text-blue-500" />
-                  </div>
-                  <h2 className="text-2xl font-bold text-foreground">Cross-Chain Strategies</h2>
-                  <Badge variant="outline" className="text-blue-500 border-blue-500/20 bg-blue-500/10">
-                    {crossChainStrategies.length} strategies
-                  </Badge>
-                </div>
-                <div className={`grid gap-6 ${viewMode === "grid" ? "grid-cols-1 md:grid-cols-2 lg:grid-cols-3" : "grid-cols-1"}`}>
-                  {crossChainStrategies.map((strategy) => (
-                    <AIStrategyCard
-                      key={strategy.id}
-                      strategy={strategy}
-                      onDeploy={handleStrategySelect}
-                      className="hover:shadow-lg hover:shadow-blue-500/5 border-blue-500/20"
-                    />
-                  ))}
-                </div>
-              </div>
-            )}
+              <h2 className="text-2xl font-bold text-foreground">
+                {selectedFilter === "overall" ? "Best Strategies" : `${filters.find(f => f.value === selectedFilter)?.label} Strategies`}
+              </h2>
+              <Badge variant="outline" className="text-primary border-primary/20 bg-primary/10">
+                {filteredStrategies.length} strategies
+              </Badge>
+            </div>
+            <div className="grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+              {filteredStrategies.map((strategy) => (
+                <AIStrategyCard
+                  key={strategy.id}
+                  strategy={strategy}
+                  onDeploy={handleStrategySelect}
+                  className="hover:shadow-lg hover:shadow-primary/5 border-primary/20"
+                />
+              ))}
+            </div>
           </div>
-        )}
+        ) : null}
 
-        {/* Enhanced Empty State */}
-        {filteredStrategies.length === 0 && (
+        {/* Empty State */}
+        {!isLoading && filteredStrategies.length === 0 && (
           <Card className="border-border/50 bg-gradient-to-br from-background to-muted/20">
             <CardContent className="py-16 text-center">
               <div className="h-20 w-20 bg-muted/30 rounded-full flex items-center justify-center mx-auto mb-6">
                 <Search className="h-10 w-10 text-muted-foreground" />
               </div>
-              <h3 className="text-2xl font-semibold mb-2">No AI strategies available</h3>
+              <h3 className="text-2xl font-semibold mb-2">No strategies found</h3>
               <p className="text-muted-foreground mb-6 max-w-md mx-auto">
-                {isConnectedToBackend 
-                  ? "No AI-generated strategies match your current filters. Try adjusting your search criteria or clearing some filters."
-                  : "Unable to connect to the AI strategy backend. Please check your connection and try again."
+                {isConnectedToBackend
+                  ? `No strategies found for ${filters.find(f => f.value === selectedFilter)?.label}. Try a different chain filter.`
+                  : "Unable to connect to the backend. Please check your connection and try again."
                 }
               </p>
               <div className="flex flex-wrap gap-2 justify-center">
@@ -1422,19 +1275,12 @@ export default function StrategiesPage() {
                   variant="outline"
                   onClick={() => {
                     setSearchQuery("");
-                    setSelectedChain("All Chains");
-                    setSelectedRisk("All Risk");
-                    setSelectedCategory("All Categories");
-                    setShowAIOnly(false);
+                    setSelectedFilter("overall");
                   }}
                   className="bg-transparent"
                 >
                   <Filter className="h-4 w-4 mr-2" />
-                  Clear All Filters
-                </Button>
-                <Button variant="default" className="bg-gradient-to-r from-primary to-purple-500">
-                  <Info className="h-4 w-4 mr-2" />
-                  View All Strategies
+                  Clear Filters
                 </Button>
               </div>
             </CardContent>
@@ -1734,7 +1580,7 @@ export default function StrategiesPage() {
         {/* Wallet Connection Modal */}
         {showWalletModal && (
           <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-            <div className="bg-background rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="bg-background rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto">
               <div className="p-6">
                 <div className="flex items-center justify-between mb-6">
                   <h2 className="text-2xl font-bold">Connect Wallets</h2>
