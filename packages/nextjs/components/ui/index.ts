@@ -5,3 +5,4 @@ export * from "./progress";
 export * from "./table";
 export * from "./input";
 export * from "./label";
+export * from "./alert";

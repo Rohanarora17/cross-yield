@@ -2,9 +2,15 @@
 """Risk Assessment Agent - focuses on safety and risk management"""
 
 import asyncio
+import time
 from typing import Dict, List, Any
 from src.agents.base_agent import BaseAgent
 from src.data.models import USDCOpportunity, UserProfile
+from src.utils.logger import (
+    log_ai_start, log_ai_end, log_ai_error, log_agent_analysis, 
+    log_agent_result, log_opportunity_analysis, log_allocation_decision,
+    log_performance_metrics
+)
 
 class RiskAssessmentAgent(BaseAgent):
     """Agent specialized in risk assessment and safety"""
@@ -17,37 +23,71 @@ class RiskAssessmentAgent(BaseAgent):
                      user_profile: UserProfile) -> Dict[str, Any]:
         """Analyze opportunities for risk-adjusted allocation"""
         
-        print(f"⚠️ {self.name}: Evaluating risk factors for {len(opportunities)} opportunities...")
+        start_time = time.time()
+        log_agent_analysis(self.name, len(opportunities), {
+            "amount": user_profile.amount,
+            "risk_tolerance": user_profile.risk_tolerance,
+            "preferred_chains": user_profile.preferred_chains
+        })
         
-        # Filter by risk tolerance
-        risk_filtered = self.filter_by_risk_tolerance(opportunities, user_profile.risk_tolerance)
-        chain_filtered = self.filter_by_chains(risk_filtered, user_profile.preferred_chains)
-        
-        # Perform comprehensive risk analysis
-        risk_analyzed = await self._analyze_risks(chain_filtered)
-        
-        # Create risk-optimized allocation
-        allocation = await self._create_risk_allocation(risk_analyzed, user_profile)
-        
-        # Calculate portfolio metrics
-        portfolio_metrics = await self._calculate_portfolio_metrics(risk_analyzed)
-        
-        expected_apy = sum(
-            opp["risk_adjusted_return"] * opp["allocation"] 
-            for opp in risk_analyzed
-        )
-        
-        return {
-            "agent_name": self.name,
-            "strategy_type": "risk_management",
-            "allocation": allocation,
-            "expected_apy": expected_apy,
-            "confidence": self.confidence,
-            "risk_analysis": risk_analyzed,
-            "portfolio_metrics": portfolio_metrics,
-            "reasoning": self._generate_risk_reasoning(risk_analyzed),
-            "safety_features": self._identify_safety_features(risk_analyzed)
-        }
+        try:
+            # Filter by risk tolerance
+            risk_filtered = self.filter_by_risk_tolerance(opportunities, user_profile.risk_tolerance)
+            chain_filtered = self.filter_by_chains(risk_filtered, user_profile.preferred_chains)
+            
+            log_performance_metrics({
+                "original_opportunities": len(opportunities),
+                "risk_filtered": len(risk_filtered),
+                "chain_filtered": len(chain_filtered),
+                "risk_filter_efficiency": len(risk_filtered) / len(opportunities) if opportunities else 0
+            })
+            
+            # Perform comprehensive risk analysis
+            risk_analyzed = await self._analyze_risks(chain_filtered)
+            
+            # Create risk-optimized allocation
+            allocation = await self._create_risk_allocation(risk_analyzed, user_profile)
+            
+            # Calculate portfolio metrics
+            portfolio_metrics = await self._calculate_portfolio_metrics(risk_analyzed)
+            
+            expected_apy = sum(
+                opp["risk_adjusted_return"] * opp["allocation"] 
+                for opp in risk_analyzed
+            )
+            
+            result = {
+                "agent_name": self.name,
+                "strategy_type": "risk_management",
+                "allocation": allocation,
+                "expected_apy": expected_apy,
+                "confidence": self.confidence,
+                "risk_analysis": risk_analyzed,
+                "portfolio_metrics": portfolio_metrics,
+                "reasoning": self._generate_risk_reasoning(risk_analyzed),
+                "safety_features": self._identify_safety_features(risk_analyzed)
+            }
+            
+            duration = time.time() - start_time
+            log_performance_metrics({
+                "expected_apy": expected_apy,
+                "portfolio_risk_score": portfolio_metrics.get("portfolio_risk_score", 0),
+                "portfolio_safety_score": portfolio_metrics.get("portfolio_safety_score", 0),
+                "analysis_duration": duration
+            })
+            
+            log_allocation_decision(allocation, self._generate_risk_reasoning(risk_analyzed))
+            log_ai_end(f"{self.name} Analysis", result, duration)
+            
+            return result
+            
+        except Exception as e:
+            log_ai_error(f"{self.name} Analysis", e, {
+                "opportunities_count": len(opportunities),
+                "user_amount": user_profile.amount,
+                "risk_tolerance": user_profile.risk_tolerance
+            })
+            raise
     
     async def _analyze_risks(self, opportunities: List[USDCOpportunity]) -> List[Dict]:
         """Comprehensive risk analysis of opportunities"""

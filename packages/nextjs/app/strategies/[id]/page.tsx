@@ -10,7 +10,7 @@ import { Input } from "~~/components/ui/input";
 import { Label } from "~~/components/ui/label";
 import { Progress } from "~~/components/ui/progress";
 import { ArrowLeft, DollarSign, Zap, Target, Loader2, CheckCircle, AlertTriangle } from "lucide-react";
-import { RainbowKitCustomConnectButton } from "~~/components/scaffold-eth";
+import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { useAccount } from "wagmi";
 import { useAgentLinkage } from "~~/hooks/useAgentLinkage";
 import { useSmartWallet } from "~~/hooks/useSmartWallet";
@@ -272,7 +272,7 @@ export default function StrategyDeployPage() {
               </Link>
             </div>
             <div className="ml-auto flex items-center space-x-4">
-              <RainbowKitCustomConnectButton />
+              <ConnectButton />
             </div>
           </div>
         </header>
@@ -295,7 +295,7 @@ export default function StrategyDeployPage() {
                   <p className="text-sm text-muted-foreground">
                     You need to connect your wallet to deploy strategies
                   </p>
-                  <RainbowKitCustomConnectButton />
+                  <ConnectButton />
                 </div>
               </CardContent>
             </Card>
@@ -337,7 +337,7 @@ export default function StrategyDeployPage() {
               </div>
             </div>
             <div className="flex items-center space-x-4">
-              <RainbowKitCustomConnectButton />
+              <ConnectButton />
             </div>
           </div>
         </div>

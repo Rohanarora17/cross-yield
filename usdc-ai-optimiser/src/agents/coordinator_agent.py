@@ -2,9 +2,15 @@
 """LLM Coordinator Agent - uses Claude AI for strategic coordination"""
 
 import asyncio
+import time
 from typing import Dict, List, Any, Optional
 from src.agents.base_agent import BaseAgent
 from src.data.models import USDCOpportunity, UserProfile
+from src.utils.logger import (
+    log_ai_start, log_ai_end, log_ai_error, log_agent_analysis, 
+    log_agent_result, log_llm_interaction, log_performance_metrics,
+    log_allocation_decision
+)
 
 # Optional Claude import (graceful fallback if not available)
 try:
@@ -33,24 +39,68 @@ class LLMCoordinatorAgent(BaseAgent):
                      user_profile: UserProfile) -> Dict[str, Any]:
         """Coordinate strategy using LLM reasoning"""
         
-        print(f"🧠 {self.name}: Coordinating strategy using {'Claude AI' if self.llm_available else 'fallback logic'}...")
+        start_time = time.time()
+        log_agent_analysis(self.name, len(opportunities), {
+            "amount": user_profile.amount,
+            "risk_tolerance": user_profile.risk_tolerance,
+            "llm_available": self.llm_available
+        })
         
-        if self.llm_available:
-            return await self._llm_coordination(opportunities, user_profile)
-        else:
-            return await self._fallback_coordination(opportunities, user_profile)
+        try:
+            if self.llm_available:
+                result = await self._llm_coordination(opportunities, user_profile)
+            else:
+                result = await self._fallback_coordination(opportunities, user_profile)
+            
+            duration = time.time() - start_time
+            log_ai_end(f"{self.name} Analysis", result, duration)
+            
+            return result
+            
+        except Exception as e:
+            log_ai_error(f"{self.name} Analysis", e, {
+                "opportunities_count": len(opportunities),
+                "llm_available": self.llm_available
+            })
+            raise
     
     async def coordinate_agent_strategies(self, yield_result: Dict, risk_result: Dict, 
                                         opportunities: List[USDCOpportunity],
                                         user_profile: UserProfile) -> Dict[str, Any]:
         """Coordinate between yield and risk agent recommendations"""
         
-        print(f"🤝 {self.name}: Coordinating yield and risk strategies...")
+        start_time = time.time()
+        log_ai_start("Agent Strategy Coordination", {
+            "yield_apy": yield_result.get("expected_apy", 0),
+            "risk_apy": risk_result.get("expected_apy", 0),
+            "llm_available": self.llm_available
+        })
         
-        if self.llm_available:
-            return await self._llm_agent_coordination(yield_result, risk_result, user_profile)
-        else:
-            return await self._fallback_agent_coordination(yield_result, risk_result)
+        try:
+            if self.llm_available:
+                result = await self._llm_agent_coordination(yield_result, risk_result, user_profile)
+            else:
+                result = await self._fallback_agent_coordination(yield_result, risk_result)
+            
+            duration = time.time() - start_time
+            log_performance_metrics({
+                "coordination_method": result.get("coordination_method", "unknown"),
+                "final_apy": result.get("expected_apy", 0),
+                "coordination_duration": duration
+            })
+            
+            log_allocation_decision(result.get("allocation", {}), result.get("reasoning", ""))
+            log_ai_end("Agent Strategy Coordination", result, duration)
+            
+            return result
+            
+        except Exception as e:
+            log_ai_error("Agent Strategy Coordination", e, {
+                "yield_result": yield_result.get("expected_apy", 0),
+                "risk_result": risk_result.get("expected_apy", 0),
+                "llm_available": self.llm_available
+            })
+            raise
     
     async def _llm_coordination(self, opportunities: List[USDCOpportunity], 
                               user_profile: UserProfile) -> Dict[str, Any]:
@@ -167,14 +217,34 @@ class LLMCoordinatorAgent(BaseAgent):
         if not self.claude:
             raise Exception("Claude client not initialized")
         
-        response = await asyncio.to_thread(
-            self.claude.messages.create,
-            model="claude-3-5-sonnet-20241022",
-            max_tokens=1000,
-            messages=[{"role": "user", "content": prompt}]
-        )
-        
-        return response.content[0].text if response.content else ""
+        start_time = time.time()
+        try:
+            response = await asyncio.to_thread(
+                self.claude.messages.create,
+                model="claude-3-5-sonnet-20241022",
+                max_tokens=1000,
+                messages=[{"role": "user", "content": prompt}]
+            )
+            
+            response_text = response.content[0].text if response.content else ""
+            duration = time.time() - start_time
+            
+            log_llm_interaction("Claude Coordination", len(response_text), True)
+            log_performance_metrics({
+                "llm_response_time": duration,
+                "response_length": len(response_text)
+            })
+            
+            return response_text
+            
+        except Exception as e:
+            duration = time.time() - start_time
+            log_llm_interaction("Claude Coordination", 0, False)
+            log_ai_error("Claude API Call", e, {
+                "prompt_length": len(prompt),
+                "duration": duration
+            })
+            raise
     
     async def _parse_llm_response(self, response: str, 
                                 opportunities: List[USDCOpportunity]) -> Dict[str, Any]:

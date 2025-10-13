@@ -19,6 +19,18 @@
     "lint": "eslint",
     "lint-staged": "eslint",
     "test": "REPORT_GAS=true hardhat test --network hardhat",
+    "test:cctp": "hardhat run scripts/testCCTP.ts",
+    "check:ownership": "hardhat run scripts/checkOwnership.ts",
+    "debug:cctp": "hardhat run scripts/debugCCTP.ts",
+    "test:circle": "hardhat run scripts/testCircleCCTP.ts",
+    "test:min": "hardhat run scripts/testMinAmount.ts",
+    "debug:real": "hardhat run scripts/findRealError.ts",
+    "check:usdc": "hardhat run scripts/checkUSDC.ts",
+    "check:paused": "hardhat run scripts/checkUSDCPaused.ts",
+    "get:usdc": "hardhat run scripts/getCircleUSDC.ts",
+    "test:fixed": "hardhat run scripts/testFixedCCTP.ts",
+    "test:final": "hardhat run scripts/testFinalCCTP.ts",
+    "debug:approval": "hardhat run scripts/debugApproval.ts",
     "verify": "hardhat etherscan-verify"
   },
   "dependencies": {

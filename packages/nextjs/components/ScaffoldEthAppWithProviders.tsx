@@ -12,6 +12,7 @@ import { WagmiProvider } from "wagmi";
 import { BlockieAvatar } from "~~/components/scaffold-eth";
 import { useInitializeNativeCurrencyPrice } from "~~/hooks/scaffold-eth";
 import { wagmiConfig } from "~~/services/web3/wagmiConfig";
+import { AptosWalletProvider } from "~~/components/AptosWalletProvider";
 
 const ScaffoldEthApp = ({ children }: { children: React.ReactNode }) => {
   useInitializeNativeCurrencyPrice();
@@ -50,8 +51,10 @@ export const ScaffoldEthAppWithProviders = ({ children }: { children: React.Reac
           avatar={BlockieAvatar}
           theme={mounted ? (isDarkMode ? darkTheme() : lightTheme()) : lightTheme()}
         >
-          <ProgressBar height="3px" color="#2299dd" />
-          <ScaffoldEthApp>{children}</ScaffoldEthApp>
+          <AptosWalletProvider>
+            <ProgressBar height="3px" color="#2299dd" />
+            <ScaffoldEthApp>{children}</ScaffoldEthApp>
+          </AptosWalletProvider>
         </RainbowKitProvider>
       </QueryClientProvider>
     </WagmiProvider>

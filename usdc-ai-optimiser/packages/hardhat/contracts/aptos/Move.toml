@@ -1,0 +1,19 @@
+[package]
+name = "yieldflow"
+version = "1.0.0"
+authors = ["YieldFlow Team"]
+
+
+
+[addresses]
+yieldflow = "0x7e8e802870fe28b31e6dc7c72a96806d2a62a03efdd488d4f2a2cf866cbe072b"
+circle_usdc = "0x69091fbab5f7d635ee7ac5098cf0c1efbe31d68fec0f2cd565e8d168daf52832"
+
+[dev-addresses]
+
+[dependencies.AptosFramework]
+git = "https://github.com/aptos-labs/aptos-framework.git"
+rev = "testnet"
+subdir = "aptos-framework"
+
+[dev-dependencies]

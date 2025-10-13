@@ -3,9 +3,15 @@
 
 import asyncio
 import numpy as np
+import time
 from typing import Dict, List, Any
 from src.agents.base_agent import BaseAgent
 from src.data.models import USDCOpportunity, UserProfile
+from src.utils.logger import (
+    log_ai_start, log_ai_end, log_ai_error, log_agent_analysis, 
+    log_agent_result, log_opportunity_analysis, log_allocation_decision,
+    log_performance_metrics
+)
 
 class YieldMaximizerAgent(BaseAgent):
     """Agent specialized in finding maximum yield opportunities"""
@@ -18,45 +24,83 @@ class YieldMaximizerAgent(BaseAgent):
                      user_profile: UserProfile) -> Dict[str, Any]:
         """Analyze opportunities for maximum yield potential"""
         
-        print(f"🎯 {self.name}: Analyzing {len(opportunities)} opportunities for maximum yield...")
+        start_time = time.time()
+        log_agent_analysis(self.name, len(opportunities), {
+            "amount": user_profile.amount,
+            "risk_tolerance": user_profile.risk_tolerance,
+            "preferred_chains": user_profile.preferred_chains
+        })
         
-        # Filter opportunities by user preferences
-        filtered_opportunities = self.filter_by_chains(
-            opportunities, user_profile.preferred_chains
-        )
-        
-        # Focus on highest yield opportunities
-        yield_focused = await self._find_yield_opportunities(filtered_opportunities, user_profile)
-        
-        # Create yield-maximizing allocation
-        allocation = await self._create_yield_allocation(yield_focused, user_profile)
-        
-        # Calculate expected performance
-        expected_apy = sum(
-            opp["apy"] * opp["allocation"] 
-            for opp in yield_focused
-        )
-        
-        return {
-            "agent_name": self.name,
-            "strategy_type": "yield_maximization",
-            "allocation": allocation,
-            "expected_apy": expected_apy,
-            "confidence": self.confidence,
-            "top_opportunities": yield_focused,
-            "reasoning": self._generate_reasoning(yield_focused),
-            "cross_chain_advantage": self._analyze_cross_chain_advantage(yield_focused)
-        }
+        try:
+            # Filter opportunities by user preferences
+            filtered_opportunities = self.filter_by_chains(
+                opportunities, user_profile.preferred_chains
+            )
+            
+            log_performance_metrics({
+                "original_opportunities": len(opportunities),
+                "filtered_opportunities": len(filtered_opportunities),
+                "filter_efficiency": len(filtered_opportunities) / len(opportunities) if opportunities else 0
+            })
+            
+            # Focus on highest yield opportunities
+            yield_focused = await self._find_yield_opportunities(filtered_opportunities, user_profile)
+            
+            # Create yield-maximizing allocation
+            allocation = await self._create_yield_allocation(yield_focused, user_profile)
+            
+            # Calculate expected performance
+            expected_apy = sum(
+                opp["apy"] * opp["allocation"] 
+                for opp in yield_focused
+            )
+            
+            result = {
+                "agent_name": self.name,
+                "strategy_type": "yield_maximization",
+                "allocation": allocation,
+                "expected_apy": expected_apy,
+                "confidence": self.confidence,
+                "top_opportunities": yield_focused,
+                "reasoning": self._generate_reasoning(yield_focused),
+                "cross_chain_advantage": self._analyze_cross_chain_advantage(yield_focused)
+            }
+            
+            duration = time.time() - start_time
+            log_performance_metrics({
+                "expected_apy": expected_apy,
+                "opportunities_selected": len(yield_focused),
+                "analysis_duration": duration
+            })
+            
+            log_allocation_decision(allocation, self._generate_reasoning(yield_focused))
+            log_ai_end(f"{self.name} Analysis", result, duration)
+            
+            return result
+            
+        except Exception as e:
+            log_ai_error(f"{self.name} Analysis", e, {
+                "opportunities_count": len(opportunities),
+                "user_amount": user_profile.amount
+            })
+            raise
     
     async def _find_yield_opportunities(self, opportunities: List[USDCOpportunity], 
                                       user_profile: UserProfile) -> List[Dict]:
         """Find top yield opportunities with analysis"""
+        
+        log_ai_start("Yield Opportunity Analysis", {
+            "input_opportunities": len(opportunities),
+            "user_amount": user_profile.amount,
+            "min_liquidity_requirement": user_profile.amount * 3
+        })
         
         # Sort by yield and take top performers
         sorted_opportunities = sorted(opportunities, key=lambda x: x.apy, reverse=True)
         
         top_opportunities = []
         total_weight = 0
+        liquidity_filtered = 0
         
         for i, opp in enumerate(sorted_opportunities[:8]):  # Top 8 opportunities
             # Calculate weight (exponential decay)
@@ -65,6 +109,7 @@ class YieldMaximizerAgent(BaseAgent):
             # Check if opportunity has sufficient liquidity
             min_liquidity = user_profile.amount * 3  # 3x user amount for safety
             if opp.usdc_liquidity < min_liquidity:
+                liquidity_filtered += 1
                 continue
                 
             opportunity_data = {
@@ -91,6 +136,19 @@ class YieldMaximizerAgent(BaseAgent):
         # Normalize weights to allocations
         for opp in top_opportunities:
             opp["allocation"] = opp["weight"] / total_weight if total_weight > 0 else 0
+        
+        log_performance_metrics({
+            "opportunities_analyzed": len(sorted_opportunities[:8]),
+            "liquidity_filtered": liquidity_filtered,
+            "final_selections": len(top_opportunities),
+            "total_weight": total_weight
+        })
+        
+        log_opportunity_analysis(top_opportunities)
+        log_ai_end("Yield Opportunity Analysis", {
+            "selected_count": len(top_opportunities),
+            "avg_apy": sum(opp["apy"] for opp in top_opportunities) / len(top_opportunities) if top_opportunities else 0
+        })
         
         return top_opportunities
     

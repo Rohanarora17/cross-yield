@@ -135,6 +135,13 @@ class CrossYieldContractManager:
                     "type": "function"
                 },
                 {
+                    "inputs": [],
+                    "name": "getTotalWallets",
+                    "outputs": [{"name": "count", "type": "uint256"}],
+                    "stateMutability": "view",
+                    "type": "function"
+                },
+                {
                     "inputs": [{"name": "user", "type": "address"}],
                     "name": "getWallet",
                     "outputs": [{"name": "wallet", "type": "address"}],
@@ -185,6 +192,24 @@ class CrossYieldContractManager:
                     ],
                     "name": "WalletCreated",
                     "type": "event"
+                },
+                {
+                    "anonymous": False,
+                    "inputs": [
+                        {"indexed": True, "name": "coordinator", "type": "address"},
+                        {"indexed": True, "name": "newCoordinator", "type": "address"}
+                    ],
+                    "name": "BackendCoordinatorUpdated",
+                    "type": "event"
+                },
+                {
+                    "anonymous": False,
+                    "inputs": [
+                        {"indexed": True, "name": "previousOwner", "type": "address"},
+                        {"indexed": True, "name": "newOwner", "type": "address"}
+                    ],
+                    "name": "OwnershipTransferred",
+                    "type": "event"
                 }
             ]
         elif contract_type == "yieldRouter":
@@ -230,6 +255,37 @@ class CrossYieldContractManager:
                     ],
                     "stateMutability": "view",
                     "type": "function"
+                },
+                {
+                    "anonymous": False,
+                    "inputs": [
+                        {"indexed": True, "name": "user", "type": "address"},
+                        {"indexed": False, "name": "amount", "type": "uint256"},
+                        {"indexed": False, "name": "strategy", "type": "string"},
+                        {"indexed": False, "name": "timestamp", "type": "uint256"}
+                    ],
+                    "name": "OptimizationRequested",
+                    "type": "event"
+                },
+                {
+                    "anonymous": False,
+                    "inputs": [
+                        {"indexed": True, "name": "user", "type": "address"},
+                        {"indexed": False, "name": "strategyId", "type": "uint256"},
+                        {"indexed": False, "name": "actualCost", "type": "uint256"}
+                    ],
+                    "name": "OptimizationCompleted",
+                    "type": "event"
+                },
+                {
+                    "anonymous": False,
+                    "inputs": [
+                        {"indexed": True, "name": "user", "type": "address"},
+                        {"indexed": False, "name": "totalValue", "type": "uint256"},
+                        {"indexed": False, "name": "timestamp", "type": "uint256"}
+                    ],
+                    "name": "PortfolioUpdated",
+                    "type": "event"
                 }
             ]
         elif contract_type == "userSmartWallet":
@@ -799,7 +855,7 @@ class CrossYieldContractManager:
         w3 = self.web3_clients[chain]
 
         # Create event filter
-        event_filter = contract.events[event_name].create_filter(fromBlock='latest')
+        event_filter = contract.events[event_name].create_filter(from_block='latest')
 
         def handle_event(event):
             try:
